@@ -216,6 +216,61 @@ Generate request body.
 
 Response includes generated text, per-token grounding scores, and halt positions.
 
+## Model Studio UI
+
+The UI runs at `http://localhost:3000` when started via `./start.sh`. It has six pages.
+
+**Dashboard**
+
+Server health, model load status, and training phase at a glance. Shows total parameter count and active model config. Lists all checkpoints with phase, file size, and timestamp. Lists active inference sessions with token counts and idle time, with a button to drop any session.
+
+**Inference**
+
+Chat interface with full access to Regent's runtime controls.
+
+- Essence vector — 7 sliders (mood, influence, truth, civility, good/evil, curiosity, self-preservation) that shape every token in the response
+- EPG nodes — select any nodes from your domain knowledge store to inject as grounded prefix context; searchable and filterable
+- Generation settings — temperature, max tokens, grounding threshold slider
+- Per-token grounding scores — each assistant token is colour-coded green/amber/red by its verification score; halts are shown as inline badges
+- Stats bar — total tokens, inference time, halt count, mean grounding score per response
+- Session management — new session button resets KV/SSM cache
+
+**Domain Knowledge**
+
+Manage the EPG node store that feeds into inference.
+
+- Browse all nodes in a table with confidence, activation, and valence bars per row
+- Filter by category (15 categories: identity, belief, capability, experience, goal, domain, relationship, emotional, procedural, episodic, semantic, preference, constraint, meta, other)
+- Full-text search across key and value fields
+- Add, edit, or delete nodes via a modal form; all fields editable (key, value, category, confidence, activation, valence, emotional weight)
+- Ingest tab — paste a JSON array of nodes, preview before importing, import in bulk
+
+**Data Pipeline**
+
+Guided 5-step wizard for building a training corpus from scratch.
+
+- Step 1 (Sources) — enter web URLs (one per line) and/or HuggingFace dataset references (dataset name, split, text column, max docs)
+- Step 2 (Scraping) — live progress: URL count, doc count, threshold bar, current URL, scrape log; stop at any time
+- Step 3 (Review) — corpus summary (train/val split, total docs, MB on disk) with quality indicator; sample document preview
+- Step 4 (Configure) — pick model config, start stage, and checkpoint directory; shows a plain-English run plan before you commit
+- Step 5 (Training) — phase pipeline with active phase highlighted; live training log with loss/step lines coloured; checkpoint list updated in real time
+
+**Training**
+
+Direct training controls without the pipeline wizard. Start or stop training at any stage, pick a start stage and config, and resume from any saved checkpoint. Live log with colour-coded lines (loss steps in indigo, errors in red, warnings in amber).
+
+**Export**
+
+Export a trained checkpoint to a deployable format.
+
+- Pick any checkpoint from the list
+- Pick a model config (370M / 1.5B Edge / 7B / production)
+- Choose format: HuggingFace Transformers, Docker/server package, or both
+- Choose dtype: float32, float16, or bfloat16 (with device recommendation shown for each)
+- Fill in model card metadata (description, license, tags) and optionally push directly to HuggingFace Hub
+- Live export log streamed from the server
+- Post-export code snippet updates dynamically with the chosen dtype and target device
+
 ## Status
 
 Architecture and training pipeline are implemented. Both have been validated end-to-end on Apple Metal with synthetic data through all four phases.
