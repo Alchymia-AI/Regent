@@ -35,6 +35,12 @@ data/processed/
 *.swo
 .DS_Store
 
+# UI build artifacts
+ui/.nuxt/
+ui/.output/
+ui/node_modules/
+ui/dist/
+
 # Logs
 wandb/
 logs/
