@@ -273,28 +273,6 @@ Export a trained checkpoint to a deployable format.
 - Live export log streamed from the server
 - Post-export code snippet updates dynamically with the chosen dtype and target device
 
-## Status
-
-Architecture and training pipeline are implemented. Both have been validated end-to-end on Apple Metal with synthetic data through all four phases.
-
-The model has not been trained on real data. Quality claims about generation, grounding accuracy, and instruction following are projections until a real training run completes.
-
-Working today:
-
-- All architecture components run forward and backward
-- The 4-phase training pipeline runs end-to-end
-- Checkpointing, resume, validation loops, gradient accumulation
-- The inference server responds to all endpoints
-- The verification head produces scores during decoding
-
-Needed next:
-
-- Real training corpus
-- Compute for Phase 1 base training
-- Real grounded/corrupted pairs for Phase 3
-- Real preference pairs for Phase 4
-- Empirical evaluation on hallucination benchmarks
-
 ## Target markets
 
 Workloads where constant-memory inference, per-token grounding, native knowledge graph input, or self-hosting matter more than raw benchmark quality.
