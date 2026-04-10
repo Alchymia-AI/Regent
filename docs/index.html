@@ -166,22 +166,22 @@
       <div class="card">
         <div class="icon">⚡</div>
         <h3>Recurrent Layers (Mamba-2)</h3>
-        <p>Each layer reads the input and decides how much of it matters, then compresses what it learned into a fixed-size state buffer. That buffer stays the same size whether the session is one minute or eight hours. This is what gives the model constant memory.</p>
+        <p>Compresses each input into a fixed-size state buffer. The buffer stays the same size whether the session runs one minute or eight hours.</p>
       </div>
       <div class="card">
         <div class="icon">🎯</div>
         <h3>Attention Layers (Sparse)</h3>
-        <p>Placed every eight recurrent layers. Handles precise recall: finding a specific fact from earlier in the session that the recurrent layers may have compressed away. Operates over a sliding window to keep memory bounded.</p>
+        <p>Placed every eight recurrent layers for precise recall. Finds specific facts the recurrent layers compressed away. Sliding window keeps memory bounded.</p>
       </div>
       <div class="card">
         <div class="icon">🧠</div>
         <h3>Knowledge Graph Encoder</h3>
-        <p>Takes structured knowledge nodes (facts, beliefs, relationships, memories) and converts them into inputs the model reads as native context. Each node carries metadata: confidence level, recency, emotional weight, category. No text serialization required.</p>
+        <p>Converts structured knowledge nodes into native model inputs. Each node carries confidence, recency, emotional weight, and category. No text conversion needed.</p>
       </div>
       <div class="card">
         <div class="icon">💜</div>
         <h3>Behavioral Conditioning</h3>
-        <p>A 7-number vector (mood, influence, truth bias, civility, good/evil, curiosity, self-preservation) is fed into the model at multiple points during generation. The whole response is shaped by it. Not a prompt prefix that the model has to keep re-reading.</p>
+        <p>7 numbers injected at multiple layers during generation: mood, influence, truth bias, civility, good/evil, curiosity, self-preservation. Shapes the entire response. Not a prompt prefix.</p>
       </div>
     </div>
   </div>
@@ -200,43 +200,37 @@
       <div class="novelty-item">
         <div class="novelty-num">01</div>
         <h3>It scores its own accuracy while it writes</h3>
-        <p>The model has two output channels. One produces the next word. The other produces a number between 0 and 1 for that word, where 1 means "I am confident this is correct" and 0 means "I am guessing."</p>
-        <p>Both channels run on every word in the same pass. Other systems detect errors after the response is finished by re-running the model or sending the output to a second one. This one knows in real time.</p>
+        <p>Two output channels, one pass. One produces the next word. The other scores it 0 to 1: confident or guessing. Other systems check after the fact by re-running the model or sending output to a second one.</p>
       </div>
 
       <div class="novelty-item">
         <div class="novelty-num">02</div>
-        <h3>It changes behavior when its confidence drops</h3>
-        <p>The accuracy score gates the generation into three modes. Above 0.6 it writes normally. Between 0.3 and 0.6 it slows and picks more conservative words. Below 0.3 it stops, retrieves relevant facts from its knowledge store, and tries again from the point where it got uncertain.</p>
-        <p>Other models write at the same pace and confidence whether they are right or wrong.</p>
+        <h3>It changes behavior when confidence drops</h3>
+        <p>Above 0.6: writes normally. Between 0.3 and 0.6: slows, picks conservative words. Below 0.3: stops, retrieves facts, tries again from the uncertain point. Other models write at the same pace whether right or wrong.</p>
       </div>
 
       <div class="novelty-item">
         <div class="novelty-num">03</div>
-        <h3>It reads structured knowledge as itself, not as text</h3>
-        <p>The knowledge graph encoder takes typed nodes directly as input. Facts, relationships, memories, constraints, each with confidence scores and category labels. The model treats them as native knowledge.</p>
-        <p>Other systems flatten knowledge into English sentences and inject them as prompt text. This one does not pay the token cost to re-inject the same knowledge on every call.</p>
+        <h3>It reads structured knowledge directly</h3>
+        <p>Typed nodes as input: facts, relationships, memories, constraints, each with confidence and category. No text conversion. Other systems flatten knowledge into prompt text and re-inject it on every call.</p>
       </div>
 
       <div class="novelty-item">
         <div class="novelty-num">04</div>
-        <h3>Its behavioral state is a dial, not a paragraph</h3>
-        <p>The model takes seven numbers alongside the conversation. They describe its current state: how positive it feels, how strongly that should affect output, how much it values truth, civility, kindness, curiosity, and self-preservation.</p>
-        <p>Those numbers are injected into the model at multiple layers. The entire response is shaped by them continuously. Other models use a persona description in the prompt that the model has to keep remembering.</p>
+        <h3>Behavioral state is a dial, not a paragraph</h3>
+        <p>7 numbers alongside the conversation: mood, influence, truth bias, civility, good/evil, curiosity, self-preservation. Injected at multiple layers. Shapes the entire response. Other models use a prompt persona that dilutes as the response grows.</p>
       </div>
 
       <div class="novelty-item">
         <div class="novelty-num">05</div>
-        <h3>It uses constant memory no matter how long the session is</h3>
-        <p>Standard AI models keep a growing record of every word they have processed. For a multi-hour session that record becomes gigabytes. Regent compresses past context into a fixed-size buffer of about 2 MB for the 7B model.</p>
-        <p>The buffer does not grow. A drone runs a six-hour mission on the same memory it used in the first second. A robot works a full shift. A long patient encounter does not degrade performance.</p>
+        <h3>Constant memory regardless of session length</h3>
+        <p>Other models accumulate gigabytes over a multi-hour session. Regent compresses past context into a fixed 2MB buffer. It does not grow. A drone runs six hours on the same memory it used in the first second.</p>
       </div>
 
       <div class="novelty-item">
         <div class="novelty-num">06</div>
-        <h3>Accuracy scoring adds almost nothing to the cost</h3>
-        <p>The accuracy-checking component is one-tenth of one percent of the model's total size. It reads the same internal state the writing head reads, so no extra computation is needed.</p>
-        <p>Most safety systems require running the model two to twenty times to get a reliability signal. This one is already running.</p>
+        <h3>Accuracy scoring adds 0.1% to the cost</h3>
+        <p>Reads state that already exists. No extra passes. Most safety systems run the model 5 to 20 times for a reliability signal. This one runs once.</p>
       </div>
     </div>
 
@@ -270,15 +264,15 @@
     <div class="card-grid" style="margin-top: 2rem;">
       <div class="card">
         <h3>Per-word, not per-response</h3>
-        <p>Most accuracy checks produce one score for an entire response. This model scores every word. That means catching a fabricated claim mid-sentence and knowing exactly which span is the problem, not just that the response has one somewhere.</p>
+        <p>Most checks score an entire response. This scores every word, catching fabricated claims mid-sentence and identifying the exact span.</p>
       </div>
       <div class="card">
         <h3>No extra inference cost</h3>
-        <p>Sampling-based verification requires running the model 5 to 20 times. Constitutional AI methods require 2 to 3 extra calls. The verification head is a small network reading state that already exists. 0.1% of model parameters, zero extra passes.</p>
+        <p>Sampling verification runs the model 5 to 20 times. This reads state that already exists. 0.1% of parameters, zero extra passes.</p>
       </div>
       <div class="card">
         <h3>Grounded in the knowledge base</h3>
-        <p>Standard retrieval augmentation gives the model the right documents but does not prevent it from ignoring them. The verification head is trained specifically to distinguish between claims grounded in the knowledge base and claims that are not.</p>
+        <p>Retrieval augmentation gives the model documents but does not stop it ignoring them. The verification head is trained to flag claims not grounded in the knowledge base.</p>
       </div>
     </div>
   </div>
@@ -402,7 +396,7 @@
     </div>
 
     <div class="callout">
-      <strong>What this table is not.</strong> A general capability ranking. On language quality, instruction following, math, coding, and multimodal tasks, the frontier models lead at their scale. Regent competes on a different set of properties: trustable generation in long-running, knowledge-grounded, self-hosted workloads where the cost of a wrong answer is measurable.
+      <strong>Not a general capability ranking.</strong> On language quality, instruction following, math, and coding, the frontier models lead. Regent competes on accuracy-scored, long-running, self-hosted workloads where wrong answers have a measurable cost.
     </div>
 
     <h3 style="margin-top: 3rem; font-size: 1.5rem; color: var(--text);">Memory at scale: the operational difference</h3>
@@ -522,7 +516,7 @@
       <div class="card">
         <div class="icon">🤗</div>
         <h3>HuggingFace</h3>
-        <p>Export to a HuggingFace-compatible package and load it with two lines of code using any tool in the HuggingFace ecosystem. Push directly to HuggingFace Hub from the interface. Works with existing fine-tuning pipelines, quantization tools, and deployment frameworks.</p>
+        <p>Export to a HuggingFace package. Load with two lines. Push to Hub from the interface. Works with existing fine-tuning, quantization, and deployment tooling.</p>
         <div class="code-block" style="margin-top: 1rem; font-size: 0.75rem;">
 <span class="keyword">from</span> transformers <span class="keyword">import</span> AutoModelForCausalLM, AutoTokenizer
 
@@ -534,12 +528,12 @@ model = AutoModelForCausalLM.from_pretrained(
       <div class="card">
         <div class="icon">🐳</div>
         <h3>Docker / Self-Hosted</h3>
-        <p>Export as a self-contained Docker package with a FastAPI inference server included. Runs on any machine with Docker installed. No Python environment setup required. API-compatible with standard chat completion endpoints.</p>
+        <p>Self-contained Docker package with FastAPI server. Runs on any machine with Docker. No Python setup needed.</p>
       </div>
       <div class="card">
         <div class="icon">⚡</div>
         <h3>CUDA + Apple Silicon</h3>
-        <p>Runs natively on NVIDIA GPUs and Apple Silicon. The CUDA path includes an optional Triton kernel for maximum throughput on long sequences. The Apple Silicon path uses Metal for native acceleration. CPU fallback works on any machine.</p>
+        <p>Native on NVIDIA GPUs and Apple Silicon. Optional Triton kernel on CUDA for long-sequence throughput. CPU fallback on any machine.</p>
       </div>
     </div>
 
@@ -547,12 +541,12 @@ model = AutoModelForCausalLM.from_pretrained(
       <div class="card">
         <div class="icon">🖥</div>
         <h3>Model Studio Interface</h3>
-        <p>A browser-based interface ships with the model. From it you can scrape and prepare training data, run all four training phases with live monitoring, review checkpoints, chat with the running model and see per-word accuracy scores in real time, manage the knowledge graph, and export when ready. No command line required.</p>
+        <p>Browser interface for the full lifecycle: scrape data, train, monitor, chat with live accuracy scores, manage the knowledge graph, export. No command line needed.</p>
       </div>
       <div class="card">
         <div class="icon">📦</div>
         <h3>Weight Formats</h3>
-        <p>Weights are stored in SafeTensors format, readable by both PyTorch and MLX without conversion. Export supports float32, float16, and bfloat16. The same weight file loads in HuggingFace Transformers on CUDA and in MLX on Apple Silicon.</p>
+        <p>SafeTensors format, readable by PyTorch and MLX. Supports float32, float16, and bfloat16. Same file loads on both platforms.</p>
       </div>
     </div>
   </div>
@@ -620,7 +614,7 @@ out = model.generate(
     </div>
 
     <div class="callout" style="margin-top: 2rem;">
-      No weights yet? Run with <code>--synthetic</code> to validate the architecture on random data. All four training phases run end-to-end. When you have a real corpus, swap it in and run again.
+      No weights yet? Run with <code>--synthetic</code> to validate on random data. All four phases run end-to-end. Swap in a real corpus when ready.
     </div>
   </div>
 </section>
@@ -638,42 +632,42 @@ out = model.generate(
       <div class="use-case">
         <h3>Legal Research and Drafting</h3>
         <div class="fit strong">Strong fit</div>
-        <p>Every claim in a brief needs to be traceable. The accuracy score gives a per-sentence confidence signal before the document leaves the desk. Case law and statute are graph-shaped; the knowledge encoder ingests them directly rather than as pasted text.</p>
+        <p>Every claim needs to be traceable. The accuracy score flags uncertain spans before the document is finished. Case law and statute are graph-shaped; the knowledge encoder ingests them directly.</p>
       </div>
       <div class="use-case">
         <h3>Healthcare and Clinical Support</h3>
         <div class="fit strong">Strong fit</div>
-        <p>Long patient sessions require memory that does not degrade with length. Hallucination has clinical consequences. UMLS, SNOMED, and ICD are structured ontologies the knowledge encoder consumes natively. The accuracy score provides the grounding signal clinical workflows require.</p>
+        <p>Long sessions, fixed memory, clinical consequences for errors. UMLS, SNOMED, and ICD are structured ontologies the knowledge encoder reads natively. The accuracy score meets the auditability bar clinical workflows require.</p>
       </div>
       <div class="use-case">
         <h3>Robotics and Drones</h3>
         <div class="fit strong">Strong fit</div>
-        <p>A robot running an 8-hour shift and a drone on a 6-hour mission both need a cognitive layer that does not accumulate memory. The 7B model at INT4 runs in 4GB on a Jetson Orin. The accuracy score gates actions before they are executed.</p>
+        <p>8-hour shifts and 6-hour missions need fixed memory. 7B at INT4 runs in 4GB on a Jetson Orin. Accuracy score gates actions before execution.</p>
       </div>
       <div class="use-case">
         <h3>Government and Defense</h3>
         <div class="fit strong">Strong fit</div>
-        <p>Air-gap deployment is a hard requirement that eliminates API-based competitors. The model ships as weights and runs on local hardware with no external connectivity. The accuracy score produces auditable records. Sovereign AI procurement is a stated priority across allied governments.</p>
+        <p>Air-gap is a hard requirement. Ships as weights, runs on local hardware, no external connectivity. Accuracy score produces auditable records per claim.</p>
       </div>
       <div class="use-case">
         <h3>Financial Research and Risk</h3>
         <div class="fit strong">Strong fit</div>
-        <p>Long analyst sessions over structured market data. Risk teams need every claim traceable before it influences a decision. The accuracy score is the audit trail. Self-hosting removes data sovereignty concerns.</p>
+        <p>Long sessions over structured data. Every claim traceable before it influences a decision. The accuracy score is the audit trail. Self-hosting removes data sovereignty concerns.</p>
       </div>
       <div class="use-case">
         <h3>Persistent AI Agents</h3>
         <div class="fit strong">Strong fit</div>
-        <p>Agents that run for hours or days without restarting. Constant memory means no session limit. Knowledge graph input provides persistent context without growing prompts. Behavioral conditioning stays consistent across the full session.</p>
+        <p>Constant memory means no session limit. Knowledge graph input persists context without growing prompts. Behavioral state stays consistent across the full session.</p>
       </div>
       <div class="use-case">
         <h3>General-Purpose Chat</h3>
         <div class="fit emerging">Depends on training data</div>
-        <p>For general chat and creative writing, quality depends on training data and compute. At 7B parameters, it will not match 70B+ frontier models on open-ended tasks. This is not the target use case.</p>
+        <p>Quality depends on training data. At 7B it will not match 70B+ frontier models on open-ended tasks. Not the target use case.</p>
       </div>
       <div class="use-case">
-        <h3>Emerging Market Deployment</h3>
+        <h3>Emerging Markets</h3>
         <div class="fit good">Strong fit</div>
-        <p>Organizations in markets where per-token cloud pricing is not economically viable. One license, local hardware, zero marginal cost per inference. Works without internet. The 7B model runs on a $500 edge device. Healthcare, legal aid, agricultural, and financial inclusion organizations across Africa, South Asia, Southeast Asia, and Latin America.</p>
+        <p>One license, local hardware, zero marginal cost after deployment. Works without internet. 7B on a $500 device. Healthcare, legal, agricultural, and financial organizations across Africa, South Asia, Southeast Asia, and Latin America.</p>
       </div>
     </div>
   </div>
@@ -700,19 +694,19 @@ out = model.generate(
     <div class="card-grid" style="margin-top: 2rem;">
       <div class="card">
         <h3>Phase 1: Base</h3>
-        <p>Language modeling on a general text corpus. The model learns grammar, world knowledge, and reasoning. Full model trains. This is the foundation all other phases build on.</p>
+        <p>Language modeling on a general corpus. Full model trains. Learns grammar, world knowledge, and reasoning.</p>
       </div>
       <div class="card">
         <h3>Phase 2: Identity</h3>
-        <p>Supervised fine-tuning on domain conversations and structured knowledge examples. The knowledge encoder trains jointly. The model learns the output format and tone expected for the deployment context.</p>
+        <p>Fine-tuning on domain conversations. Knowledge encoder trains jointly. Learns output format and tone for the deployment context.</p>
       </div>
       <div class="card">
         <h3>Phase 3: Verification</h3>
-        <p>Accuracy head training with the backbone frozen. Trained on examples of grounded output alongside fabricated, contradicted, and entity-swapped versions. Only the small accuracy head updates. 0.1% of parameters.</p>
+        <p>Accuracy head trains, backbone frozen. Trained on grounded, fabricated, contradicted, and entity-swapped pairs. 0.1% of parameters update.</p>
       </div>
       <div class="card">
         <h3>Phase 4: Alignment</h3>
-        <p>Preference learning against a frozen reference copy. Responses with higher accuracy scores and better domain alignment are preferred. The model learns what constitutes good output for its specific use case.</p>
+        <p>Preference learning against a frozen reference. Higher accuracy and better domain alignment are preferred. The model learns what good output means for its use case.</p>
       </div>
     </div>
   </div>
@@ -729,19 +723,19 @@ out = model.generate(
 
     <div class="card-grid">
       <div class="card">
-        <h3>The problem we are solving</h3>
-        <p>The people who stand to benefit most from capable AI are in markets where the current pricing model does not work. A hospital in Lagos, a legal clinic in Dhaka, a cooperative in Medellin cannot build on infrastructure that charges per word, requires a live internet connection, and runs on servers in another country.</p>
-        <p>The AI industry has spent the last five years building better models. We are building models with different properties: local deployment, fixed operational cost, offline capability, and accuracy scoring that makes output trustworthy enough to act on without a verification workforce behind it.</p>
+        <h3>The problem</h3>
+        <p>AI runs on cloud infrastructure priced per word, in currencies many markets cannot absorb at scale. A hospital in Lagos, a legal clinic in Dhaka, a cooperative in Medellin cannot build on a subscription to servers they do not control.</p>
+        <p>We build models that run locally, at fixed cost, without internet.</p>
       </div>
       <div class="card">
         <h3>Our position</h3>
-        <p>Three billion people will derive the most economic benefit from AI in healthcare access, legal access, agricultural productivity, financial inclusion, and education. They are not the primary design target of any major AI lab today.</p>
-        <p>We are not building cheaper imitations of existing models. We are building a different category: capable AI that ships as infrastructure, not as a subscription. Regent is the first model released under that mandate.</p>
+        <p>Three billion people stand to gain the most from AI in healthcare, legal access, agriculture, finance, and education. None of the major labs build for them primarily.</p>
+        <p>Regent ships as infrastructure, not a subscription. It is the first model released under that mandate.</p>
       </div>
       <div class="card">
         <h3>Open source commitment</h3>
-        <p>Regent at 7B to 50B is open source. Not open weight with restricted use. Not research-only. Open source, deployable, modifiable, and free to build on. The use cases with the highest social return on AI capability are often in the organizations least able to pay for it. That is why this tier is open.</p>
-        <p>Grande Regent at 70B to 1T is commercial. That revenue funds the research that keeps the open-source tier current and competitive.</p>
+        <p>7B to 50B is open source. Deployable, modifiable, free to build on. The organizations with the most to gain from AI are often the least able to pay for it.</p>
+        <p>Grande Regent at 70B to 1T is commercial. That revenue funds the open tier.</p>
       </div>
     </div>
   </div>
