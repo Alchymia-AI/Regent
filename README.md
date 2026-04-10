@@ -83,10 +83,7 @@ The downside of pure Mamba is precision recall. A fixed-size state cannot lossle
 ```
 regent-model/
 ├── ARCHITECTURE.md           Technical specification
-├── WHITEPAPER.md             Research paper
-├── TRAINING.md               Training pipeline documentation
 ├── ADDING_MODEL_SIZES.md     How to define new configurations
-├── COMPARISON.md             Comparison against existing LLMs
 ├── configs/                  Model configs (YAML)
 ├── regent_model/             Model code
 │   ├── blocks/               Mamba-2 and GQA blocks
