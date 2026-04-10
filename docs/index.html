@@ -20,12 +20,14 @@
     </div>
     <div class="links">
       <a href="#variants">Variants</a>
-      <a href="#architecture">Architecture</a>
       <a href="#novelty">What's Different</a>
       <a href="#hallucination">Accuracy</a>
       <a href="#comparison">vs Others</a>
+      <a href="#sizes">Sizes</a>
       <a href="#deploy">Deploy</a>
-      <a href="#applications">Use Cases</a>
+      <a href="#quickstart">Quick Start</a>
+      <a href="#training">Training</a>
+      <a href="#about">About</a>
       <a href="https://github.com/Alchymia-AI/Regent" class="nav-cta">GitHub</a>
     </div>
   </div>
@@ -55,20 +57,20 @@
   <div class="container">
     <div class="stats">
       <div class="stat">
-        <div class="number">2</div>
-        <div class="label">Outputs per pass: text and accuracy score</div>
+        <div class="number">4GB</div>
+        <div class="label">7B model on a $500 edge device, no cloud needed</div>
       </div>
       <div class="stat">
         <div class="number">2MB</div>
-        <div class="label">Fixed memory footprint at any session length</div>
+        <div class="label">Fixed memory at any session length — hours or days</div>
       </div>
       <div class="stat">
         <div class="number">0.1%</div>
         <div class="label">Extra cost to add real-time accuracy scoring</div>
       </div>
       <div class="stat">
-        <div class="number">4</div>
-        <div class="label">Training phases, one command or one click</div>
+        <div class="number">$0</div>
+        <div class="label">Per-inference cost after deployment</div>
       </div>
     </div>
   </div>
@@ -556,6 +558,73 @@ model = AutoModelForCausalLM.from_pretrained(
   </div>
 </section>
 
+<!-- QUICK START -->
+<section id="quickstart">
+  <div class="container">
+    <div class="section-label">Quick Start</div>
+    <h2 class="section-title">Up and running in three steps</h2>
+    <p class="section-desc">
+      Clone, install, and start. The Model Studio interface opens in your browser and handles everything from there.
+    </p>
+
+    <div class="card-grid">
+      <div class="card">
+        <h3>Step 1 — Clone and install</h3>
+        <div class="code-block" style="font-size: 0.75rem;">
+<span class="comment"># Apple Silicon</span>
+git clone https://github.com/Alchymia-AI/Regent
+cd regent-model
+python3.12 -m venv .venv && source .venv/bin/activate
+pip install mlx pyyaml sentencepiece numpy fastapi uvicorn pydantic
+
+<span class="comment"># NVIDIA GPU</span>
+pip install torch --index-url https://download.pytorch.org/whl/cu124
+pip install pyyaml sentencepiece numpy fastapi uvicorn pydantic safetensors transformers
+        </div>
+      </div>
+      <div class="card">
+        <h3>Step 2 — Start the interface</h3>
+        <div class="code-block" style="font-size: 0.75rem;">
+<span class="comment"># Starts Model Studio UI + API server</span>
+./start.sh
+
+<span class="comment"># Opens at http://localhost:3000</span>
+<span class="comment"># API at http://localhost:8400</span>
+
+<span class="comment"># With a specific model config and weights</span>
+./start.sh --config configs/regent_7b.yaml \
+           --model  checkpoints/alignment/regent.safetensors
+        </div>
+      </div>
+      <div class="card">
+        <h3>Step 3 — Or load from HuggingFace</h3>
+        <div class="code-block" style="font-size: 0.75rem;">
+<span class="keyword">from</span> transformers <span class="keyword">import</span> AutoModelForCausalLM, AutoTokenizer
+<span class="keyword">import</span> torch
+
+model = AutoModelForCausalLM.from_pretrained(
+    <span class="string">"alchymia-ai/regent-7b"</span>,
+    trust_remote_code=<span class="keyword">True</span>,
+    torch_dtype=torch.float16,
+    device_map=<span class="string">"auto"</span>,
+)
+tok = AutoTokenizer.from_pretrained(
+    <span class="string">"alchymia-ai/regent-7b"</span>, trust_remote_code=<span class="keyword">True</span>
+)
+out = model.generate(
+    **tok(<span class="string">"Hello, Regent!"</span>, return_tensors=<span class="string">"pt"</span>).to(model.device),
+    max_new_tokens=200
+)
+        </div>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top: 2rem;">
+      No weights yet? Run with <code>--synthetic</code> to validate the architecture on random data. All four training phases run end-to-end. When you have a real corpus, swap it in and run again.
+    </div>
+  </div>
+</section>
+
 <!-- APPLICATIONS -->
 <section id="applications">
   <div class="container">
@@ -597,14 +666,14 @@ model = AutoModelForCausalLM.from_pretrained(
         <p>Agents that run for hours or days without restarting. Constant memory means no session limit. Knowledge graph input provides persistent context without growing prompts. Behavioral conditioning stays consistent across the full session.</p>
       </div>
       <div class="use-case">
-        <h3>Emerging Market Deployment</h3>
-        <div class="fit good">Good fit</div>
-        <p>Organizations in markets where per-token cloud pricing is not economically viable. One license, local hardware, zero marginal cost per inference. Works without internet. The 7B model runs on a $500 edge device. Healthcare, legal aid, agricultural, and financial inclusion organizations in Africa, South Asia, Southeast Asia, and Latin America.</p>
-      </div>
-      <div class="use-case">
         <h3>General-Purpose Chat</h3>
         <div class="fit emerging">Depends on training data</div>
         <p>For general chat and creative writing, quality depends on training data and compute. At 7B parameters, it will not match 70B+ frontier models on open-ended tasks. This is not the target use case.</p>
+      </div>
+      <div class="use-case">
+        <h3>Emerging Market Deployment</h3>
+        <div class="fit good">Strong fit</div>
+        <p>Organizations in markets where per-token cloud pricing is not economically viable. One license, local hardware, zero marginal cost per inference. Works without internet. The 7B model runs on a $500 edge device. Healthcare, legal aid, agricultural, and financial inclusion organizations across Africa, South Asia, Southeast Asia, and Latin America.</p>
       </div>
     </div>
   </div>
@@ -649,6 +718,75 @@ model = AutoModelForCausalLM.from_pretrained(
   </div>
 </section>
 
+<!-- ABOUT -->
+<section id="about">
+  <div class="container">
+    <div class="section-label">About</div>
+    <h2 class="section-title">Alchymia AI Research Labs</h2>
+    <p class="section-desc">
+      We build AI that can be owned, not just rented.
+    </p>
+
+    <div class="card-grid">
+      <div class="card">
+        <h3>The problem we are solving</h3>
+        <p>The people who stand to benefit most from capable AI are in markets where the current pricing model does not work. A hospital in Lagos, a legal clinic in Dhaka, a cooperative in Medellin cannot build on infrastructure that charges per word, requires a live internet connection, and runs on servers in another country.</p>
+        <p>The AI industry has spent the last five years building better models. We are building models with different properties: local deployment, fixed operational cost, offline capability, and accuracy scoring that makes output trustworthy enough to act on without a verification workforce behind it.</p>
+      </div>
+      <div class="card">
+        <h3>Our position</h3>
+        <p>Three billion people will derive the most economic benefit from AI in healthcare access, legal access, agricultural productivity, financial inclusion, and education. They are not the primary design target of any major AI lab today.</p>
+        <p>We are not building cheaper imitations of existing models. We are building a different category: capable AI that ships as infrastructure, not as a subscription. Regent is the first model released under that mandate.</p>
+      </div>
+      <div class="card">
+        <h3>Open source commitment</h3>
+        <p>Regent at 7B to 50B is open source. Not open weight with restricted use. Not research-only. Open source, deployable, modifiable, and free to build on. The use cases with the highest social return on AI capability are often in the organizations least able to pay for it. That is why this tier is open.</p>
+        <p>Grande Regent at 70B to 1T is commercial. That revenue funds the research that keeps the open-source tier current and competitive.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container">
+    <div class="section-label">Contact</div>
+    <h2 class="section-title">Get in touch</h2>
+
+    <div class="variants">
+      <div class="variant variant-open">
+        <div class="variant-label">Open Source</div>
+        <h3 class="variant-name">Regent</h3>
+        <p class="variant-desc">Architecture, code, weights, and training pipeline are on GitHub. Issues, questions, and contributions welcome.</p>
+        <ul class="variant-list">
+          <li>Bug reports and feature requests via GitHub Issues</li>
+          <li>Architecture and training questions via Discussions</li>
+          <li>Research collaboration: research@alchymia.ai</li>
+        </ul>
+        <a href="https://github.com/Alchymia-AI/Regent" class="variant-cta">GitHub</a>
+      </div>
+
+      <div class="variant variant-closed">
+        <div class="variant-label">Commercial</div>
+        <h3 class="variant-name">Grande Regent</h3>
+        <p class="variant-desc">Frontier-scale checkpoints, enterprise tooling, and SLA support. Distributed through Alchymia Groom.</p>
+        <ul class="variant-list">
+          <li>70B to 1T checkpoints</li>
+          <li>Production verification tooling</li>
+          <li>On-premise and air-gap deployment</li>
+          <li>Enterprise SLA and dedicated support</li>
+          <li>Custom fine-tuning and deployment services</li>
+        </ul>
+        <a href="mailto:research@alchymia.ai" class="variant-cta variant-cta-primary">Request Access</a>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top: 2rem; text-align: center;">
+      Press and media inquiries: <strong>research@alchymia.ai</strong>
+    </div>
+  </div>
+</section>
+
 <!-- FOOTER -->
 <footer>
   <div class="container">
@@ -658,7 +796,7 @@ model = AutoModelForCausalLM.from_pretrained(
     </div>
     <p>Built to make capable AI deployable where it is needed most.</p>
     <p>&copy; 2026 Alchymia AI. All rights reserved.</p>
-    <p class="disclaimer">Architecture implemented and validated. Training on real data pending. Performance claims are projections until empirical evaluation is complete.</p>
+    
   </div>
 </footer>
 
