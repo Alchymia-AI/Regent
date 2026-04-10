@@ -7,6 +7,7 @@ build/
 *.so
 *.pptx
 *.docx
+/market
 
 # Model weights
 *.gguf

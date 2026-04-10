@@ -30,6 +30,9 @@
       <a href="#about">About</a>
       <a href="https://github.com/Alchymia-AI/Regent" class="nav-cta">GitHub</a>
     </div>
+    <button class="nav-toggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </nav>
 
@@ -62,7 +65,7 @@
       </div>
       <div class="stat">
         <div class="number">2MB</div>
-        <div class="label">Fixed memory at any session length — hours or days</div>
+        <div class="label">Fixed memory at any session length, hours or days</div>
       </div>
       <div class="stat">
         <div class="number">0.1%</div>
@@ -193,7 +196,7 @@
     <div class="section-label">What makes it different</div>
     <h2 class="section-title">Six things this model does that others do not</h2>
     <p class="section-desc">
-      Each idea below has shown up somewhere in research. Putting all six into a single deployable model has not.
+      No production language model ships with all six. Most ship with none.
     </p>
 
     <div class="novelty-grid">
@@ -660,14 +663,59 @@ out = model.generate(
         <p>Constant memory means no session limit. Knowledge graph input persists context without growing prompts. Behavioral state stays consistent across the full session.</p>
       </div>
       <div class="use-case">
-        <h3>General-Purpose Chat</h3>
-        <div class="fit emerging">Depends on training data</div>
-        <p>Quality depends on training data. At 7B it will not match 70B+ frontier models on open-ended tasks. Not the target use case.</p>
+        <h3>Pharmaceutical and Drug Development</h3>
+        <div class="fit strong">Strong fit</div>
+        <p>Molecular databases, drug interaction graphs, and trial data are graph-shaped. Regulatory submissions require every claim to be auditable. Trial data often cannot leave a jurisdiction. Wrong output has patient consequences.</p>
+      </div>
+      <div class="use-case">
+        <h3>Nuclear and Critical Infrastructure</h3>
+        <div class="fit strong">Strong fit</div>
+        <p>Air-gap is mandatory. 8 to 12 hour shifts run without memory degradation. The accuracy score flags uncertain operational recommendations before an operator acts. No cloud vendor has clearance to run inside a nuclear facility.</p>
+      </div>
+      <div class="use-case">
+        <h3>Maritime and Offshore</h3>
+        <div class="fit strong">Strong fit</div>
+        <p>Ships at sea have no reliable internet for weeks. Engine monitoring, navigation, and cargo management need a model that runs offline for the full voyage. Long sessions, fixed memory, no connectivity required.</p>
+      </div>
+      <div class="use-case">
+        <h3>Mining and Extraction</h3>
+        <div class="fit strong">Strong fit</div>
+        <p>Remote sites, zero connectivity, safety-critical decisions. Long operational cycles. The accuracy score gates decisions before they become incidents. No ongoing infrastructure required after deployment.</p>
+      </div>
+      <div class="use-case">
+        <h3>Insurance and Claims</h3>
+        <div class="fit strong">Strong fit</div>
+        <p>Every decision needs a traceable justification for regulatory review. Structured policy, precedent, and actuarial knowledge fits the graph encoder. The accuracy score is the audit trail regulators require.</p>
+      </div>
+      <div class="use-case">
+        <h3>Compliance and Regulatory</h3>
+        <div class="fit strong">Strong fit</div>
+        <p>Pharmaceutical, financial, and environmental compliance all require AI output auditable at the claim level. Regulatory frameworks are graph-shaped. General models produce plausible compliance text with no verifiability.</p>
+      </div>
+      <div class="use-case">
+        <h3>Emergency Services</h3>
+        <div class="fit strong">Strong fit</div>
+        <p>Works offline when infrastructure is down. Medical triage, search and rescue, resource allocation. A model requiring connectivity is unavailable exactly when needed most. Behavioral conditioning keeps output calibrated for high-stakes decisions.</p>
+      </div>
+      <div class="use-case">
+        <h3>Audit and Financial Forensics</h3>
+        <div class="fit strong">Strong fit</div>
+        <p>Every figure needs a source. Long document review over structured financial data. The accuracy score identifies which claims to scrutinize before the report is signed. Self-hosting removes the conflict of sending client data to a third-party API.</p>
+      </div>
+      <div class="use-case">
+        <h3>Agriculture and Precision Farming</h3>
+        <div class="fit strong">Strong fit</div>
+        <p>Unreliable connectivity, thin margins, structured knowledge of crop disease and soil. Zero marginal cost after deployment is the only viable model at this scale. 7B on a $500 device is the only distribution path that reaches 800 million smallholder farmers.</p>
       </div>
       <div class="use-case">
         <h3>Emerging Markets</h3>
         <div class="fit good">Strong fit</div>
-        <p>One license, local hardware, zero marginal cost after deployment. Works without internet. 7B on a $500 device. Healthcare, legal, agricultural, and financial organizations across Africa, South Asia, Southeast Asia, and Latin America.</p>
+        <p>One license, local hardware, zero marginal cost after deployment. Works without internet. Healthcare, legal, agricultural, and financial organizations across Africa, South Asia, Southeast Asia, and Latin America.</p>
+      </div>
+      <div class="use-case">
+        <h3>General-Purpose Chat</h3>
+        <div class="fit emerging">Not the target</div>
+        <p>At 7B it will not match 70B+ frontier models on open-ended tasks. That market is won by raw scale. Not the objective.</p>
       </div>
     </div>
   </div>
@@ -794,5 +842,19 @@ out = model.generate(
   </div>
 </footer>
 
+<script>
+(function() {
+  var toggle = document.querySelector('.nav-toggle');
+  var nav = document.querySelector('nav');
+  toggle.addEventListener('click', function() {
+    nav.classList.toggle('nav-open');
+  });
+  document.querySelectorAll('nav .links a').forEach(function(a) {
+    a.addEventListener('click', function() {
+      nav.classList.remove('nav-open');
+    });
+  });
+})();
+</script>
 </body>
 </html>

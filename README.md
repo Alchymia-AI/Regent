@@ -11,17 +11,19 @@ This repository is the open source Regent. Grande Regent is shipped separately b
 
 ## Why this exists
 
-We were running the Grande Regent on a third-party LLM API. Three problems came up that we could not fix from the outside.
+We were building a cognitive system for physical agents — robots, drones, platforms that act in the real world. We were running its language layer on a third-party API. Three walls kept appearing.
 
-1. The model had no internal signal for when it was fabricating. We could detect hallucinations after the fact with extra calls or sampling tricks, but by then the bad output was already in front of the user. For an entity that acts in the physical world through robots and drones, post-hoc detection is too late.
+The first wall: the model could not tell when it was wrong. We could catch hallucinations after the response was finished, by sampling multiple times or running a second model, but the bad output was already formed. For something that issues physical commands, post-hoc detection is not a correction — it is an incident report.
 
-2. We were paying for context tokens to inject the same knowledge graph nodes into every prompt. The graph kept growing. The prompt kept growing. The cost kept growing. None of it stuck in the model.
+The second wall: knowledge was stateless. Every prompt re-injected the same graph of facts, relationships, and context the system already knew. The graph grew. The prompt cost grew. Nothing accumulated. Each call started from scratch.
 
-3. The whitepaper that defines the Regent's cognitive dynamics describes a state-space recurrence. We were running that recurrence in TypeScript and feeding the results to a transformer as English sentences. The transformer pattern-matched on the words. It did not understand the math.
+The third wall: the cognitive model we were building is defined as a state-space process — a recurrence with decay, input gating, and memory integration. We were translating that math into English sentences and feeding it to a transformer. The transformer matched patterns in the words. It did not run the dynamics. We were approximating our own model with a model that could not represent it.
 
-We built the Regent Model to fix these. It is a hybrid Mamba-2 language model with two output heads. One head predicts the next token. The other predicts whether the current token is grounded or fabricated. Both heads read the same hidden states from one forward pass.
+None of these could be fixed from the outside. So we built the inside.
 
-The math in the backbone is the math from the whitepaper. Mamba-2's selective scan is the same equation as the whitepaper's state update. Nothing bolted on. The model is the math.
+Regent is a hybrid Mamba-2 language model with two output heads. One predicts the next token. The other predicts whether that token is grounded or fabricated. Both heads read the same hidden states in one forward pass.
+
+Mamba-2's selective scan is the same recurrence equation as the cognitive model's state update. The dynamics are in the weights, not in the prompt.
 
 ## What it is
 
@@ -94,7 +96,7 @@ regent-model/
 ├── scripts/                  Training and pipeline scripts
 ├── serve/                    Inference server
 ├── tests/                    Architecture tests
-└── website/                  Static site
+└── docs/                  Static site
 ```
 
 ## Setup
@@ -324,6 +326,42 @@ Long missions, intermittent connectivity, safety-critical decisions. Constant-me
 ### Industrial automation and embodied AI platforms
 
 Warehouse robots, agricultural systems, last-mile delivery, humanoid platforms. The architecture was built for persistent embodied operation. As embodied AI matures, the model is positioned as the cognitive layer that other components plug into.
+
+### Pharmaceutical and drug development
+
+Molecular databases, drug interaction graphs, and clinical trial data are graph-shaped. The EPG encoder ingests them directly. Regulatory submissions to the FDA or EMA require every claim to be auditable at the source. Wrong output has patient consequences. Trial data often cannot leave a jurisdiction.
+
+### Nuclear and critical infrastructure
+
+Air-gap is mandatory. Shift monitoring runs 8 to 12 hours — fixed memory handles this without degradation. The accuracy score flags uncertain operational recommendations before an operator acts on them. No cloud vendor has clearance to run inside a nuclear facility.
+
+### Maritime and offshore
+
+Ships at sea have no reliable internet for weeks. Engine monitoring, navigation decisions, and cargo management need a model that runs offline for the duration of a voyage. Long sessions and fixed memory match the operational profile exactly.
+
+### Mining and extraction
+
+Remote sites, intermittent or zero connectivity, safety-critical decisions about equipment and personnel. Long operational cycles. The accuracy score gates decisions before they become incidents. The deployment model requires no ongoing infrastructure.
+
+### Insurance and claims
+
+Every claims decision needs a traceable justification for regulatory review. Structured knowledge of policies, precedents, and actuarial tables fits the EPG encoder. Long review sessions benefit from fixed memory. The accuracy score is the audit trail the regulator asks for.
+
+### Compliance and regulatory affairs
+
+Pharmaceutical submissions, financial regulatory reporting, environmental compliance — all require AI output auditable at the claim level. Regulatory frameworks are graph-shaped: rules, exceptions, cross-references. General models produce plausible-sounding compliance text with no verifiability.
+
+### Emergency services and disaster response
+
+Works offline when infrastructure is down. Medical triage, search and rescue coordination, resource allocation. Response time matters. A model that requires connectivity is unavailable exactly when it is needed most. Behavioral conditioning keeps output calibrated for high-stakes decisions.
+
+### Audit and financial forensics
+
+Every figure needs a source. Long document review sessions over structured financial data. The accuracy score tells the auditor which claims to scrutinize before the report is finalized. Self-hosting removes the conflict of sending client financial data to a third-party API.
+
+### Agriculture and precision farming
+
+Smallholder farmers in regions with unreliable connectivity. Structured knowledge of crop disease, soil types, weather patterns, and market prices fits the EPG format. Zero marginal cost after deployment is the only viable economic model at this scale. The 7B model on a $500 device is the only distribution path that reaches this market.
 
 ### Where the model is not positioned to play
 
