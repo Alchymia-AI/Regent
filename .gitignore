@@ -1,0 +1,41 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+*.so
+*.pptx
+*.docx
+
+# Model weights
+*.gguf
+*.safetensors
+*.bin
+*.pt
+*.pth
+checkpoints/
+weights/
+
+# Data
+data/raw/
+data/processed/
+*.jsonl
+*.parquet
+
+# Environment
+.venv/
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Logs
+wandb/
+logs/
+*.log

@@ -1,0 +1,36 @@
+# Regent Model — Data Scraping Pipeline Configuration
+#
+# Usage: PYTHONPATH=. python3 scripts/scrape_corpus.py --config pipeline.yaml
+
+output_dir: data/raw
+val_ratio: 0.05
+seed: 42
+
+sources:
+  # Local text files
+  - type: local
+    path: data/raw/custom/        # Put your own .txt files here
+    max_docs: 100000
+
+  # Web URLs (create a urls.txt with one URL per line)
+  # - type: urls
+  #   file: data/urls.txt
+  #   max_docs: 50000
+
+  # HuggingFace datasets (requires: pip install datasets)
+  # - type: huggingface
+  #   dataset: wikimedia/wikipedia
+  #   split: train
+  #   column: text
+  #   max_docs: 100000
+
+  # - type: huggingface
+  #   dataset: openwebtext
+  #   split: train
+  #   column: text
+  #   max_docs: 200000
+
+  # Regent interaction logs (from MongoDB export or direct logging)
+  # - type: regent_logs
+  #   path: data/regent_logs/
+  #   max_docs: 50000

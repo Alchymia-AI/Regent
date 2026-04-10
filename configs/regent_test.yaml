@@ -1,0 +1,60 @@
+# Regent Test — Tiny config for end-to-end pipeline validation
+# Runs in minutes on Apple Silicon, validates full training loop
+
+model:
+  d_model: 128
+  n_layer: 8
+  vocab_size: 4096
+
+  ssm:
+    expand: 2
+    d_state: 16
+    d_conv: 4
+    n_heads: 4
+    chunk_size: 32
+
+  attention:
+    layers: [3, 7]
+    n_q_heads: 4
+    n_kv_heads: 2
+    head_dim: 32
+    window_size: 256
+
+  gen_head:
+    tie_embeddings: true
+
+  ver_head:
+    hidden_dim: 32
+    enabled: true
+
+  epg_encoder:
+    max_nodes: 4
+    scalar_features: 5
+    n_categories: 15
+    category_embed_dim: 4
+    n_encoder_layers: 1
+    encoder_heads: 2
+
+  essence:
+    input_dim: 7
+    inject_every_n: 4
+
+  norm_eps: 1.0e-5
+  initializer_range: 0.02
+
+training:
+  max_seq_len: 512
+  batch_size: 8
+  gradient_accumulation: 1
+  lr: 1.0e-3
+  min_lr: 1.0e-4
+  warmup_steps: 50
+  max_steps: 200
+  weight_decay: 0.01
+  grad_clip: 1.0
+  dtype: float16
+
+  ver_head:
+    lr: 1.0e-4
+    freeze_backbone: true
+    epochs: 5

@@ -1,0 +1,68 @@
+# Regent 370M — Prototype for architecture validation on Apple Silicon
+# Target: single M-series GPU, ~1.5GB memory
+
+model:
+  d_model: 1024
+  n_layer: 48
+  vocab_size: 32768
+
+  # Mamba-2 SSM parameters
+  ssm:
+    expand: 2            # d_inner = expand * d_model = 2048
+    d_state: 64          # state dimension per head
+    d_conv: 4            # causal conv1d kernel width
+    n_heads: 16          # multi-head SSM (head_dim = d_inner / n_heads = 128)
+
+  # Hybrid attention layers (GQA)
+  attention:
+    # Layer indices where GQA replaces Mamba-2 (0-indexed)
+    # Ratio: ~7:1 Mamba-to-Attention
+    layers: [7, 15, 23, 31, 39, 47]
+    n_q_heads: 16
+    n_kv_heads: 4        # grouped query attention
+    head_dim: 64
+    window_size: 1024     # sliding window attention
+
+  # Dual heads
+  gen_head:
+    tie_embeddings: true  # share weights with input embeddings
+
+  ver_head:
+    hidden_dim: 128       # MLP hidden dim before scalar output
+    enabled: true
+
+  # EPG encoder
+  epg_encoder:
+    max_nodes: 32         # max EPG nodes in prefix
+    scalar_features: 5    # confidence, activation, valence, emotional_weight, category_id
+    n_categories: 15      # from EPG NodeCategory enum
+    category_embed_dim: 8
+    n_encoder_layers: 2
+    encoder_heads: 4
+
+  # Essence conditioning
+  essence:
+    input_dim: 7          # essence_index, essence_influence, truth, civility, good_evil, curiosity, self_preservation
+    inject_every_n: 8     # inject conditioning every N layers
+
+  # Norms and init
+  norm_eps: 1.0e-5
+  initializer_range: 0.02
+
+training:
+  max_seq_len: 2048
+  batch_size: 4
+  gradient_accumulation: 4
+  lr: 3.0e-4
+  min_lr: 3.0e-5
+  warmup_steps: 1000
+  max_steps: 100000
+  weight_decay: 0.1
+  grad_clip: 1.0
+  dtype: float16
+
+  # Ver head training (phase 3)
+  ver_head:
+    lr: 1.0e-4
+    freeze_backbone: true
+    epochs: 5

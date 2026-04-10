@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "regent-model"
+version = "0.1.0"
+description = "Hybrid Mamba-2 language model for the Grande Regent synthetic sentient"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Alchymia AI Research Labs", email = "research@alchymia.ai" }]
+
+dependencies = [
+    "mlx>=0.22.0",
+    "mlx-nn>=0.22.0",
+    "numpy>=1.26",
+    "sentencepiece>=0.2.0",
+    "tokenizers>=0.20",
+    "safetensors>=0.4",
+    "pyyaml>=6.0",
+    "tqdm>=4.66",
+]
+
+[project.optional-dependencies]
+train = [
+    "datasets>=3.0",
+    "wandb>=0.18",
+]
+serve = [
+    "uvicorn>=0.30",
+    "fastapi>=0.115",
+    "sse-starlette>=2.0",
+]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.6",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]

@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Regent Model | Hybrid Mamba-2 with Built-in Hallucination Mitigation</title>
+  <meta name="description" content="A hybrid Mamba-2 language model with dual-head architecture for real-time hallucination detection. Constant-memory inference. EPG-native knowledge grounding.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="container">
+    <div class="logo-group">
+      <img src="assets/logo.png" alt="Alchymia AI">
+      <div class="logo"><span>Regent</span> Model</div>
+    </div>
+    <div class="links">
+      <a href="#variants">Variants</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#novelty">Novelty</a>
+      <a href="#hallucination">Hallucination</a>
+      <a href="#comparison">vs LLMs</a>
+      <a href="#sizes">Model Sizes</a>
+      <a href="#applications">Applications</a>
+      <a href="https://github.com" class="nav-cta">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <img src="assets/logo.png" alt="Alchymia AI" class="hero-logo">
+    <h1>One forward pass.<br><span class="accent">Two outputs.</span></h1>
+    <p class="subtitle">
+      Hybrid Mamba-2 language model. Generates text and scores its own grounding in a single forward pass. Constant-memory inference. No API dependency.
+    </p>
+    <div class="tag-row">
+      <span class="tag">Hybrid Mamba-2 + Attention</span>
+      <span class="tag">Dual-Head (Gen + Verification)</span>
+      <span class="tag">Constant Memory Inference</span>
+      <span class="tag">EPG Knowledge Grounding</span>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats-bar">
+  <div class="container">
+    <div class="stats">
+      <div class="stat">
+        <div class="number">2</div>
+        <div class="label">Output heads per forward pass</div>
+      </div>
+      <div class="stat">
+        <div class="number">2MB</div>
+        <div class="label">Fixed inference state (vs GB for transformers)</div>
+      </div>
+      <div class="stat">
+        <div class="number">0.1%</div>
+        <div class="label">Extra parameters for hallucination detection</div>
+      </div>
+      <div class="stat">
+        <div class="number">4</div>
+        <div class="label">Training phases (automated pipeline)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VARIANTS -->
+<section id="variants">
+  <div class="container">
+    <div class="section-label">Variants</div>
+    <h2 class="section-title">Two distributions</h2>
+    <p class="section-desc">
+      Same architecture across both. Split is by scale and licensing.
+    </p>
+
+    <div class="variants">
+      <div class="variant variant-open">
+        <div class="variant-label">Open Source</div>
+        <h3 class="variant-name">Regent</h3>
+        <div class="variant-scale">7B to 50B parameters</div>
+        <p class="variant-desc">Architecture, training pipeline, inference server, and the 7B through 50B checkpoints.</p>
+        <ul class="variant-list">
+          <li>Hybrid Mamba-2 with sparse GQA</li>
+          <li>EPG encoder and Essence conditioning</li>
+          <li>Verification head and three-zone decoding</li>
+          <li>Four-phase training pipeline</li>
+          <li>Inference server</li>
+          <li>7B, 13B, 30B, and 50B checkpoints</li>
+        </ul>
+        <a href="https://github.com" class="variant-cta">GitHub</a>
+      </div>
+
+      <div class="variant variant-closed">
+        <div class="variant-label">Commercial</div>
+        <h3 class="variant-name">Grande Regent</h3>
+        <div class="variant-scale">70B to 1T parameters</div>
+        <p class="variant-desc">Frontier-scale checkpoints, production EPG tooling, enterprise integrations. Distributed through Alchymia Groom.</p>
+        <ul class="variant-list">
+          <li>70B, 200B, 500B, and 1T checkpoints</li>
+          <li>Production-trained verification head</li>
+          <li>Production EPG tooling</li>
+          <li>Enterprise SLA</li>
+          <li>On-premise and air-gap deployment</li>
+          <li>Distributed via Alchymia Groom</li>
+        </ul>
+        <a href="#contact" class="variant-cta variant-cta-primary">Request Access</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section id="architecture">
+  <div class="container">
+    <div class="section-label">Architecture</div>
+    <h2 class="section-title">Hybrid Mamba-2 with sparse attention</h2>
+    <p class="section-desc">
+      Mamba-2 state space layers interleaved with Grouped Query Attention at an 8:1 ratio. SSM gives constant-memory processing. Attention gives precise token recall.
+    </p>
+
+    <div class="arch-section">
+      <div class="arch-diagram">
+  EPG Nodes ──→ EPG Encoder ──→ Prefix Tokens ─┐
+                                                │
+  Essence Vector ─────────────────────────────→ │ (injected every 8 layers)
+                                                │
+  Token IDs ──→ Embedding ────────────────────→ Concatenate
+                                                    │
+                                                    ▼
+                                    ┌───────────────────────────┐
+                                    │   Hybrid Backbone          │
+                                    │                           │
+                                    │   Layer 1-7:   Mamba-2    │
+                                    │   Layer 8:     GQA Attn   │
+                                    │   Layer 9-15:  Mamba-2    │
+                                    │   Layer 16:    GQA Attn   │
+                                    │   ...                     │
+                                    │   (57 Mamba + 7 GQA = 64) │
+                                    └─────────────┬─────────────┘
+                                                  │
+                                          ┌───────┴───────┐
+                                          │               │
+                                          ▼               ▼
+                                    ┌──────────┐   ┌──────────────┐
+                                    │ Gen Head │   │   Ver Head   │
+                                    │          │   │              │
+                                    │ RMSNorm  │   │ RMSNorm      │
+                                    │ Linear   │   │ MLP (2-layer)│
+                                    │          │   │ Sigmoid      │
+                                    │ → logits │   │ → score [0,1]│
+                                    └──────────┘   └──────────────┘
+                                     next token     grounding score</div>
+    </div>
+
+    <div class="card-grid" style="margin-top: 2rem;">
+      <div class="card">
+        <div class="icon">⚡</div>
+        <h3>Mamba-2 (SSM Layers)</h3>
+        <p>Structured State Space Duality. Input-dependent gating via selective scan. Fixed-size recurrent state regardless of sequence length. Chunked parallel computation for training, sequential scan for inference.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🎯</div>
+        <h3>GQA Attention (Sparse)</h3>
+        <p>Grouped Query Attention with sliding window. Fewer KV heads than query heads for memory efficiency. RoPE position encoding. Placed every ~8 layers as precision recall checkpoints.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🧠</div>
+        <h3>EPG Encoder</h3>
+        <p>Converts structured knowledge graph nodes into dense prefix embeddings. Text features through a small transformer, scalar features (confidence, activation, valence) through learned projections, fused into d_model vectors.</p>
+      </div>
+      <div class="card">
+        <div class="icon">💜</div>
+        <h3>Essence Conditioning</h3>
+        <p>7-dimensional affective state vector projected into hidden layers every N blocks. Modulates model behavior based on emotional state. Same mechanism as timestep injection in diffusion models.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NOVELTY -->
+<section id="novelty">
+  <div class="container">
+    <div class="section-label">What makes it different</div>
+    <h2 class="section-title">Six things this model does that others do not</h2>
+    <p class="section-desc">
+      Each idea below has shown up somewhere in research. Putting all six into a single production model has not.
+    </p>
+
+    <div class="novelty-grid">
+      <div class="novelty-item">
+        <div class="novelty-num">01</div>
+        <h3>It scores its own grounding while it writes</h3>
+        <p>The model has two output heads. One produces the next word. The other produces a number between 0 and 1 for that word, where 1 means "this is backed by what I know" and 0 means "I am making this up."</p>
+        <p>Both heads run on every word in the same pass. Other systems detect hallucinations after the response is finished by re-running the model multiple times or sending the output to a second model. This one knows in real time.</p>
+      </div>
+
+      <div class="novelty-item">
+        <div class="novelty-num">02</div>
+        <h3>It changes how it writes when its confidence drops</h3>
+        <p>The grounding score gates the writing behavior into three modes. Above 0.6 it writes normally. Between 0.3 and 0.6 it slows down and picks safer words. Below 0.3 it stops, looks up relevant facts, and tries again from the point where it got uncertain.</p>
+        <p>Other models keep writing at the same confidence regardless of whether they are right or wrong.</p>
+      </div>
+
+      <div class="novelty-item">
+        <div class="novelty-num">03</div>
+        <h3>EPG Encoder: it reads structured knowledge as itself, not as text</h3>
+        <p>The Entity Preference Graph holds typed nodes: facts, beliefs, relationships, memories, each tagged with how confident the model is in it, how recently it was used, whether it was a good or bad experience, and what kind of knowledge it is.</p>
+        <p>Most systems flatten this into English sentences and stuff it into the prompt. This one feeds the nodes directly to the model as compressed inputs the model treats as native knowledge, not a wall of text it has to read and trust.</p>
+      </div>
+
+      <div class="novelty-item">
+        <div class="novelty-num">04</div>
+        <h3>Essence Vector: its mood is a dial, not a paragraph in the prompt</h3>
+        <p>The model takes a 7-number input alongside the conversation. Those numbers describe its current emotional state: how positive it feels, how strongly that feeling should affect output, how much it values truth, civility, kindness, curiosity, and self-preservation.</p>
+        <p>The numbers get fed in at multiple points during the forward pass, so the whole response is shaped by them. Other models use a persona description that the model has to keep remembering as the response gets longer.</p>
+      </div>
+
+      <div class="novelty-item">
+        <div class="novelty-num">05</div>
+        <h3>It uses constant memory no matter how long the session is</h3>
+        <p>Most language models keep a growing record of every word they have processed. For an 8-hour session that record becomes gigabytes. This model uses different math where the memory of past words is compressed into a fixed-size buffer of about 2 MB.</p>
+        <p>The buffer does not grow. A drone can run a multi-hour mission without hitting a memory wall. A robot can run a full shift.</p>
+      </div>
+
+      <div class="novelty-item">
+        <div class="novelty-num">06</div>
+        <h3>It runs the grounding check for free</h3>
+        <p>The grounding head is about one-tenth of one percent of the model's total size. It reads the same internal numbers the writing head reads, so it does not need a separate forward pass.</p>
+        <p>Adding hallucination detection costs almost nothing in compute or memory. Most safety systems double or triple the cost.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- HALLUCINATION -->
+<section id="hallucination">
+  <div class="container">
+    <div class="section-label">Hallucination Mitigation</div>
+    <h2 class="section-title">Built-in grounding verification</h2>
+    <p class="section-desc">
+      The verification head reads the same hidden states as the generation head and outputs a grounding score per token. One forward pass. No separate model, no multiple samples, no post-hoc filtering.
+    </p>
+
+    <div class="zones">
+      <div class="zone flow">
+        <h3>FLOW (score &gt; 0.6)</h3>
+        <p>Model is confident and grounded. Normal sampling with configured temperature, top-p, and top-k. Standard generation for topics backed by knowledge.</p>
+      </div>
+      <div class="zone caution">
+        <h3>CAUTION (0.3 to 0.6)</h3>
+        <p>Model is uncertain. Temperature drops to 0.3, biasing toward conservative tokens. Output shifts to hedged language. Generation slows.</p>
+      </div>
+      <div class="zone halt">
+        <h3>HALT (score &lt; 0.3)</h3>
+        <p>Model is fabricating. Generation stops. System retrieves relevant knowledge, re-injects as context, re-decodes from the halt position.</p>
+      </div>
+    </div>
+
+    <div class="card-grid" style="margin-top: 2rem;">
+      <div class="card">
+        <h3>Per-token, not per-response</h3>
+        <p>Reward models and SelfCheckGPT produce one score for an entire response. The Ver Head scores every token position. This enables catching hallucinations mid-sentence and identifying exactly which spans are fabricated.</p>
+      </div>
+      <div class="card">
+        <h3>Zero extra inference cost</h3>
+        <p>SelfCheckGPT needs 5-20x compute (multiple samples). Constitutional AI needs 2-3 extra LLM calls. The Ver Head is a 2-layer MLP reading existing hidden states. 0.1% of model parameters.</p>
+      </div>
+      <div class="card">
+        <h3>Knowledge-grounded</h3>
+        <p>RAG appends documents to context but models can hallucinate despite having the right documents. The Ver Head is trained specifically on grounded vs fabricated claims relative to the EPG knowledge base.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section id="comparison">
+  <div class="container">
+    <div class="section-label">Comparison</div>
+    <h2 class="section-title">Against the flagships</h2>
+    <p class="section-desc">
+      Compared on what the Regent Model is built for, not on general benchmarks. The flagships listed are the latest publicly available frontier models from each lab as of 2026.
+    </p>
+
+    <div class="table-wrap">
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>Property</th>
+          <th><span class="model-name">Regent</span></th>
+          <th>GPT-5</th>
+          <th>Claude 4.5</th>
+          <th>Gemini 2.5</th>
+          <th>Llama 4</th>
+          <th>DeepSeek V3</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Per-token grounding score</td>
+          <td><span class="check">Yes (Ver Head)</span></td>
+          <td><span class="cross">No</span></td>
+          <td><span class="cross">No</span></td>
+          <td><span class="cross">No</span></td>
+          <td><span class="cross">No</span></td>
+          <td><span class="cross">No</span></td>
+        </tr>
+        <tr>
+          <td>Hallucination caught mid-generation</td>
+          <td><span class="check">Yes (HALT zone)</span></td>
+          <td><span class="cross">Post-hoc only</span></td>
+          <td><span class="cross">Post-hoc only</span></td>
+          <td><span class="cross">Post-hoc only</span></td>
+          <td><span class="cross">Post-hoc only</span></td>
+          <td><span class="cross">Post-hoc only</span></td>
+        </tr>
+        <tr>
+          <td>Constant-memory inference</td>
+          <td><span class="check">Yes (SSM state)</span></td>
+          <td><span class="cross">KV cache O(n)</span></td>
+          <td><span class="cross">KV cache O(n)</span></td>
+          <td><span class="cross">KV cache O(n)</span></td>
+          <td><span class="cross">KV cache O(n)</span></td>
+          <td><span class="cross">KV cache O(n)</span></td>
+        </tr>
+        <tr>
+          <td>Native structured knowledge input</td>
+          <td><span class="check">EPG encoder</span></td>
+          <td><span class="cross">RAG text only</span></td>
+          <td><span class="cross">RAG text only</span></td>
+          <td><span class="cross">RAG text only</span></td>
+          <td><span class="cross">RAG text only</span></td>
+          <td><span class="cross">RAG text only</span></td>
+        </tr>
+        <tr>
+          <td>Self-hosted, no API call</td>
+          <td><span class="check">Yes</span></td>
+          <td><span class="cross">API only</span></td>
+          <td><span class="cross">API only</span></td>
+          <td><span class="cross">API only</span></td>
+          <td><span class="check">Open weights</span></td>
+          <td><span class="check">Open weights</span></td>
+        </tr>
+        <tr>
+          <td>Air-gap deployable</td>
+          <td><span class="check">Yes</span></td>
+          <td><span class="cross">No</span></td>
+          <td><span class="cross">No</span></td>
+          <td><span class="cross">No</span></td>
+          <td><span class="check">Yes</span></td>
+          <td><span class="check">Yes</span></td>
+        </tr>
+        <tr>
+          <td>Sub-5GB on-device deploy</td>
+          <td><span class="check">7B INT4 in 4GB</span></td>
+          <td><span class="cross">API only</span></td>
+          <td><span class="cross">API only</span></td>
+          <td><span class="cross">API only</span></td>
+          <td><span class="partial">8B INT4 ~5GB</span></td>
+          <td><span class="cross">Too large</span></td>
+        </tr>
+        <tr>
+          <td>Indefinite session runtime</td>
+          <td><span class="check">Hours to days</span></td>
+          <td><span class="partial">Context-bound</span></td>
+          <td><span class="partial">Context-bound</span></td>
+          <td><span class="partial">Context-bound</span></td>
+          <td><span class="partial">Context-bound</span></td>
+          <td><span class="partial">Context-bound</span></td>
+        </tr>
+        <tr>
+          <td>Auditable per-claim trace</td>
+          <td><span class="check">Yes</span></td>
+          <td><span class="cross">Reasoning trace only</span></td>
+          <td><span class="cross">Reasoning trace only</span></td>
+          <td><span class="cross">Reasoning trace only</span></td>
+          <td><span class="cross">No</span></td>
+          <td><span class="cross">No</span></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="callout">
+      <strong>What this table is not.</strong> A general capability ranking. On raw language quality, instruction following, math, coding, and multimodal tasks, the frontier models lead. The Regent Model competes on a different axis: trustable generation in long-running, knowledge-grounded, self-hosted workloads.
+    </div>
+
+    <h3 style="margin-top: 3rem; font-size: 1.5rem; color: var(--text);">Inference memory at scale</h3>
+    <p class="section-desc" style="max-width: 100%;">
+      Transformer KV caches grow linearly with context. SSM state is fixed. For workloads measured in hours, not turns, this is the difference between running and not running.
+    </p>
+
+    <div class="table-wrap">
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Architecture</th>
+          <th>State at 10K ctx</th>
+          <th>State at 100K ctx</th>
+          <th>State at 1M ctx</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="model-name">Regent 7B</td>
+          <td>Hybrid Mamba-2 + GQA</td>
+          <td>~2 MB</td>
+          <td>~2 MB</td>
+          <td>~2 MB</td>
+        </tr>
+        <tr>
+          <td class="model-name">GPT-5</td>
+          <td>Dense Transformer</td>
+          <td>API managed</td>
+          <td>API managed</td>
+          <td>Exceeds context</td>
+        </tr>
+        <tr>
+          <td class="model-name">Claude 4.5</td>
+          <td>Dense Transformer</td>
+          <td>API managed</td>
+          <td>API managed</td>
+          <td>Exceeds context</td>
+        </tr>
+        <tr>
+          <td class="model-name">Llama 4 70B</td>
+          <td>Dense Transformer</td>
+          <td>~2.5 GB</td>
+          <td>~25 GB</td>
+          <td><span class="cross">Will not fit</span></td>
+        </tr>
+        <tr>
+          <td class="model-name">DeepSeek V3</td>
+          <td>MoE Transformer</td>
+          <td>~1.5 GB</td>
+          <td>~15 GB</td>
+          <td><span class="cross">Will not fit</span></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</section>
+
+<!-- MODEL SIZES -->
+<section id="sizes">
+  <div class="container">
+    <div class="section-label">Model Sizes</div>
+    <h2 class="section-title">7B to 1T parameters</h2>
+    <p class="section-desc">
+      Same backbone across every checkpoint. Open source up to 50B. Commercial above.
+    </p>
+
+    <div class="sizes">
+      <div class="size-card">
+        <div class="size-name">7B</div>
+        <div class="size-label">Regent | Open Source</div>
+        <div class="specs">
+          <div class="spec"><span class="label">Variant</span><span class="value">Regent</span></div>
+          <div class="spec"><span class="label">License</span><span class="value">Open</span></div>
+          <div class="spec"><span class="label">VRAM (INT4)</span><span class="value">~4 GB</span></div>
+          <div class="spec"><span class="label">Target</span><span class="value">Edge / Embedded</span></div>
+        </div>
+      </div>
+
+      <div class="size-card" style="border: 1px solid rgba(16, 185, 129, 0.3);">
+        <div class="size-name" style="color: var(--green);">13B - 50B</div>
+        <div class="size-label">Regent | Open Source</div>
+        <div class="specs">
+          <div class="spec"><span class="label">Variant</span><span class="value">Regent</span></div>
+          <div class="spec"><span class="label">License</span><span class="value">Open</span></div>
+          <div class="spec"><span class="label">VRAM (INT4)</span><span class="value">8 - 30 GB</span></div>
+          <div class="spec"><span class="label">Target</span><span class="value">Server / Workstation</span></div>
+        </div>
+      </div>
+
+      <div class="size-card featured">
+        <div class="size-name">70B - 1T</div>
+        <div class="size-label">Grande Regent | Commercial</div>
+        <div class="specs">
+          <div class="spec"><span class="label">Variant</span><span class="value">Grande Regent</span></div>
+          <div class="spec"><span class="label">License</span><span class="value">Commercial</span></div>
+          <div class="spec"><span class="label">Deployment</span><span class="value">On-prem / Cloud</span></div>
+          <div class="spec"><span class="label">Target</span><span class="value">Frontier Workloads</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- APPLICATIONS -->
+<section id="applications">
+  <div class="container">
+    <div class="section-label">Applications</div>
+    <h2 class="section-title">Where it fits</h2>
+    <p class="section-desc">
+      Workloads where constant memory, per-token grounding, structured knowledge input, or self-hosting matter more than raw benchmark quality.
+    </p>
+
+    <div class="use-case-grid">
+      <div class="use-case">
+        <h3>Persistent AI Agents</h3>
+        <div class="fit strong">Strong fit</div>
+        <p>Agents that run for hours or days without restarting. Constant-memory inference means no session limits. EPG input provides persistent context without growing prompts.</p>
+      </div>
+      <div class="use-case">
+        <h3>Edge / Embodied AI</h3>
+        <div class="fit strong">Strong fit</div>
+        <p>Robots, drones, wearables with 4-8GB memory budgets. The 7B model at INT4 runs in ~4GB with no memory growth. Indefinite operation on constrained hardware where transformers hit memory walls.</p>
+      </div>
+      <div class="use-case">
+        <h3>High-Integrity Generation</h3>
+        <div class="fit strong">Strong fit</div>
+        <p>Medical Q&A, legal document drafting, financial analysis. The Ver Head flags uncertain spans before they reach the user. Per-token scoring, not per-response.</p>
+      </div>
+      <div class="use-case">
+        <h3>Knowledge-Grounded Systems</h3>
+        <div class="fit strong">Strong fit</div>
+        <p>Systems with structured knowledge bases beyond document chunks. The EPG encoder ingests typed knowledge nodes with confidence, activation, and category metadata.</p>
+      </div>
+      <div class="use-case">
+        <h3>Emotionally Adaptive Interfaces</h3>
+        <div class="fit good">Good fit</div>
+        <p>Companion AI, therapeutic tools, customer service. Essence conditioning shifts tone and behavior based on a continuous affective state vector, not discrete persona prompts.</p>
+      </div>
+      <div class="use-case">
+        <h3>Offline / Air-Gapped Deployment</h3>
+        <div class="fit good">Good fit</div>
+        <p>Military, industrial, remote environments without internet. Self-contained binary. No API calls, no cloud dependency, no data leaves the device.</p>
+      </div>
+      <div class="use-case">
+        <h3>Multi-Model Pipelines</h3>
+        <div class="fit good">Good fit</div>
+        <p>Use the Ver Head as a hallucination filter in any pipeline. Run a separate LLM for generation, then pass output through Regent's /verify endpoint to get per-token grounding scores and flagged spans.</p>
+      </div>
+      <div class="use-case">
+        <h3>General-Purpose Chat</h3>
+        <div class="fit emerging">Depends on training data</div>
+        <p>For general chat, instruction following, and creative writing, quality depends on training data and compute. At 7B parameters, it will not match 70B+ models.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRAINING -->
+<section id="training">
+  <div class="container">
+    <div class="section-label">Training</div>
+    <h2 class="section-title">Four-phase pipeline</h2>
+    <p class="section-desc">
+      One command runs scrape, tokenize, prepare, and all four training phases. Validated end-to-end on Apple Metal.
+    </p>
+
+    <div class="code-block">
+<span class="comment"># Full automated pipeline: scrape, tokenize, train all 4 phases</span>
+<span class="keyword">PYTHONPATH</span>=. python3 scripts/run_pipeline.py \
+    --config configs/regent_370m.yaml \
+    --scrape-config pipeline.yaml
+
+<span class="comment"># Or with synthetic data for validation</span>
+<span class="keyword">PYTHONPATH</span>=. python3 scripts/run_pipeline.py \
+    --config configs/regent_test.yaml \
+    --synthetic</div>
+
+    <div class="card-grid" style="margin-top: 2rem;">
+      <div class="card">
+        <h3>Phase 1: Base</h3>
+        <p>Standard language modeling. Cross-entropy on next-token prediction. Full model trains on general text corpus. The model learns grammar, world knowledge, reasoning.</p>
+      </div>
+      <div class="card">
+        <h3>Phase 2: Identity</h3>
+        <p>Supervised fine-tuning on domain conversations. Loss on response tokens only. EPG encoder trains jointly. Model learns structured output, knowledge grounding, tone modulation.</p>
+      </div>
+      <div class="card">
+        <h3>Phase 3: Verification</h3>
+        <p>Ver Head training with backbone frozen. BCE loss on grounding labels. Trained on clean, contradicted, entity-swapped, and fabricated pairs. Only 0.1% of parameters update.</p>
+      </div>
+      <div class="card">
+        <h3>Phase 4: Alignment</h3>
+        <p>Direct Preference Optimization. Preferred responses have higher grounding scores and better domain alignment. Frozen reference model. The model learns what "good output" means.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-logo">
+      <img src="assets/logo.png" alt="Alchymia AI">
+      <span>Alchymia AI Research Labs</span>
+    </div>
+    <p>&copy; 2026 Alchymia AI. All rights reserved.</p>
+    <p class="disclaimer">Architecture implemented and validated. Training on real data pending. Performance claims are projections until empirical evaluation is complete.</p>
+  </div>
+</footer>
+
+</body>
+</html>

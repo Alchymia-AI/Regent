@@ -1,0 +1,41 @@
+Regent Model
+Copyright (c) 2026 Alchymia AI Research Labs
+
+This product is developed and maintained by Alchymia AI Research Labs.
+
+The Regent Model is a hybrid Mamba-2 language model with a dual-head
+architecture for built-in hallucination mitigation. It is designed for
+the Grande Regent synthetic sentient runtime and related Alchymia AI
+research initiatives.
+
+All source code, model architectures, training pipelines, configurations,
+documentation, presentations, and website materials in this repository
+are the proprietary work of Alchymia AI Research Labs.
+
+================================================================================
+
+Third-party software referenced in this work:
+
+  - MLX (Apple): Apache License 2.0
+  - SentencePiece (Google): Apache License 2.0
+  - NumPy: BSD License
+  - PyYAML: MIT License
+  - FastAPI: MIT License
+  - Uvicorn: BSD License
+  - Pydantic: MIT License
+  - SafeTensors: Apache License 2.0
+
+Architectural concepts referenced:
+
+  - Mamba and Mamba-2: Gu & Dao, 2023; Dao & Gu, 2024
+  - Jamba (hybrid SSM-attention): AI21 Labs, 2024
+  - Prefix-Tuning: Li & Liang, 2021
+  - Direct Preference Optimization: Rafailov et al., 2023
+  - RLHF reward model heads: Ouyang et al., 2022
+
+These references are cited for context only. Their inclusion does not
+imply endorsement of this work by the cited authors or organizations.
+
+================================================================================
+
+For inquiries: research@alchymia.ai
