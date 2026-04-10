@@ -99,13 +99,26 @@ regent-model/
 
 ## Setup
 
-Python 3.11+. MLX for Apple Silicon.
+Python 3.11+. MLX for Apple Silicon, PyTorch for CUDA.
+
+**Apple Silicon (MLX)**
 
 ```bash
 brew install python@3.12
 python3.12 -m venv .venv
 source .venv/bin/activate
 pip install mlx pyyaml sentencepiece numpy fastapi uvicorn pydantic
+```
+
+**NVIDIA GPU (PyTorch + CUDA)**
+
+```bash
+python3.12 -m venv .venv
+source .venv/bin/activate
+pip install torch --index-url https://download.pytorch.org/whl/cu124
+pip install pyyaml sentencepiece numpy fastapi uvicorn pydantic safetensors transformers
+# Optional: Triton SSD kernel for maximum scan throughput
+pip install mamba-ssm causal-conv1d
 ```
 
 Validate the architecture builds and gradients flow.
