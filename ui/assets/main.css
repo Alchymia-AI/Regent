@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body {
+    @apply bg-surface text-slate-100 font-mono;
+  }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { @apply bg-surface; }
+  ::-webkit-scrollbar-thumb { @apply bg-surface-border rounded; }
+}
+
+@layer components {
+  .card {
+    @apply bg-surface-raised border border-surface-border rounded-lg p-4;
+  }
+  .btn {
+    @apply px-3 py-1.5 rounded text-sm font-medium transition-colors cursor-pointer;
+  }
+  .btn-primary {
+    @apply btn bg-accent hover:bg-accent-hover text-white;
+  }
+  .btn-ghost {
+    @apply btn border border-surface-border hover:bg-surface-raised text-slate-300;
+  }
+  .btn-danger {
+    @apply btn bg-red-700 hover:bg-red-600 text-white;
+  }
+  .input {
+    @apply w-full bg-surface border border-surface-border rounded px-3 py-2 text-sm
+           text-slate-100 placeholder-slate-500 focus:outline-none focus:border-accent;
+  }
+  .badge-flow    { @apply inline-block px-1.5 py-0.5 rounded text-xs bg-green-900 text-green-300; }
+  .badge-caution { @apply inline-block px-1.5 py-0.5 rounded text-xs bg-amber-900 text-amber-300; }
+  .badge-halt    { @apply inline-block px-1.5 py-0.5 rounded text-xs bg-red-900 text-red-300; }
+}

@@ -137,6 +137,38 @@ See [TRAINING.md](TRAINING.md) for phase-by-phase details.
 
 ## Inference
 
+Start the model server and the UI together.
+
+```bash
+./start.sh
+```
+
+This starts the FastAPI model server on port 8400 and the Nuxt UI on port 3000. Both log to `logs/`. Press `Ctrl+C` to stop both.
+
+| URL | Purpose |
+|---|---|
+| http://localhost:3000 | Model Studio UI |
+| http://localhost:8400 | API server |
+
+Options.
+
+```bash
+./start.sh --config configs/regent_7b.yaml \
+           --model  checkpoints/alignment/step_N.safetensors \
+           --port   8400 \
+           --ui-port 3000
+```
+
+| Flag | Default | Description |
+|---|---|---|
+| `--config` | `configs/regent_370m.yaml` | Model config YAML |
+| `--model` | none | Weights file (.safetensors). Omit to run on random init for architecture testing. |
+| `--tokenizer` | `data/tokenizer/regent.model` | SentencePiece tokenizer |
+| `--port` | 8400 | API server port |
+| `--ui-port` | 3000 | Nuxt dev server port |
+
+To start only the API server without the UI.
+
 ```bash
 PYTHONPATH=. python3 -m serve.server \
     --config configs/regent_7b.yaml \
