@@ -137,36 +137,11 @@
       Every frontier model today is a transformer. Regent is a Mamba-2 state-space model with grouped-query attention at selected layers. Different engine, different properties. Recurrent layers handle processing with a fixed memory footprint. Attention layers are placed every eight blocks for precise recall. Two output heads share the same internal state.
     </p>
 
-    <div class="arch-section">
-      <div class="arch-diagram">
-  Knowledge Nodes ──→ Node Encoder ──→ Prefix Tokens ─┐
-                                                       │
-  Behavioral Vector ───────────────────────────────→  │ (injected every 8 layers)
-                                                       │
-  Token IDs ──→ Embedding ───────────────────────────→ Concatenate
-                                                           │
-                                                           ▼
-                                       ┌───────────────────────────┐
-                                       │   Hybrid Backbone          │
-                                       │                           │
-                                       │   Layers 1-7:  Recurrent  │
-                                       │   Layer 8:     Attention  │
-                                       │   Layers 9-15: Recurrent  │
-                                       │   Layer 16:    Attention  │
-                                       │   ...                     │
-                                       │   (57 recurrent + 7 attn) │
-                                       └─────────────┬─────────────┘
-                                                     │
-                                             ┌───────┴───────┐
-                                             │               │
-                                             ▼               ▼
-                                       ┌──────────┐   ┌──────────────┐
-                                       │ Gen Head │   │   Ver Head   │
-                                       │          │   │              │
-                                       │ → next   │   │ → accuracy   │
-                                       │   token  │   │   score [0,1]│
-                                       └──────────┘   └──────────────┘</div>
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <img src="assets/regent_architecture.svg" alt="Regent Architecture" style="max-width: 100%; height: auto; border-radius: 8px;">
     </div>
+
+
 
     <div class="card-grid" style="margin-top: 2rem;">
       <div class="card">

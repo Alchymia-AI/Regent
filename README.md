@@ -29,6 +29,10 @@ Mamba-2's selective scan is the same recurrence equation as the cognitive model'
 
 A self-contained language model. Ships as weights and code. No API dependency.
 
+<p align="center">
+  <img src="docs/assets/regent_architecture.svg" alt="Regent Architecture" width="800">
+</p>
+
 - Hybrid backbone: Mamba-2 layers with sparse Grouped Query Attention at an 8:1 ratio
 - Two output heads: generation (logits) and verification (per-token grounding score)
 - EPG encoder: knowledge graph nodes encoded as dense prefix embeddings instead of serialized text
