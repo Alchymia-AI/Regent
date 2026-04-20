@@ -16,12 +16,19 @@ Key fixes over the prototype:
 
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass, field
 from typing import Callable, Optional
 
 import mlx.core as mx
 
 from regent_model.layers.model import RegentModel
+
+
+@dataclass
+class ToolCall:
+    name: str
+    arguments: dict
 
 
 @dataclass
@@ -40,6 +47,14 @@ class GenerateConfig:
     # Max restarts triggered by HALT before falling back to caution sampling
     max_halt_retries: int = 1
 
+    # Tool calling — special token IDs
+    tool_call_id: int = 6
+    tool_end_id: int = 8
+
+    # Thinking — special token IDs
+    think_start_id: int = 10
+    think_end_id: int = 11
+
 
 @dataclass
 class GenerateResult:
@@ -49,6 +64,9 @@ class GenerateResult:
     grounding_scores: list[float]
     halted_positions: list[int]
     total_tokens: int
+    thinking: str = ""
+    tool_calls: list[ToolCall] = field(default_factory=list)
+    stop_reason: str = "eos"  # "eos" | "tool_call" | "max_tokens"
 
 
 # retrieve_epg_fn signature:
@@ -159,6 +177,7 @@ def generate(
     token_texts: list[str] = []
     grounding_scores: list[float] = []
     halted_positions: list[int] = []
+    thinking_tokens: list[int] = []
 
     next_logits = output["logits"][:, -1:, :]   # (1, 1, vocab)
     next_grounding: float = (
@@ -170,7 +189,6 @@ def generate(
     # --- Token-by-token generation loop ---
     for step in range(cfg.max_tokens):
         g_score = next_grounding
-        grounding_scores.append(g_score)
 
         if g_score > cfg.flow_threshold:
             temp = cfg.temperature
@@ -218,6 +236,102 @@ def generate(
         if token_id == eos_id:
             break
 
+        # Thinking: model emits [THINK].
+        # Advance the model on the [THINK] token, then collect reasoning tokens
+        # until [/THINK] or EOS. Thinking tokens are not part of the visible output.
+        if token_id == cfg.think_start_id:
+            output = model(input_ids=token.reshape(1, 1), essence=essence, cache=cache, use_chunked=False)
+            cache = output.get("cache") or cache
+            _eval_cache(cache)
+            next_logits = output["logits"]
+
+            for _ in range(cfg.max_tokens):
+                think_tok = sample_token(
+                    next_logits[:, 0, :],
+                    temperature=cfg.temperature,
+                    top_p=cfg.top_p,
+                    top_k=cfg.top_k,
+                )
+                mx.eval(think_tok)
+                think_id = int(think_tok.item())
+                if think_id == cfg.think_end_id or think_id == eos_id:
+                    break
+                thinking_tokens.append(think_id)
+                output = model(input_ids=think_tok.reshape(1, 1), essence=essence, cache=cache, use_chunked=False)
+                cache = output.get("cache") or cache
+                _eval_cache(cache)
+                next_logits = output["logits"]
+
+            # Step the model on [/THINK] (or last token if EOS) to prime logits
+            # for the next visible token
+            if think_id == cfg.think_end_id:
+                output = model(input_ids=think_tok.reshape(1, 1), essence=essence, cache=cache, use_chunked=False)
+                cache = output.get("cache") or cache
+                _eval_cache(cache)
+
+            next_logits = output["logits"]
+            next_grounding = (
+                output["grounding"][:, -1].item()
+                if output.get("grounding") is not None
+                else 1.0
+            )
+            continue
+
+        # Tool call: model emits [TOOL_CALL].
+        # Advance the model one step on the [TOOL_CALL] token, then collect
+        # JSON content tokens until [TOOL_END] or EOS, then parse and return.
+        if token_id == cfg.tool_call_id:
+            # Step the model forward on [TOOL_CALL] to prime logits for JSON content
+            tool_input = token.reshape(1, 1)
+            output = model(input_ids=tool_input, essence=essence, cache=cache, use_chunked=False)
+            cache = output.get("cache") or cache
+            _eval_cache(cache)
+            next_logits = output["logits"]
+
+            tool_tokens: list[int] = []
+            for _ in range(512):  # max tool call JSON length in tokens
+                tool_tok = sample_token(
+                    next_logits[:, 0, :],
+                    temperature=cfg.temperature,
+                    top_p=cfg.top_p,
+                    top_k=cfg.top_k,
+                )
+                mx.eval(tool_tok)
+                tid = int(tool_tok.item())
+                if tid == cfg.tool_end_id or tid == eos_id:
+                    break
+                tool_tokens.append(tid)
+                output = model(input_ids=tool_tok.reshape(1, 1), essence=essence, cache=cache, use_chunked=False)
+                cache = output.get("cache") or cache
+                _eval_cache(cache)
+                next_logits = output["logits"]
+
+            raw_json = tokenizer.decode(tool_tokens).strip()
+            try:
+                parsed = json.loads(raw_json)
+                tool_call = ToolCall(
+                    name=parsed.get("name", ""),
+                    arguments=parsed.get("arguments", {}),
+                )
+            except (json.JSONDecodeError, AttributeError):
+                tool_call = ToolCall(name="", arguments={"raw": raw_json})
+
+            text = tokenizer.decode(generated_tokens)
+            result = GenerateResult(
+                text=text,
+                tokens=generated_tokens,
+                token_texts=token_texts,
+                grounding_scores=grounding_scores,
+                halted_positions=halted_positions,
+                total_tokens=len(generated_tokens),
+                thinking=tokenizer.decode(thinking_tokens),
+                tool_calls=[tool_call],
+                stop_reason="tool_call",
+            )
+            return result, cache
+
+        # Normal token: record grounding score aligned with this token position
+        grounding_scores.append(g_score)
         generated_tokens.append(token_id)
         token_texts.append(tokenizer.decode([token_id]))
 
@@ -241,6 +355,7 @@ def generate(
         )
 
     text = tokenizer.decode(generated_tokens)
+    stop_reason = "max_tokens" if len(generated_tokens) >= cfg.max_tokens else "eos"
 
     result = GenerateResult(
         text=text,
@@ -249,5 +364,7 @@ def generate(
         grounding_scores=grounding_scores,
         halted_positions=halted_positions,
         total_tokens=len(generated_tokens),
+        thinking=tokenizer.decode(thinking_tokens),
+        stop_reason=stop_reason,
     )
     return result, cache

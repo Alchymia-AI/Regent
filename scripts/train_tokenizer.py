@@ -10,13 +10,19 @@ Usage:
 
     # Output: data/tokenizer/regent.model, data/tokenizer/regent.vocab
 
-The tokenizer reserves IDs 0-5 for special tokens:
+The tokenizer reserves IDs 0-11 for special tokens:
     0: [PAD]
     1: [BOS]
     2: [EOS]
-    3: [GROUND]  — Ver Head grounding trigger
-    4: [EPG]     — EPG prefix boundary
-    5: [META]    — REGENT_META marker
+    3: [GROUND]      — Ver Head grounding trigger
+    4: [EPG]         — EPG prefix boundary
+    5: [META]        — REGENT_META marker
+    6: [TOOL_CALL]   — marks start of a tool call block
+    7: [TOOL_RESULT] — marks start of a tool result block
+    8: [TOOL_END]    — marks end of a tool call or result block
+    9: [UNK]         — unknown token (byte fallback preferred; ID kept out of reserved range)
+   10: [THINK]       — marks start of a thinking/reasoning block
+   11: [/THINK]      — marks end of a thinking/reasoning block
 """
 
 import argparse
@@ -25,7 +31,9 @@ from pathlib import Path
 import sentencepiece as spm
 
 
-SPECIAL_TOKENS = ["[PAD]", "[BOS]", "[EOS]", "[GROUND]", "[EPG]", "[META]"]
+SPECIAL_TOKENS = ["[PAD]", "[BOS]", "[EOS]", "[GROUND]", "[EPG]", "[META]",
+                  "[TOOL_CALL]", "[TOOL_RESULT]", "[TOOL_END]",
+                  "[THINK]", "[/THINK]"]
 
 
 def collect_text_files(input_path: str) -> list[str]:
@@ -59,10 +67,11 @@ def train_tokenizer(
     print(f"  Model type: {model_type}")
     print(f"  Output: {out}/regent.model")
 
-    # SentencePiece reserves IDs for special tokens via user_defined_symbols
-    # pad_id, bos_id, eos_id are handled natively
-    # We add GROUND, EPG, META as user-defined symbols
-    user_symbols = SPECIAL_TOKENS[3:]  # [GROUND], [EPG], [META]
+    # SentencePiece reserves IDs for special tokens via user_defined_symbols.
+    # pad_id, bos_id, eos_id are handled natively. unk_id is set to 9.
+    # IDs 3-8, 10-11 are user-defined symbols assigned in order: GROUND, EPG,
+    # META, TOOL_CALL, TOOL_RESULT, TOOL_END, THINK, /THINK.
+    user_symbols = SPECIAL_TOKENS[3:]
 
     model_prefix = str(out / "regent")
 
@@ -76,7 +85,7 @@ def train_tokenizer(
         pad_id=0,
         bos_id=1,
         eos_id=2,
-        unk_id=3,
+        unk_id=9,  # IDs 3-8 and 10-11 are reserved for user-defined special tokens
         user_defined_symbols=user_symbols,
         # Normalization
         normalization_rule_name="identity",  # no NFKC normalization

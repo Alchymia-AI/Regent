@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Regent Model - Language Model That Knows When It Is Wrong</title>
-  <meta name="description" content="Regent scores its own accuracy word by word while it writes. Constant memory regardless of session length. Runs offline. HuggingFace compatible. Open source at 7B to 50B.">
+  <title>Regent Model - The Model Built for Decisions That Matter</title>
+  <meta name="description" content="The first production language model built in Africa. Regent scores its own accuracy word by word, thinks before it answers, calls tools natively, and runs on your hardware offline. Open source at 7B to 50B.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
@@ -42,12 +42,15 @@
     <img src="assets/logo.png" alt="Alchymia AI" class="hero-logo">
     <h1>The model built for<br><span class="accent">decisions that matter.</span></h1>
     <p class="subtitle">
-      Regent scores every word it generates in real time, at no extra cost. When confidence drops, it stops, retrieves what it needs, and tries again. Runs on your hardware, offline, with no per-inference cost after deployment.
+      The first production language model built in Africa. Scores every word it generates in real time. Thinks before it answers. Calls tools natively. Runs on your hardware, offline, with no per-inference cost after deployment.
     </p>
     <div class="tag-row">
-      <span class="tag">Hybrid Recurrent + Attention</span>
+      <span class="tag">Not a Transformer</span>
       <span class="tag">Real-Time Accuracy Scoring</span>
-      <span class="tag">Constant Memory Inference</span>
+      <span class="tag">Native Thinking</span>
+      <span class="tag">Native Tool Calling</span>
+      <span class="tag">Constant Memory</span>
+      <span class="tag">OpenAI-Compatible API</span>
       <span class="tag">HuggingFace Compatible</span>
       <span class="tag">CUDA + Apple Silicon</span>
       <span class="tag">No API Dependency</span>
@@ -129,9 +132,9 @@
 <section id="architecture">
   <div class="container">
     <div class="section-label">Architecture</div>
-    <h2 class="section-title">Recurrent backbone with sparse attention</h2>
+    <h2 class="section-title">Not a transformer</h2>
     <p class="section-desc">
-      Recurrent layers handle the bulk of processing with a fixed memory footprint. Attention layers are placed every eight blocks to handle precise recall. Two output heads share the same internal state.
+      Every frontier model today is a transformer. Regent is a Mamba-2 state-space model with grouped-query attention at selected layers. Different engine, different properties. Recurrent layers handle processing with a fixed memory footprint. Attention layers are placed every eight blocks for precise recall. Two output heads share the same internal state.
     </p>
 
     <div class="arch-section">
@@ -194,9 +197,9 @@
 <section id="novelty">
   <div class="container">
     <div class="section-label">What makes it different</div>
-    <h2 class="section-title">Six things this model does that others do not</h2>
+    <h2 class="section-title">Eight things this model does that others do not</h2>
     <p class="section-desc">
-      No production language model ships with all six. Most ship with none.
+      No production language model ships with all eight. Most ship with none.
     </p>
 
     <div class="novelty-grid">
@@ -234,6 +237,18 @@
         <div class="novelty-num">06</div>
         <h3>Accuracy scoring adds 0.1% to the cost</h3>
         <p>Reads state that already exists. No extra passes. Most safety systems run the model 5 to 20 times for a reliability signal. This one runs once.</p>
+      </div>
+
+      <div class="novelty-item">
+        <div class="novelty-num">07</div>
+        <h3>It thinks before it answers</h3>
+        <p>When the question requires reasoning, the model works through it internally first, then responds. The reasoning is visible to the caller. Built into the generation loop with dedicated tokens, not a prompt engineering trick.</p>
+      </div>
+
+      <div class="novelty-item">
+        <div class="novelty-num">08</div>
+        <h3>It calls tools natively</h3>
+        <p>When the model needs external information, it emits a structured tool request, pauses, receives the result, and continues. APIs, databases, search. Built into the architecture with dedicated tokens, not a plugin layer.</p>
       </div>
     </div>
 
@@ -304,6 +319,33 @@
         </tr>
       </thead>
       <tbody>
+        <tr>
+          <td>Non-transformer architecture</td>
+          <td><span class="check">Mamba-2 SSM</span></td>
+          <td><span class="cross">Transformer</span></td>
+          <td><span class="cross">Transformer</span></td>
+          <td><span class="cross">Transformer</span></td>
+          <td><span class="cross">Transformer</span></td>
+          <td><span class="cross">MoE Transformer</span></td>
+        </tr>
+        <tr>
+          <td>Thinks before answering</td>
+          <td><span class="check">Yes</span></td>
+          <td><span class="check">Yes</span></td>
+          <td><span class="check">Yes</span></td>
+          <td><span class="check">Yes</span></td>
+          <td><span class="cross">No</span></td>
+          <td><span class="check">Yes</span></td>
+        </tr>
+        <tr>
+          <td>Native tool calling</td>
+          <td><span class="check">Yes</span></td>
+          <td><span class="check">Yes</span></td>
+          <td><span class="check">Yes</span></td>
+          <td><span class="check">Yes</span></td>
+          <td><span class="check">Yes</span></td>
+          <td><span class="check">Yes</span></td>
+        </tr>
         <tr>
           <td>Per-word accuracy score</td>
           <td><span class="check">Yes</span></td>
@@ -399,7 +441,7 @@
     </div>
 
     <div class="callout">
-      <strong>Not a general capability ranking.</strong> On language quality, instruction following, math, and coding, the frontier models lead. Regent competes on accuracy-scored, long-running, self-hosted workloads where wrong answers have a measurable cost.
+      <strong>Not a general capability ranking.</strong> On language quality, instruction following, math, and coding, the frontier transformers lead. Regent is a different architecture built for different properties: accuracy-scored, long-running, self-hosted workloads where wrong answers have a measurable cost.
     </div>
 
     <h3 style="margin-top: 3rem; font-size: 1.5rem; color: var(--text);">Memory at scale: the operational difference</h3>
@@ -545,6 +587,11 @@ model = AutoModelForCausalLM.from_pretrained(
         <div class="icon">🖥</div>
         <h3>Model Studio Interface</h3>
         <p>Browser interface for the full lifecycle: scrape data, train, monitor, chat with live accuracy scores, manage the knowledge graph, export. No command line needed.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🔌</div>
+        <h3>OpenAI-Compatible API</h3>
+        <p>Drop-in replacement at <code>/v1/chat/completions</code>. Any SDK, framework, or application built for OpenAI works by changing the base URL. No code changes needed.</p>
       </div>
       <div class="card">
         <div class="icon">📦</div>
@@ -764,26 +811,39 @@ out = model.generate(
 <section id="about">
   <div class="container">
     <div class="section-label">About</div>
-    <h2 class="section-title">Alchymia AI Research Labs</h2>
+    <h2 class="section-title">Alchymia Labs</h2>
     <p class="section-desc">
-      We build AI that can be owned, not just rented.
+      Researching, building, and accelerating AI for developing economies.
     </p>
 
     <div class="card-grid">
       <div class="card">
-        <h3>The problem</h3>
-        <p>AI runs on cloud infrastructure priced per word, in currencies many markets cannot absorb at scale. A hospital in Lagos, a legal clinic in Dhaka, a cooperative in Medellin cannot build on a subscription to servers they do not control.</p>
-        <p>We build models that run locally, at fixed cost, without internet.</p>
+        <h3>The first production model from Africa</h3>
+        <p>Regent is the first real language model to come out of Africa. Not a fine-tune. Not a wrapper. A ground-up architecture designed to be on par with the best models in the world at the workloads it is built for.</p>
+        <p>Alchymia Labs is founded by <a href="https://www.linkedin.com/in/prime-architect/" style="color: var(--accent);">Ayomide I. Daniels</a>. The team is in the diaspora. The work is global.</p>
       </div>
       <div class="card">
-        <h3>Our position</h3>
-        <p>Three billion people stand to gain the most from AI in healthcare, legal access, agriculture, finance, and education. None of the major labs build for them primarily.</p>
-        <p>Regent ships as infrastructure, not a subscription. It is the first model released under that mandate.</p>
+        <h3>The 10x imperative</h3>
+        <p>Developing economies do not need cheaper versions of Western AI. They need AI with different properties: offline, owned, auditable, affordable.</p>
+        <p>Getting there from where we stand requires a 10x magnitude of ingenuity. That is the operating requirement, and the core ethos of the people at Alchymia.</p>
       </div>
       <div class="card">
         <h3>Open source commitment</h3>
         <p>7B to 50B is open source. Deployable, modifiable, free to build on. The organizations with the most to gain from AI are often the least able to pay for it.</p>
         <p>Grande Regent at 70B to 1T is commercial. That revenue funds the open tier.</p>
+      </div>
+    </div>
+
+    <div class="card-grid" style="margin-top: 1.5rem;">
+      <div class="card">
+        <h3>Distributed Shared Training Protocol</h3>
+        <p>Training frontier-scale models currently requires concentrating tens of thousands of GPUs in one facility and a $50M to $200M check to a single cloud provider.</p>
+        <p>Alchymia is developing DSTP, a protocol to train 1 to 2 trillion parameter models by pooling compute across universities, national labs, government centers, private organizations, and individuals. Frontier-scale AI should not require a single nine-figure infrastructure investment.</p>
+      </div>
+      <div class="card">
+        <h3>Who this is for</h3>
+        <p>Three billion people stand to gain the most from AI in healthcare, legal access, agriculture, finance, and education. None of the major labs build for them primarily.</p>
+        <p>Regent ships as infrastructure, not a subscription. It is the first model released under that mandate.</p>
       </div>
     </div>
   </div>
@@ -834,10 +894,11 @@ out = model.generate(
   <div class="container">
     <div class="footer-logo">
       <img src="assets/logo.png" alt="Alchymia AI">
-      <span>Alchymia AI Research Labs</span>
+      <span>Alchymia Labs</span>
     </div>
-    <p>Built to make capable AI deployable where it is needed most.</p>
-    <p>&copy; 2026 Alchymia AI. All rights reserved.</p>
+    <p>Researching, building, and accelerating AI for developing economies.</p>
+    <p><a href="https://alchymia.ai" style="color: var(--accent);">alchymia.ai</a></p>
+    <p>&copy; 2026 Alchymia Labs. All rights reserved.</p>
     
   </div>
 </footer>

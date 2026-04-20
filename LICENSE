@@ -1,39 +1,127 @@
-Copyright (c) 2026 Alchymia AI Research Labs. All rights reserved.
+REGENT COMMUNITY LICENSE AGREEMENT
+Version 1.0, 2026
 
-This software and associated documentation files (the "Software") are the
-proprietary property of Alchymia AI Research Labs ("Alchymia AI"). The
-Software includes source code, model architectures, training pipelines,
-configuration files, documentation, presentations, and website materials.
+Copyright (c) 2026 Alchymia Labs. All rights reserved.
 
-NOTICE OF PROPRIETARY RIGHTS
 
-The Software is owned by Alchymia AI and is protected by copyright laws and
-international treaty provisions. All rights, title, and interest in and to
-the Software, including all intellectual property rights, are and shall
-remain the exclusive property of Alchymia AI.
+1. DEFINITIONS
 
-PERMITTED USE
+"Agreement" means this Regent Community License Agreement.
 
-No license, express or implied, is granted to any party by this notice.
-Use, reproduction, modification, distribution, public display, or public
-performance of the Software in any form is prohibited without the prior
-written authorization of Alchymia AI Research Labs.
+"Alchymia" means Alchymia Labs and its affiliates.
 
-For licensing inquiries, partnerships, or other matters, contact:
-research@alchymia.ai
+"Materials" means the Regent model weights, code, documentation, and any
+other files distributed under this Agreement.
 
-DISCLAIMER OF WARRANTY
+"Regent" means the language model created by Alchymia Labs, including all
+parameter configurations from 7B through 50B.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL
-ALCHYMIA AI RESEARCH LABS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING
-FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-DEALINGS IN THE SOFTWARE.
+"Hosted Service" means making the Materials available to third parties as a
+managed service, where the primary value delivered to the third party is
+access to the model's inference capabilities. This includes, without
+limitation, offering the model as an API, a hosted endpoint, or a managed
+deployment that third parties pay to use.
 
-TRADEMARKS
+"You" means the individual or entity exercising rights under this Agreement.
 
-"Alchymia AI", "Regent Model", "Grande Regent", and the Alchymia logo are
-trademarks of Alchymia AI Research Labs. Use of these marks is subject to
+
+2. GRANT OF RIGHTS
+
+Subject to the terms of this Agreement, Alchymia grants You a non-exclusive,
+worldwide, non-transferable, royalty-free license to:
+
+  a. Use the Materials for any purpose, including commercial purposes.
+  b. Reproduce and distribute copies of the Materials.
+  c. Create and distribute derivative works of the Materials.
+  d. Use the Materials to train, fine-tune, or otherwise create new models.
+
+
+3. HOSTED SERVICE RESTRICTION
+
+You may NOT use the Materials, or any derivative work of the Materials, to
+provide a Hosted Service without a separate commercial license from Alchymia.
+
+For clarity, the following are NOT considered a Hosted Service and are
+permitted without a commercial license:
+
+  a. Using the model internally within your organization.
+  b. Deploying the model to serve your own end users as part of a product
+     or application where the primary value is the product, not access to
+     the model itself.
+  c. Using the model for research, education, or evaluation.
+  d. Offering consulting, integration, or deployment services where you
+     help others run their own instance of the model.
+
+
+4. REDISTRIBUTION
+
+If You distribute the Materials or derivative works, You must:
+
+  a. Include a copy of this Agreement.
+  b. Clearly identify any modifications You made.
+  c. Include the following attribution notice in any distribution:
+     "Built with Regent by Alchymia Labs. https://alchymia.ai"
+
+
+5. NO TRADEMARK LICENSE
+
+This Agreement does not grant permission to use the trade names, trademarks,
+or service marks of Alchymia, except as required for attribution under
+Section 4.
+
+"Alchymia", "Regent", "Grande Regent", and the Alchymia logo are trademarks
+of Alchymia Labs. Use of these marks beyond attribution is subject to
 written authorization.
+
+
+6. PATENT GRANT
+
+Subject to the terms of this Agreement, Alchymia grants You a perpetual,
+worldwide, non-exclusive, royalty-free patent license to make, use, sell,
+offer to sell, import, and otherwise transfer the Materials, where such
+license applies only to patent claims licensable by Alchymia that are
+necessarily infringed by the Materials as distributed by Alchymia.
+
+If You institute patent litigation against any entity alleging that the
+Materials constitute patent infringement, then any patent licenses granted
+to You under this Agreement terminate as of the date such litigation is
+filed.
+
+
+7. DISCLAIMER OF WARRANTY
+
+THE MATERIALS ARE PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL ALCHYMIA BE
+LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM THE USE OF
+THE MATERIALS.
+
+
+8. LIMITATION OF LIABILITY
+
+IN NO EVENT SHALL ALCHYMIA BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL,
+CONSEQUENTIAL, OR PUNITIVE DAMAGES, REGARDLESS OF THE CAUSE OF ACTION OR
+THE THEORY OF LIABILITY, EVEN IF ALCHYMIA HAS BEEN ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGES.
+
+
+9. TERM AND TERMINATION
+
+This Agreement is effective until terminated. Your rights under this
+Agreement terminate automatically if You fail to comply with any term.
+Upon termination, You must cease all use and distribution of the Materials.
+
+
+10. GOVERNING LAW
+
+This Agreement shall be governed by the laws of the jurisdiction in which
+Alchymia Labs is incorporated, without regard to conflict of law principles.
+
+
+11. COMMERCIAL LICENSING
+
+For Hosted Service use, Grande Regent (70B to 1T parameters), or enterprise
+deployment with SLA support, contact:
+
+  research@alchymia.ai
+  https://alchymia.ai

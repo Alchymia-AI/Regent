@@ -18,12 +18,17 @@ from transformers import PreTrainedTokenizer
 VOCAB_FILES = {"vocab_file": "regent.model"}
 
 SPECIAL_TOKENS: Dict[str, int] = {
-    "[PAD]":    0,
-    "[BOS]":    1,
-    "[EOS]":    2,
-    "[GROUND]": 3,
-    "[EPG]":    4,
-    "[META]":   5,
+    "[PAD]":         0,
+    "[BOS]":         1,
+    "[EOS]":         2,
+    "[GROUND]":      3,
+    "[EPG]":         4,
+    "[META]":        5,
+    "[TOOL_CALL]":   6,
+    "[TOOL_RESULT]": 7,
+    "[TOOL_END]":    8,
+    "[THINK]":       10,
+    "[/THINK]":      11,
 }
 
 
@@ -34,6 +39,8 @@ class RegentTokenizer(PreTrainedTokenizer):
     Special tokens:
         [PAD] = 0   [BOS] = 1   [EOS] = 2
         [GROUND] = 3   [EPG] = 4   [META] = 5
+        [TOOL_CALL] = 6   [TOOL_RESULT] = 7   [TOOL_END] = 8
+        [THINK] = 10   [/THINK] = 11
     """
 
     vocab_files_names       = VOCAB_FILES
@@ -138,6 +145,30 @@ class RegentTokenizer(PreTrainedTokenizer):
         if token_ids_1 is None:
             return bos + ([0] * len(token_ids_0)) + eos
         return bos + ([0] * len(token_ids_0)) + eos + ([0] * len(token_ids_1)) + eos
+
+    # ------------------------------------------------------------------ tool token accessors
+
+    @property
+    def tool_call_id(self) -> int:
+        return self._special["[TOOL_CALL]"]
+
+    @property
+    def tool_result_id(self) -> int:
+        return self._special["[TOOL_RESULT]"]
+
+    @property
+    def tool_end_id(self) -> int:
+        return self._special["[TOOL_END]"]
+
+    # ------------------------------------------------------------------ thinking token accessors
+
+    @property
+    def think_start_id(self) -> int:
+        return self._special["[THINK]"]
+
+    @property
+    def think_end_id(self) -> int:
+        return self._special["[/THINK]"]
 
     # ------------------------------------------------------------------ save / load
 

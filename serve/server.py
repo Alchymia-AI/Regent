@@ -28,6 +28,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import html
+import json
 import os
 import random
 import re
@@ -232,8 +233,15 @@ class EssenceState(BaseModel):
     self_preservation:    float = 0.3
 
 
+class ToolDefinition(BaseModel):
+    name:        str
+    description: str
+    parameters:  dict = {}  # JSON Schema object describing the arguments
+
+
 class GenerateRequest(BaseModel):
     messages:            list[dict]
+    tools:               list[ToolDefinition] | None = None
     epg_nodes:           list[EPGNode] | None = None
     essence:             EssenceState | None  = None
     max_tokens:          int   = 2048
@@ -242,6 +250,11 @@ class GenerateRequest(BaseModel):
     verification:        bool  = True
     grounding_threshold: float = 0.4
     session_id:          str | None = None
+
+
+class ToolCallResponse(BaseModel):
+    name:      str
+    arguments: dict
 
 
 class GenerateResponse(BaseModel):
@@ -253,6 +266,9 @@ class GenerateResponse(BaseModel):
     total_tokens:     int
     inference_time_ms: float
     session_id:       str
+    thinking:         str = ""
+    tool_calls:       list[ToolCallResponse] = []
+    stop_reason:      str = "eos"
 
 
 class VerifyRequest(BaseModel):
@@ -688,7 +704,30 @@ async def generate_endpoint(req: GenerateRequest):
     start = time.time()
 
     # --- Tokenise conversation ---
-    prompt = "".join(f"<{m['role']}>{m['content']}" for m in req.messages)
+    # Build prompt with optional tool definitions injected before the first user turn.
+    # Tool call and tool result messages use special token boundaries so the model
+    # sees structured markers rather than raw text.
+    parts: list[str] = []
+
+    if req.tools:
+        tool_block = json.dumps([
+            {"name": t.name, "description": t.description, "parameters": t.parameters}
+            for t in req.tools
+        ], separators=(",", ":"))
+        parts.append(f"<tools>{tool_block}</tools>")
+
+    for m in req.messages:
+        role = m.get("role", "user")
+        if role == "tool_call":
+            # Model-emitted tool call — format with special tokens
+            parts.append(f"[TOOL_CALL]{m.get('content', '')}[TOOL_END]")
+        elif role == "tool_result":
+            # Caller-provided tool execution result — format with special tokens
+            parts.append(f"[TOOL_RESULT]{m.get('content', '')}[TOOL_END]")
+        else:
+            parts.append(f"<{role}>{m.get('content', '')}")
+
+    prompt = "".join(parts)
     token_ids = _tokenizer.encode(prompt, add_bos=True)
     input_ids = mx.array([token_ids], dtype=mx.int32)
 
@@ -721,6 +760,10 @@ async def generate_endpoint(req: GenerateRequest):
         temperature=req.temperature,
         top_p=req.top_p,
         caution_threshold=req.grounding_threshold,
+        tool_call_id=_tokenizer.tool_call_id,
+        tool_end_id=_tokenizer.tool_end_id,
+        think_start_id=_tokenizer.think_start_id,
+        think_end_id=_tokenizer.think_end_id,
     )
 
     result, final_cache = generate(
@@ -749,6 +792,9 @@ async def generate_endpoint(req: GenerateRequest):
         total_tokens=result.total_tokens,
         inference_time_ms=round(elapsed, 1),
         session_id=session_id,
+        thinking=result.thinking,
+        tool_calls=[ToolCallResponse(name=tc.name, arguments=tc.arguments) for tc in result.tool_calls],
+        stop_reason=result.stop_reason,
     )
 
 
@@ -959,6 +1005,153 @@ async def export_status():
         "error":      s.error,
         "output_dir": s.output_dir,
         "log":        s.log[-50:],
+    }
+
+
+# ---------------------------------------------------------------------------
+# OpenAI-compatible /v1/chat/completions
+# ---------------------------------------------------------------------------
+
+class OAIFunctionDef(BaseModel):
+    name:        str
+    description: str = ""
+    parameters:  dict = {}
+
+class OAIToolDef(BaseModel):
+    type:     str = "function"
+    function: OAIFunctionDef
+
+class OAIChatRequest(BaseModel):
+    model:             str = "regent"
+    messages:          list[dict]
+    tools:             list[OAIToolDef] | None = None
+    max_tokens:        int | None = None
+    temperature:       float | None = None
+    top_p:             float | None = None
+    n:                 int = 1
+    stream:            bool = False
+    stop:              list[str] | None = None
+    user:              str | None = None
+
+
+def _oai_messages_to_regent(messages: list[dict]) -> list[dict]:
+    """Convert OpenAI message format to Regent's internal format."""
+    out: list[dict] = []
+    for m in messages:
+        role = m.get("role", "user")
+
+        # OpenAI "tool" role = Regent "tool_result"
+        if role == "tool":
+            out.append({"role": "tool_result", "content": m.get("content", "")})
+            continue
+
+        # OpenAI "assistant" with tool_calls = Regent "tool_call" messages
+        if role == "assistant" and m.get("tool_calls"):
+            for tc in m["tool_calls"]:
+                fn = tc.get("function", {})
+                args = fn.get("arguments", {})
+                if isinstance(args, str):
+                    try:
+                        args = json.loads(args)
+                    except json.JSONDecodeError:
+                        args = {"raw": args}
+                call_json = json.dumps({"name": fn.get("name", ""), "arguments": args})
+                out.append({"role": "tool_call", "content": call_json})
+            # Also include any text content the assistant produced before the tool call
+            if m.get("content"):
+                out.append({"role": "assistant", "content": m["content"]})
+            continue
+
+        # Map "system" to Regent's format (passed through as-is)
+        out.append({"role": role, "content": m.get("content", "")})
+
+    return out
+
+
+@app.post("/v1/chat/completions")
+async def oai_chat_completions(req: OAIChatRequest):
+    if _model is None or _tokenizer is None:
+        raise HTTPException(status_code=503, detail="Model not loaded")
+
+    if req.stream:
+        raise HTTPException(status_code=400, detail="Streaming not supported")
+
+    if req.n > 1:
+        raise HTTPException(status_code=400, detail="n > 1 not supported")
+
+    # Convert tools
+    regent_tools: list[ToolDefinition] | None = None
+    if req.tools:
+        regent_tools = [
+            ToolDefinition(
+                name=t.function.name,
+                description=t.function.description,
+                parameters=t.function.parameters,
+            )
+            for t in req.tools
+        ]
+
+    # Convert messages
+    regent_messages = _oai_messages_to_regent(req.messages)
+
+    # Build the internal request and delegate to the existing generate endpoint
+    regent_req = GenerateRequest(
+        messages=regent_messages,
+        tools=regent_tools,
+        max_tokens=req.max_tokens or 2048,
+        temperature=req.temperature if req.temperature is not None else 0.7,
+        top_p=req.top_p if req.top_p is not None else 0.9,
+    )
+    result = await generate_endpoint(regent_req)
+
+    # Build OpenAI response
+    completion_id = f"chatcmpl-{uuid.uuid4().hex[:24]}"
+    created = int(time.time())
+
+    # Build the assistant message
+    message: dict = {"role": "assistant"}
+
+    if result.thinking:
+        message["reasoning_content"] = result.thinking
+
+    if result.tool_calls:
+        message["content"] = result.text or None
+        message["tool_calls"] = [
+            {
+                "id": f"call_{uuid.uuid4().hex[:24]}",
+                "type": "function",
+                "function": {
+                    "name": tc.name,
+                    "arguments": json.dumps(tc.arguments) if isinstance(tc.arguments, dict) else tc.arguments,
+                },
+            }
+            for tc in result.tool_calls
+        ]
+        finish_reason = "tool_calls"
+    elif result.stop_reason == "max_tokens":
+        message["content"] = result.text
+        finish_reason = "length"
+    else:
+        message["content"] = result.text
+        finish_reason = "stop"
+
+    return {
+        "id": completion_id,
+        "object": "chat.completion",
+        "created": created,
+        "model": req.model,
+        "choices": [
+            {
+                "index": 0,
+                "message": message,
+                "finish_reason": finish_reason,
+            }
+        ],
+        "usage": {
+            "prompt_tokens": 0,
+            "completion_tokens": result.total_tokens,
+            "total_tokens": result.total_tokens,
+        },
     }
 
 

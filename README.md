@@ -4,7 +4,7 @@ Two distributions, same architecture.
 
 | Variant | Scale | License | Distribution |
 |---|---|---|---|
-| **Regent** | 7B to 50B | Open source | This repository |
+| **Regent** | 7B to 50B | [Regent Community License](LICENSE) | This repository |
 | **Grande Regent** | 70B to 1T | Commercial | Alchymia Groom |
 
 This repository is the open source Regent. Grande Regent is shipped separately by Alchymia AI.
@@ -148,7 +148,9 @@ PYTHONPATH=. python3 scripts/run_pipeline.py \
     --scrape-config pipeline.yaml
 ```
 
-See [TRAINING.md](TRAINING.md) for phase-by-phase details.
+See [QUICKSTART.md](QUICKSTART.md) for the full end-to-end guide from data to deployment.
+
+See [API.md](API.md) for the complete API reference: inference, chat, tool calling, thinking, verification, knowledge graph input, sessions, and the OpenAI-compatible endpoint.
 
 ## Inference
 
@@ -347,15 +349,17 @@ General consumer chat, code assistants, multimodal vision-language, benchmark le
 
 ## Availability
 
-**Regent (open source, 7B to 50B)**. This repository. Architecture, training pipeline, inference server, and the 7B through 50B trained checkpoints will be released under an open source license.
+**Regent (7B to 50B)**. This repository. Architecture, training pipeline, inference server, and the 7B through 50B checkpoints. Released under the Regent Community License.
 
-**Grande Regent (commercial, 70B to 1T)**. Frontier checkpoints with the production-trained verification head, production EPG tooling, and enterprise integrations. Distributed through Alchymia Groom alongside the rest of the Alchymia AI model lineup. Commercial license. Sign-up and pricing details will be announced at the first trained checkpoint release.
+**Grande Regent (70B to 1T)**. Frontier checkpoints with the production-trained verification head, production EPG tooling, and enterprise integrations. Distributed through Alchymia Groom. Commercial license.
 
 ## License
 
-The Regent variant in this repository is held under proprietary copyright while the architecture is being finalized. It will transition to an open source license at the first public release. See [LICENSE](LICENSE) for current terms.
+Regent is released under the [Regent Community License](LICENSE). You can use, modify, and redistribute it for any purpose, including commercial, with one restriction: you cannot offer Regent or its derivatives as a hosted inference service to third parties without a commercial license from Alchymia.
 
-Grande Regent is closed source and distributed only through Alchymia Groom under commercial license.
+Building products that use Regent internally, deploying it for your own users, research, education, and consulting are all permitted. See the full [LICENSE](LICENSE) for details.
+
+Grande Regent is distributed through Alchymia Groom under a separate commercial license.
 
 Copyright (c) 2026 Alchymia AI Research Labs. All rights reserved.
 

@@ -1,0 +1,105 @@
+# Press Release
+
+---
+
+FOR IMMEDIATE RELEASE
+
+**Contact**
+Alchymia Labs
+research@alchymia.ai
+https://alchymia.ai
+
+---
+
+## Alchymia Labs Releases Regent, the First Production Language Model Built in Africa
+
+*Open-source model targets legal, healthcare, defense, and industrial sectors where AI output must be accountable, and emerging markets where cloud dependency is not a viable economic model*
+
+---
+
+Alchymia Labs today released Regent, a language model built for workloads where the cost of a wrong answer is measurable. The model produces a real-time confidence score for every word it generates, reasons through complex questions before answering, calls external tools natively, and operates fully offline on locally owned hardware. It is available open source at the 7B through 50B parameter scale. A commercial frontier-scale version, Grande Regent, covering 70B through one trillion parameters, will be distributed through Alchymia Groom.
+
+Regent is the first production language model to come out of Africa. Not a fine-tune of an existing model or a wrapper around another provider's API. It is a ground-up architecture designed to be on par with the best models in the world at the workloads it is built for.
+
+Regent addresses two structural limitations of current AI deployment that have constrained adoption in accountability-sensitive sectors and prevented meaningful adoption in emerging markets.
+
+**A different architecture**
+
+Every frontier language model in production today, including GPT-5, Claude, Llama, Mistral, and Gemini, is built on the transformer architecture from a 2017 paper. They differ in scale and training data, but the underlying engine is the same.
+
+Regent is not a transformer. It is a Mamba-2 state-space model with grouped-query attention at selected layers. This is a fundamentally different computational engine that enables properties transformers cannot provide at any scale: fixed memory regardless of conversation length, native structured knowledge input, and real-time accuracy scoring built into the architecture rather than added as a post-processing layer.
+
+**Real-time accuracy scoring**
+
+Every language model in production today generates output and leaves verification to downstream processes: human review, secondary model passes, or sampling-based consistency checks. These approaches add cost and latency, and none operate at the moment of generation.
+
+Regent produces a per-word confidence score as a native output alongside generated text. When confidence falls below a configurable threshold, the model does not continue writing. It stops, retrieves relevant information from its structured knowledge store, and regenerates from the uncertain point. This behavior is built into the architecture, not added as a post-processing layer.
+
+The accuracy scoring capability adds less than 0.1 percent to the model's total parameter count and runs within a single generation pass. There is no additional inference cost relative to a model without this capability.
+
+**Thinking and tool calling**
+
+Regent reasons through complex questions before responding. When a query requires multi-step thinking, the model produces an internal chain of reasoning, then delivers the answer. The reasoning is visible to the caller and can be used for audit, debugging, or compliance review.
+
+The model also calls external tools natively. When it determines it needs information from an API, database, or search engine, it emits a structured tool request, pauses generation, receives the result, and continues. This operates through dedicated tokens in the architecture, not through a plugin system.
+
+**Deployment without cloud dependency**
+
+Current frontier AI models operate as services. Pricing is per-token, infrastructure is cloud-based, and ongoing access requires internet connectivity and subscription fees denominated in major currencies.
+
+Regent is distributed as weights and code. Organizations license the model once and deploy it on their own hardware. There are no per-inference fees after deployment. The model operates fully offline. The 7B parameter version runs on edge hardware in the sub-$1,000 range. Larger configurations scale to single-server deployment.
+
+This changes the economic model for organizations in markets where cloud API pricing is not viable at scale: public health systems, government ministries, legal aid organizations, agricultural cooperatives, and industrial operators across sub-Saharan Africa, South and Southeast Asia, and Latin America.
+
+**OpenAI-compatible API**
+
+Regent exposes an OpenAI-compatible API endpoint at `/v1/chat/completions`. Any application, SDK, or framework built for OpenAI's chat completions API works with Regent by changing the base URL. No code changes, no new SDK, no integration project.
+
+**Market focus**
+
+Regent is positioned for sectors where the cost of an inaccurate output is quantifiable and where data sovereignty or operational constraints make cloud dependency unacceptable.
+
+Legal research requires every claim to be traceable to a source. Financial research and risk analysis require AI output to be auditable before it influences decisions. Clinical decision support requires confidence scoring that meets healthcare compliance requirements. Government and defense deployments require air-gapped operation with no external data exposure. Robotics and autonomous vehicle deployments require a cognitive layer that fits on embedded hardware and operates without connectivity.
+
+Beyond those primary sectors, the same architecture properties apply across: pharmaceutical and drug development, where regulatory submissions require claim-level auditability and trial data cannot leave a jurisdiction; nuclear and critical infrastructure, where air-gap and long-shift operation are mandatory; maritime and offshore, where vessels operate without connectivity for weeks; mining and extraction, where remote sites have no reliable infrastructure; insurance and claims, where every decision requires a traceable justification for regulatory review; compliance and regulatory affairs, where AI output must be auditable at the claim level; emergency services, where the model must operate when infrastructure is unavailable; audit and financial forensics, where every figure needs a source; and agriculture, where zero marginal cost after deployment is the only viable model for organizations operating on thin margins without reliable internet.
+
+Regent is not positioned for consumer applications, code generation tools, or multimodal tasks. Those segments are served by incumbent providers with established distribution. Regent competes on properties, not on general benchmark rankings.
+
+**Developing economies and the 10x imperative**
+
+The markets where Regent matters most are the ones where AI has the highest potential impact and the lowest current penetration: healthcare access in sub-Saharan Africa, legal services across South Asia, agricultural decision support in Latin America, financial inclusion in Southeast Asia.
+
+These are not secondary markets. They are the majority of the world's population. The reason AI has not reached them is not capability. It is economics and infrastructure.
+
+Alchymia's position is that closing this gap does not happen through incremental improvement. It requires building at a fundamentally different level of ingenuity. Not 2x. 10x. That is the operating requirement when you start without the capital, infrastructure, or institutional advantages that the incumbents have. It is also the core ethos of the people at Alchymia.
+
+**Distributed Shared Training Protocol**
+
+Alchymia is developing DSTP, a Distributed Shared Training Protocol, designed to enable training models at 1 to 2 trillion parameters by pooling compute across institutions and geographies. Universities, national labs, government compute centers, private organizations, and individuals contribute capacity to a shared training run without centralizing all hardware in one location.
+
+The goal is structural: frontier-scale AI should be achievable without a single nine-figure infrastructure investment. DSTP is in active development.
+
+**Regent and Grande Regent**
+
+Regent, the open-source tier at 7B to 50B parameters, is designed for the broadest possible deployment, including organizations in markets where commercial licensing is not economically viable. Releasing this tier as open source is a deliberate choice: the organizations that need this most are often the ones least able to pay for it.
+
+Grande Regent, at 70B to one trillion parameters, is a commercial product for organizations that require frontier-scale performance and direct enterprise support. It shares the same architecture as open-source Regent. Workflows built on Regent can migrate to Grande Regent without changes to the integration layer. Grande Regent is distributed through Alchymia Groom with commercial licensing, production-grade tooling, and enterprise SLAs.
+
+**About Alchymia AI Research Labs**
+
+Alchymia AI Research Labs is an AI research organization founded by Ayomide I. Daniels (https://www.linkedin.com/in/prime-architect/). The team is in the diaspora. The organization is focused on researching, building, and accelerating AI for developing economies.
+
+The organization's position is that the majority of the population that will benefit most from AI, in healthcare access, legal access, agricultural productivity, financial inclusion, and education, is located in markets where per-token cloud pricing creates a permanent structural barrier.
+
+The mandate is not to build cheaper versions of existing models. It is to build models with properties that existing models do not have, and to distribute them as infrastructure.
+
+
+---
+
+Regent ships with a browser-based interface called Model Studio that manages the complete model lifecycle. From a single interface, teams can source and prepare training data from web URLs or HuggingFace datasets, run all four training phases with live output monitoring, inspect and resume from any checkpoint, run inference against the model with full control over its behavioral parameters and knowledge graph, and export the finished model directly to HuggingFace or as a self-contained Docker package. Organizations without dedicated machine learning infrastructure can take a model from raw data to deployment without writing a line of code.
+
+Regent is also compatible with HuggingFace Transformers. Organizations already using HuggingFace can load and run Regent with two lines of code using their existing pipelines and deployment tooling, with no additional integration work required.
+
+*Regent 7B through 50B is available now on HuggingFace. Grande Regent availability and commercial terms are available through Alchymia Groom. Technical documentation and model weights are available at the Alchymia Labs repository. Press inquiries: research@alchymia.ai*
+
+*https://alchymia.ai*
