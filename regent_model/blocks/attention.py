@@ -6,8 +6,6 @@ over recent context — compensating for SSM's lossy state compression.
 Uses sliding window attention to maintain Mamba's memory efficiency.
 """
 
-import math
-
 import mlx.core as mx
 import mlx.nn as nn
 
@@ -61,27 +59,20 @@ class GQABlock(nn.Module):
         """
         _, seq_len, _, head_dim = x.shape
 
-        # Compute rotation frequencies
         inv_freq = 1.0 / (10000.0 ** (mx.arange(0, head_dim, 2).astype(mx.float32) / head_dim))
         positions = mx.arange(offset, offset + seq_len).astype(mx.float32)
-        freqs = positions[:, None] * inv_freq[None, :]  # (seq_len, head_dim/2)
+        freqs = positions[:, None] * inv_freq[None, :]
 
-        cos = mx.cos(freqs)  # (seq_len, head_dim/2)
-        sin = mx.sin(freqs)  # (seq_len, head_dim/2)
+        cos = mx.cos(freqs)
+        sin = mx.sin(freqs)
 
-        # Split x into pairs and rotate
-        x1 = x[:, :, :, 0::2]  # even indices
-        x2 = x[:, :, :, 1::2]  # odd indices
+        x1 = x[:, :, :, 0::2]
+        x2 = x[:, :, :, 1::2]
 
-        # Apply rotation
         y1 = x1 * cos[None, :, None, :] - x2 * sin[None, :, None, :]
         y2 = x1 * sin[None, :, None, :] + x2 * cos[None, :, None, :]
 
-        # Interleave back
-        # Stack along last dim and reshape
-        y = mx.stack([y1, y2], axis=-1).reshape(x.shape)
-
-        return y
+        return mx.stack([y1, y2], axis=-1).reshape(x.shape)
 
     def __call__(
         self,
@@ -101,51 +92,40 @@ class GQABlock(nn.Module):
         """
         batch, seq_len, _ = x.shape
 
-        # Project Q, K, V
         q = self.q_proj(x).reshape(batch, seq_len, self.n_q_heads, self.head_dim)
         k = self.k_proj(x).reshape(batch, seq_len, self.n_kv_heads, self.head_dim)
         v = self.v_proj(x).reshape(batch, seq_len, self.n_kv_heads, self.head_dim)
 
-        # Determine position offset from cache
         offset = 0
         if cache is not None and "k" in cache:
             offset = cache["k"].shape[1]
 
-        # Apply RoPE to Q and K
         q = self._apply_rotary_pos_emb(q, offset=offset)
         k = self._apply_rotary_pos_emb(k, offset=offset)
 
-        # Append to KV cache
         if cache is not None and "k" in cache:
             k = mx.concatenate([cache["k"], k], axis=1)
             v = mx.concatenate([cache["v"], v], axis=1)
 
-            # Sliding window: trim to window_size
             if k.shape[1] > self.window_size:
                 k = k[:, -self.window_size :]
                 v = v[:, -self.window_size :]
 
         new_cache = {"k": k, "v": v}
-
         kv_len = k.shape[1]
 
-        # Expand KV heads to match Q heads (grouped query attention)
-        # k: (batch, kv_len, n_kv_heads, head_dim) -> (batch, kv_len, n_q_heads, head_dim)
+        # Expand KV heads to match Q heads for grouped query attention
         if self.n_groups > 1:
             k = mx.repeat(k, self.n_groups, axis=2)
             v = mx.repeat(v, self.n_groups, axis=2)
 
-        # Transpose to (batch, n_heads, seq_len, head_dim) for attention
-        q = q.transpose(0, 2, 1, 3)  # (batch, n_q_heads, seq_len, head_dim)
-        k = k.transpose(0, 2, 1, 3)  # (batch, n_q_heads, kv_len, head_dim)
+        q = q.transpose(0, 2, 1, 3)
+        k = k.transpose(0, 2, 1, 3)
         v = v.transpose(0, 2, 1, 3)
 
-        # Scaled dot-product attention
-        attn_weights = (q @ k.transpose(0, 1, 3, 2)) * self.scale  # (batch, n_q_heads, seq_len, kv_len)
+        attn_weights = (q @ k.transpose(0, 1, 3, 2)) * self.scale
 
-        # Causal mask: each query can only attend to positions <= its own
-        # With sliding window, positions are already trimmed
-        causal_mask = mx.tri(seq_len, kv_len, k=kv_len - seq_len)  # (seq_len, kv_len)
+        causal_mask = mx.tri(seq_len, kv_len, k=kv_len - seq_len)
         attn_weights = mx.where(
             causal_mask[None, None, :, :],
             attn_weights,
@@ -153,13 +133,8 @@ class GQABlock(nn.Module):
         )
 
         attn_weights = mx.softmax(attn_weights, axis=-1)
+        attn_output = attn_weights @ v
 
-        # Apply attention to values
-        attn_output = attn_weights @ v  # (batch, n_q_heads, seq_len, head_dim)
-
-        # Transpose back and project
-        attn_output = attn_output.transpose(0, 2, 1, 3)  # (batch, seq_len, n_q_heads, head_dim)
+        attn_output = attn_output.transpose(0, 2, 1, 3)
         attn_output = attn_output.reshape(batch, seq_len, self.n_q_heads * self.head_dim)
-        output = self.o_proj(attn_output)
-
-        return output, new_cache
+        return self.o_proj(attn_output), new_cache

@@ -38,7 +38,6 @@ Data format (JSONL):
 """
 
 import json
-from pathlib import Path
 
 import mlx.core as mx
 import numpy as np

@@ -65,7 +65,6 @@ class Mamba2Block(nn.Module):
         )
         self.in_proj = nn.Linear(cfg.d_model, self.in_proj_dim, bias=False)
 
-        # Causal 1D convolution on x branch
         self.conv1d_weight = mx.zeros((self.d_inner, cfg.d_conv))
         self.conv1d_bias = mx.zeros((self.d_inner,))
 
@@ -73,16 +72,12 @@ class Mamba2Block(nn.Module):
         # Initialized negative so exp(A_log) gives decay < 1
         self.A_log = mx.full((cfg.n_heads,), math.log(0.5))
 
-        # D skip connection (one per head)
         self.D = mx.ones((cfg.n_heads,))
 
-        # dt bias (shifts the learned dt)
         self.dt_bias = mx.zeros((cfg.n_heads,))
 
-        # Output projection
         self.out_proj = nn.Linear(self.d_inner, cfg.d_model, bias=False)
 
-        # Layer norm on SSM output (pre-gating)
         self.norm = nn.RMSNorm(self.d_inner, eps=cfg.norm_eps)
 
     def _causal_conv1d(self, x: mx.array, cache: mx.array | None = None) -> tuple[mx.array, mx.array]:
@@ -104,7 +99,6 @@ class Mamba2Block(nn.Module):
             # Prepend cached context for causal continuity
             x_padded = mx.concatenate([cache, x], axis=1)
         else:
-            # Zero-pad for initial sequence
             x_padded = mx.concatenate([mx.zeros((B, k - 1, D)), x], axis=1)
 
         # Depthwise conv1d via loop over kernel width
@@ -164,7 +158,6 @@ class Mamba2Block(nn.Module):
         # Discretize B: dB = dt * B
         dB = dt[:, :, :, None] * B  # (batch, seq_len, n_heads, d_state)
 
-        # Initialize state
         if ssm_state is None:
             h = mx.zeros((batch, n_heads, head_dim, d_state))
         else:
@@ -216,7 +209,6 @@ class Mamba2Block(nn.Module):
         d_state = B.shape[-1]
         cs = chunk_size or self.cfg.chunk_size
 
-        # Pad sequence to multiple of chunk_size
         pad_len = (cs - seq_len % cs) % cs
         if pad_len > 0:
             x = mx.concatenate([x, mx.zeros((batch, pad_len, n_heads, head_dim))], axis=1)
@@ -226,7 +218,6 @@ class Mamba2Block(nn.Module):
 
         n_chunks = (seq_len + pad_len) // cs
 
-        # Reshape into chunks: (batch, n_chunks, chunk_size, ...)
         x_c = x.reshape(batch, n_chunks, cs, n_heads, head_dim)
         B_c = B.reshape(batch, n_chunks, cs, n_heads, d_state)
         C_c = C.reshape(batch, n_chunks, cs, n_heads, d_state)
@@ -262,7 +253,6 @@ class Mamba2Block(nn.Module):
                 * (dt_cum_c[:, :, None, :] - dt_cum_c[:, None, :, :])
             )
 
-            # Causal mask: zero out upper triangle
             causal_mask = mx.tri(cs, cs, k=0)  # (cs, cs) lower triangular
             decay_matrix = decay_matrix * causal_mask[None, :, :, None]
 
@@ -274,7 +264,6 @@ class Mamba2Block(nn.Module):
                 axis=-1,
             )  # (batch, cs, cs, n_heads)
 
-            # Attention weights: decay * BC
             attn = decay_matrix * BC  # (batch, cs, cs, n_heads)
 
             # Apply to x: y_intra[b,i,h,d] = sum_j attn[b,i,j,h] * x[b,j,h,d]
@@ -302,7 +291,6 @@ class Mamba2Block(nn.Module):
 
             y_chunk = y_intra + y_inter
 
-            # Skip connection
             y_chunk = y_chunk + D[None, None, :, None] * xc
 
             outputs.append(y_chunk)
@@ -327,7 +315,6 @@ class Mamba2Block(nn.Module):
 
         y = mx.concatenate(outputs, axis=1)  # (batch, seq_len + pad, n_heads, head_dim)
 
-        # Remove padding
         if pad_len > 0:
             y = y[:, :seq_len]
 
@@ -355,7 +342,6 @@ class Mamba2Block(nn.Module):
         batch, seq_len, _ = x.shape
         cfg = self.cfg
 
-        # Project input
         proj = self.in_proj(x)  # (batch, seq_len, in_proj_dim)
 
         # Split projections
@@ -403,7 +389,6 @@ class Mamba2Block(nn.Module):
         y = self.norm(y)
         y = y * nn.silu(z)
 
-        # Output projection
         output = self.out_proj(y)
 
         # Build cache

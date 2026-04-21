@@ -73,7 +73,6 @@ def tokenize_file(
                 if not ids:
                     continue
 
-                # Add BOS/EOS
                 doc_tokens = [bos] + ids + [eos]
                 all_tokens.extend(doc_tokens)
                 file_tokens += len(doc_tokens)
@@ -94,7 +93,6 @@ def tokenize_file(
     trimmed = n_sequences * seq_len
     tokens_arr = np.array(all_tokens[:trimmed], dtype=np.int32)
 
-    # Save
     out_path = Path(output_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     np.save(str(out_path), tokens_arr)

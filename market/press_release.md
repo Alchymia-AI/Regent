@@ -11,7 +11,7 @@ https://alchymia.ai
 
 ---
 
-## Alchymia Labs Releases Regent, the First Production Language Model Built in Africa
+## Alchymia Labs Releases Regent, a Language Model with Unlimited Context Window
 
 *Open-source model targets legal, healthcare, defense, and industrial sectors where AI output must be accountable, and emerging markets where cloud dependency is not a viable economic model*
 
@@ -42,6 +42,16 @@ The accuracy scoring capability adds less than 0.1 percent to the model's total 
 Regent reasons through complex questions before responding. When a query requires multi-step thinking, the model produces an internal chain of reasoning, then delivers the answer. The reasoning is visible to the caller and can be used for audit, debugging, or compliance review.
 
 The model also calls external tools natively. When it determines it needs information from an API, database, or search engine, it emits a structured tool request, pauses generation, receives the result, and continues. This operates through dedicated tokens in the architecture, not through a plugin system.
+
+**Live knowledge, no retraining**
+
+The model accepts structured knowledge as native input on every request. An organization's knowledge base, policies, patient records, case law, operational procedures, regulatory frameworks, is read directly by the model at inference time. It is not baked into weights during training.
+
+When knowledge changes, the model reflects it on the next request. A new drug interaction, a crop disease outbreak, a fraud pattern, updated AML/KYC rules, a sanctions list change, a commodity price shift, an equipment fault code, a patient history update, a route hazard, a newly published ruling. Any industry where decisions depend on current information. No retraining required. No model update to wait for. For organizations operating in fast-moving clinical, defense, financial, agricultural, or regulatory environments, this is the difference between AI that is current and AI that is months behind.
+
+Other models require retraining to incorporate new information. That process takes months and costs millions. Regent reads it directly.
+
+For the majority of enterprise deployments currently using Retrieval-Augmented Generation (RAG), this is a direct replacement. RAG requires a vector database, an embedding pipeline, a chunking strategy, and a retrieval step that frequently misses relevant context or returns irrelevant results. Regent eliminates that entire layer. Knowledge enters the model structured, typed, and scored through a dedicated encoder. The model distinguishes high-confidence facts from low-confidence ones natively. When uncertain, it retrieves from the knowledge graph automatically at the point of uncertainty. No vector search, no context window pressure, no re-injection cost per request.
 
 **Deployment without cloud dependency**
 
@@ -84,6 +94,12 @@ The goal is structural: frontier-scale AI should be achievable without a single 
 Regent, the open-source tier at 7B to 50B parameters, is designed for the broadest possible deployment, including organizations in markets where commercial licensing is not economically viable. Releasing this tier as open source is a deliberate choice: the organizations that need this most are often the ones least able to pay for it.
 
 Grande Regent, at 70B to one trillion parameters, is a commercial product for organizations that require frontier-scale performance and direct enterprise support. It shares the same architecture as open-source Regent. Workflows built on Regent can migrate to Grande Regent without changes to the integration layer. Grande Regent is distributed through Alchymia Groom with commercial licensing, production-grade tooling, and enterprise SLAs.
+
+**Coming next: Darkhorse**
+
+In the coming months, Alchymia will introduce Darkhorse: the Large Language Action Model (LLAM), first generation. Alchymia's flagship and most capable generalist AI. Darkhorse is designed to decide and execute. Multi-step tasks completed end to end. Millions of tokens of context with compact memory efficiency. The model holds an entire codebase, an entire case file, an entire operational state in working memory at once, makes decisions, and acts on them.
+
+Current AI agents are chat models with external orchestration: prompt chains, retry loops, and tool frameworks built outside the model because the model was never designed to act. Darkhorse is an action model from the ground up. Decision-making and execution are native, not scaffolded. It will change how agents are built and what they are capable of.
 
 **About Alchymia AI Research Labs**
 

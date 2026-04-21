@@ -33,11 +33,8 @@ from urllib.error import URLError
 
 def clean_text(text: str) -> str:
     """Clean a document for training."""
-    # Decode HTML entities
     text = html.unescape(text)
-    # Remove HTML tags
     text = re.sub(r"<[^>]+>", " ", text)
-    # Collapse whitespace
     text = re.sub(r"\s+", " ", text)
     # Remove control characters (keep newlines for splitting)
     text = "".join(c for c in text if c.isprintable() or c in "\n\t")
@@ -46,14 +43,10 @@ def clean_text(text: str) -> str:
 
 def extract_text_from_html(html_content: str) -> str:
     """Extract readable text from HTML, stripping tags and scripts."""
-    # Remove script and style blocks
     text = re.sub(r"<script[^>]*>[\s\S]*?</script>", "", html_content, flags=re.IGNORECASE)
     text = re.sub(r"<style[^>]*>[\s\S]*?</style>", "", text, flags=re.IGNORECASE)
-    # Remove HTML tags
     text = re.sub(r"<[^>]+>", " ", text)
-    # Decode entities
     text = html.unescape(text)
-    # Collapse whitespace
     text = re.sub(r"\s+", " ", text)
     return text.strip()
 
@@ -155,7 +148,6 @@ def scrape_hf_dataset(dataset_name: str, split: str = "train",
         if isinstance(text, str) and len(text) > 50:
             cleaned = clean_text(text)
             if len(cleaned) > 50:
-                # Flatten to single line
                 docs.append(cleaned.replace("\n", " "))
 
         if max_docs and len(docs) >= max_docs:
@@ -247,7 +239,6 @@ def run_pipeline(config_path: str):
         print(f"  Collected {len(docs)} documents")
         all_docs.extend(docs)
 
-    # Shuffle and split
     import random
     random.seed(cfg.get("seed", 42))
     random.shuffle(all_docs)
@@ -258,7 +249,6 @@ def run_pipeline(config_path: str):
     train_docs = all_docs[:split]
     val_docs = all_docs[split:]
 
-    # Write
     train_path = output_dir / "train.txt"
     val_path = output_dir / "val.txt"
 

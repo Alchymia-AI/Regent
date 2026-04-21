@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass, field
-from typing import Callable, Optional
+from typing import Callable
 
 import mlx.core as mx
 
@@ -74,8 +74,14 @@ class GenerateResult:
 #   output: (epg_node_tokens, epg_scalars, epg_categories) or None if no new context
 RetrieveEPGFn = Callable[
     [mx.array, list[int]],
-    Optional[tuple[mx.array, mx.array, mx.array]],
+    tuple[mx.array, mx.array, mx.array] | None,
 ]
+
+
+def _get_grounding(output: dict) -> float:
+    """Extract the last grounding score from model output, defaulting to 1.0."""
+    g = output.get("grounding")
+    return g[:, -1].item() if g is not None else 1.0
 
 
 def _eval_cache(cache: list[dict]) -> None:
@@ -108,14 +114,18 @@ def sample_token(
         logits = mx.where(logits < threshold, mx.array(float("-inf")), logits)
 
     if top_p < 1.0:
-        sorted_logits = mx.sort(logits, axis=-1)
+        sorted_indices = mx.argsort(logits, axis=-1)
+        sorted_logits = mx.take_along_axis(logits, sorted_indices, axis=-1)
         cumulative = mx.cumsum(mx.softmax(sorted_logits, axis=-1), axis=-1)
-        mask = (cumulative - mx.softmax(sorted_logits, axis=-1)) > top_p
+        # Mask tokens whose cumulative probability exceeds top_p (keep the nucleus)
+        cutoff = cumulative - mx.softmax(sorted_logits, axis=-1)
+        mask = cutoff > top_p
         sorted_logits = mx.where(mask, mx.array(float("-inf")), sorted_logits)
-        logits = sorted_logits
+        # Unsort back to original vocabulary order
+        unsort_indices = mx.argsort(sorted_indices, axis=-1)
+        logits = mx.take_along_axis(sorted_logits, unsort_indices, axis=-1)
 
-    probs = mx.softmax(logits, axis=-1)
-    return mx.random.categorical(mx.log(probs + 1e-10))
+    return mx.random.categorical(logits)
 
 
 def generate(
@@ -180,11 +190,7 @@ def generate(
     thinking_tokens: list[int] = []
 
     next_logits = output["logits"][:, -1:, :]   # (1, 1, vocab)
-    next_grounding: float = (
-        output["grounding"][:, -1].item()
-        if output.get("grounding") is not None
-        else 1.0
-    )
+    next_grounding = _get_grounding(output)
 
     # --- Token-by-token generation loop ---
     for step in range(cfg.max_tokens):
@@ -282,8 +288,7 @@ def generate(
         # JSON content tokens until [TOOL_END] or EOS, then parse and return.
         if token_id == cfg.tool_call_id:
             # Step the model forward on [TOOL_CALL] to prime logits for JSON content
-            tool_input = token.reshape(1, 1)
-            output = model(input_ids=tool_input, essence=essence, cache=cache, use_chunked=False)
+            output = model(input_ids=token.reshape(1, 1), essence=essence, cache=cache, use_chunked=False)
             cache = output.get("cache") or cache
             _eval_cache(cache)
             next_logits = output["logits"]
@@ -336,9 +341,8 @@ def generate(
         token_texts.append(tokenizer.decode([token_id]))
 
         # Single-token step: pass accumulated cache so Mamba state carries forward
-        token_input = token.reshape(1, 1)
         output = model(
-            input_ids=token_input,
+            input_ids=token.reshape(1, 1),
             essence=essence,
             cache=cache,
             use_chunked=False,

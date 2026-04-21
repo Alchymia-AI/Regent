@@ -40,6 +40,20 @@ These are not plugins. They are architecture.
 
 **Tweet 4**
 
+Your knowledge base updates. The model sees it immediately. No retraining. No re-deployment.
+
+New drug interaction? Reflected on the next query. Crop disease outbreak? Updated before the next field decision. New fraud pattern? Available immediately. Sanctions list change? In the next AML check. Commodity price shift? In the next risk model. New case law? In the next brief. Equipment fault code? In the next maintenance decision. Patient history update? In the next clinical recommendation. Route hazard? In the next navigation plan.
+
+Every industry where decisions depend on current information. No retraining. No delay.
+
+For most use cases, this replaces RAG entirely. No vector database. No embedding pipeline. No chunking. No retrieval misses. No context window pressure. Knowledge goes in structured and scored. The model reads it natively.
+
+Other models bake knowledge into weights during training. Updating them means months and millions of dollars. Regent reads your live knowledge graph as native input, every request, in real time.
+
+---
+
+**Tweet 5**
+
 Regent is not a transformer.
 
 Every frontier model today is built on the same architecture from a 2017 paper. Regent is a Mamba-2 state-space model with GQA attention at selected layers, a verification head, a structured knowledge graph interface, and a persistent memory system.
@@ -48,7 +62,7 @@ Different engine. Different properties. Different outcomes.
 
 ---
 
-**Tweet 5**
+**Tweet 6**
 
 The second problem: AI is priced as a service.
 
@@ -58,7 +72,7 @@ For a hospital in Lagos or a legal clinic in Dhaka, that is not a viable economi
 
 ---
 
-**Tweet 6**
+**Tweet 7**
 
 Regent ships as weights and code.
 
@@ -70,7 +84,7 @@ The 7B model runs on a $500 edge device.
 
 ---
 
-**Tweet 7 (benchmark table)**
+**Tweet 8 (benchmark table)**
 
 ```
 Capability comparison
@@ -96,7 +110,7 @@ GPT-5 and Opus 4.6 are more capable on general chat. That is not the comparison.
 
 ---
 
-**Tweet 8**
+**Tweet 9**
 
 Two tiers:
 
@@ -108,7 +122,7 @@ Same architecture. Workflows built on one migrate to the other.
 
 ---
 
-**Tweet 9**
+**Tweet 10**
 
 The markets:
 
@@ -118,7 +132,7 @@ What they share: the cost of a wrong answer is measurable, and cloud dependency 
 
 ---
 
-**Tweet 10**
+**Tweet 11**
 
 Regent is the first real language model to come out of Africa.
 
@@ -130,7 +144,7 @@ https://alchymia.ai
 
 ---
 
-**Tweet 11**
+**Tweet 12**
 
 We are also building DSTP, a Distributed Shared Training Protocol.
 
@@ -142,7 +156,7 @@ More on this soon.
 
 ---
 
-**Tweet 12**
+**Tweet 13**
 
 The core belief at Alchymia: developing economies do not need cheaper versions of Western AI. They need AI with different properties.
 
@@ -152,7 +166,23 @@ This is not charity. It is the 10x magnitude of ingenuity it takes to compete fr
 
 ---
 
-**Tweet 13 (CTA)**
+**Tweet 14**
+
+Coming in the next few months: Darkhorse.
+
+Alchymia's Large Language Action Model (LLAM). First generation. Our flagship generalist AI.
+
+Millions of tokens of context. The same fixed memory efficiency as Regent. Built to act, not just answer. The model that does the work, not the model that drafts the memo about the work.
+
+Today, an "AI agent" is a prompt chain duct-taped to an LLM that was never designed to act. Darkhorse is a model built from the ground up to decide and execute. Not a chat model with agent scaffolding on top. An action model, out of the box.
+
+Millions of tokens of context. Compact memory efficiency. Makes decisions and carries them out.
+
+More soon.
+
+---
+
+**Tweet 15 (CTA)**
 
 Regent is available now on HuggingFace.
 

@@ -4,7 +4,7 @@
 The Model Built for Decisions That Matter
 
 ## Subtitle
-Regent is the first production language model built in Africa. It is designed for work where wrong answers have a cost, and for the three billion people in markets where cloud AI pricing does not work.
+Regent is the first production language model built for emerging markets. It is designed for work where wrong answers have a cost, and for the three billion people in markets where cloud AI pricing does not work.
 
 ---
 
@@ -38,7 +38,23 @@ Transformers grow their memory linearly with conversation length. Regent maintai
 
 Transformers require all knowledge to be serialized into text and injected as prompt context. Regent accepts structured knowledge nodes, typed, scored, and categorized, as native input. An organization's knowledge base is first-class input, not text the model has to parse.
 
+And because that knowledge is input, not weights, it is live. Update your database and the model sees the change on the next request. No retraining. No waiting for a model provider to release a new version that includes your latest data. A new drug interaction discovered today is available to the model today. A regulatory change published this morning is reflected in outputs this afternoon. A crop disease alert, a fraud pattern, updated AML/KYC rules, a sanctions list change, a commodity price movement, an equipment fault code, a patient history update, a route hazard, new case law: all live on the next request. Any industry where decisions depend on current information. Other models require retraining to incorporate new knowledge, a process that costs months and millions. Regent reads it directly.
+
 These are not incremental improvements. They are properties that the transformer architecture cannot provide through scale alone.
+
+## Why this replaces RAG for most use cases
+
+The current industry workaround for giving a model current knowledge is RAG: Retrieval-Augmented Generation. It works, barely. You maintain a vector database. You embed your documents. At query time you search for relevant chunks, serialize them into text, and paste them into the prompt. The model reads them as unstructured text alongside the user's question.
+
+The problems with RAG are well known to anyone who has deployed it:
+
+The retrieval step misses relevant context and retrieves irrelevant context. The model has no way to distinguish high-confidence facts from low-confidence ones because everything arrives as flat text. Context windows fill up. Costs scale with the amount of context injected. The same knowledge is re-embedded and re-injected on every single request. There is no persistence. And the model still has no idea which parts of its answer came from the retrieved context and which it invented.
+
+Regent eliminates the need for RAG in the majority of cases. Knowledge nodes are structured, typed, scored with confidence and recency, and categorized. The model processes them as native input through a dedicated encoder, not as text pasted into a prompt. It knows the difference between a high-confidence fact and a low-confidence one because that metadata is part of the input. It knows which nodes are recent and which are stale. When it is uncertain, it retrieves from the graph automatically at the point of uncertainty, not at the beginning of the request based on a keyword match.
+
+The result: no vector database, no embedding pipeline, no retrieval step, no chunking strategy, no context window pressure, no per-request re-injection cost. You maintain your knowledge graph. The model reads it.
+
+For organizations that have spent months building and tuning RAG pipelines and are still dealing with retrieval misses, hallucinated answers, and growing infrastructure costs, this is a replacement, not an addition to the stack.
 
 ## The second problem: who AI actually serves today
 
@@ -114,7 +130,25 @@ Regent is also compatible with HuggingFace Transformers. Organizations already u
 
 Regent also exposes an OpenAI-compatible API endpoint. Any application, SDK, or tool built for OpenAI's chat completions API works with Regent out of the box, with no code changes. Switch the base URL, and it works.
 
-*Regent 7B through 50B is available now on HuggingFace. Grande Regent availability and commercial terms are available through Alchymia Groom. Technical documentation and model weights are available at the Alchymia AI Research Labs repository.*
+## What comes next: Darkhorse
+
+Regent is built for decisions. It tells you what is true, what is uncertain, and what it does not know. It is the model you trust to inform an action.
+
+In the coming months, Alchymia is introducing Darkhorse: the Large Language Action Model (LLAM), first generation. Our flagship and most capable generalist AI.
+
+Darkhorse decides and executes. Multi-step tasks completed end to end. Millions of tokens of context window with compact memory efficiency. The model holds an entire codebase, an entire case file, an entire patient history, an entire supply chain state in context at once, makes decisions, and acts on them.
+
+Today, every AI agent in production is a chat model with scaffolding bolted on. Prompt chains, retry loops, tool orchestration frameworks, error recovery layers. All built outside the model because the model itself was never designed to act. It was designed to complete text. The agent behavior is duct tape.
+
+Darkhorse changes this. It is a model that decides and executes out of the box. Action is native, not scaffolded. Multi-step planning, tool use, state management, error recovery: these are properties of the model, not of the framework wrapped around it. It will change how agents are perceived, how they are built, and what they are capable of.
+
+Same deployment model: owned, offline, fixed cost. Same ethos: AI that works where you are, not where the cloud provider is.
+
+More details in the coming months.
+
+---
+
+*Regent 7B through 50B is available now on HuggingFace. Grande Regent availability and commercial terms are available through Alchymia Groom. Technical documentation and model weights are available at the Alchymia Labs repository.*
 
 *https://alchymia.ai*
 *research@alchymia.ai*

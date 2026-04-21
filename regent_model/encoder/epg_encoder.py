@@ -47,13 +47,11 @@ class EPGNodeEncoder(nn.Module):
         """
         batch, n_nodes, max_tokens, d_model = token_embeds.shape
 
-        # Flatten batch and nodes for processing
         x = token_embeds.reshape(batch * n_nodes, max_tokens, d_model)
 
         for layer in self.layers:
             x = layer(x)
 
-        # Mean pool over token dimension
         x = x.mean(axis=1)  # (batch * n_nodes, d_model)
         x = self.pool_norm(x)
 
@@ -75,7 +73,8 @@ class EPGEncoderLayer(nn.Module):
         )
 
     def __call__(self, x: mx.array) -> mx.array:
-        x = x + self.attn(self.norm1(x), self.norm1(x), self.norm1(x))
+        h = self.norm1(x)
+        x = x + self.attn(h, h, h)
         x = x + self.ff(self.norm2(x))
         return x
 
@@ -104,19 +103,16 @@ class EPGEncoder(nn.Module):
     ):
         super().__init__()
 
-        # Text encoder (processes tokenized key+value)
         self.text_encoder = EPGNodeEncoder(
             d_model, n_layers=n_encoder_layers, n_heads=encoder_heads, norm_eps=norm_eps
         )
 
-        # Scalar feature projection
         # scalar_features: [confidence, activation, valence, emotional_weight]
         # + category embedding
         self.category_embed = nn.Embedding(n_categories, category_embed_dim)
         scalar_total = scalar_features + category_embed_dim
         self.scalar_proj = nn.Linear(scalar_total, d_model, bias=False)
 
-        # Fusion: combine text embedding + scalar projection
         self.fusion = nn.Sequential(
             nn.Linear(d_model * 2, d_model, bias=False),
             nn.SiLU(),
@@ -147,15 +143,12 @@ class EPGEncoder(nn.Module):
             prefix_embeds: (batch, n_nodes, d_model)
                 Dense embeddings to prepend to the token sequence
         """
-        # Encode text
         text_embeds = self.text_encoder(node_token_embeds)  # (batch, n_nodes, d_model)
 
-        # Encode scalars + category
         cat_embeds = self.category_embed(category_ids)  # (batch, n_nodes, category_embed_dim)
         scalars = mx.concatenate([scalar_features, cat_embeds], axis=-1)
         scalar_embeds = self.scalar_proj(scalars)  # (batch, n_nodes, d_model)
 
-        # Fuse text and scalar features
         combined = mx.concatenate([text_embeds, scalar_embeds], axis=-1)  # (batch, n_nodes, 2*d_model)
         fused = self.fusion(combined)  # (batch, n_nodes, d_model)
 

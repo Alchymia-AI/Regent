@@ -60,7 +60,6 @@ class RegentConfig:
     ver_enabled: bool = True
     ver_hidden_dim: int = 128
 
-    # EPG encoder
     epg_max_nodes: int = 32
     epg_scalar_features: int = 5
     epg_n_categories: int = 15
@@ -204,23 +203,18 @@ class RegentBlock(nn.Module):
         cache: dict | None = None,
         use_chunked: bool = True,
     ) -> tuple[mx.array, dict | None]:
-        # Pre-norm
         h = self.pre_norm(x)
 
-        # Block forward
         if self.is_attention:
             block_out, new_cache = self.block(h, cache=cache)
         else:
             block_out, new_cache = self.block(h, cache=cache, use_chunked=use_chunked)
 
-        # Residual
         x = x + block_out
 
-        # Feed-forward (attention layers only)
         if self.is_attention:
             x = x + self.ff(self.ff_norm(x))
 
-        # Essence conditioning injection
         if essence_cond is not None:
             x = x + essence_cond
 
@@ -244,10 +238,8 @@ class RegentModel(nn.Module):
         super().__init__()
         self.cfg = cfg
 
-        # Token embedding
         self.embed = nn.Embedding(cfg.vocab_size, cfg.d_model)
 
-        # EPG encoder
         self.epg_encoder = EPGEncoder(
             d_model=cfg.d_model,
             scalar_features=cfg.epg_scalar_features,
@@ -258,13 +250,10 @@ class RegentModel(nn.Module):
             norm_eps=cfg.norm_eps,
         )
 
-        # Essence conditioner
         self.essence_cond = EssenceConditioner(cfg.essence_input_dim, cfg.d_model)
 
-        # Backbone layers
         self.layers = [RegentBlock(i, cfg) for i in range(cfg.n_layer)]
 
-        # Output heads
         self.gen_head = GenHead(cfg.d_model, cfg.vocab_size, cfg.norm_eps)
 
         if cfg.ver_enabled:
@@ -272,7 +261,6 @@ class RegentModel(nn.Module):
         else:
             self.ver_head = None
 
-        # Tie embedding weights
         if cfg.tie_embeddings:
             self.gen_head.tie_weights(self.embed.weight)
 
@@ -290,15 +278,12 @@ class RegentModel(nn.Module):
         token_embeds = self.embed(input_ids)  # (batch, seq_len, d_model)
 
         if epg_node_tokens is not None and epg_scalars is not None and epg_categories is not None:
-            # Embed EPG node tokens using shared embedding
             epg_token_embeds = self.embed(epg_node_tokens)  # (batch, n_nodes, max_node_tokens, d_model)
 
-            # Encode EPG nodes into prefix embeddings
             prefix = self.epg_encoder(
                 epg_token_embeds, epg_scalars, epg_categories
             )  # (batch, n_nodes, d_model)
 
-            # Prepend to token sequence
             token_embeds = mx.concatenate([prefix, token_embeds], axis=1)
 
         return token_embeds
@@ -325,7 +310,6 @@ class RegentModel(nn.Module):
         """
         cfg = self.cfg
 
-        # Compute essence conditioning once
         ess_cond = self.essence_cond(essence) if essence is not None else None
 
         new_caches = [] if cache is not None else None
@@ -374,22 +358,17 @@ class RegentModel(nn.Module):
                 hidden: (batch, seq_len, d_model) — final hidden states
                 cache: updated per-layer caches
         """
-        # Build input embeddings with optional EPG prefix
         x = self._build_prefix(input_ids, epg_node_tokens, epg_scalars, epg_categories)
 
-        # Run backbone
         h, new_caches = self.backbone(x, essence=essence, cache=cache, use_chunked=use_chunked)
 
         # If EPG prefix was prepended, slice it off for head computation
         # (the prefix influenced the backbone but we don't need logits for it)
-        n_prefix = 0
         if epg_node_tokens is not None:
-            n_prefix = epg_node_tokens.shape[1]
-            h_for_heads = h[:, n_prefix:]
+            h_for_heads = h[:, epg_node_tokens.shape[1]:]
         else:
             h_for_heads = h
 
-        # Compute outputs
         logits = self.gen_head(h_for_heads)
 
         result = {
@@ -408,27 +387,15 @@ class RegentModel(nn.Module):
         return [{} for _ in range(self.cfg.n_layer)]
 
     def count_parameters(self) -> dict:
-        """Count parameters by component."""
-        def _count(module):
-            return sum(p.size for p in module.parameters().values() if isinstance(p, mx.array))
-
-        # Flatten nested parameter dicts
-        def _count_recursive(params):
-            total = 0
+        """Count total parameters."""
+        def _count(params):
             if isinstance(params, mx.array):
                 return params.size
             if isinstance(params, dict):
-                for v in params.values():
-                    total += _count_recursive(v)
+                return sum(_count(v) for v in params.values())
             if isinstance(params, list):
-                for v in params:
-                    total += _count_recursive(v)
-            return total
+                return sum(_count(v) for v in params)
+            return 0
 
-        all_params = self.parameters()
-        total = _count_recursive(all_params)
-
-        return {
-            "total": total,
-            "total_millions": round(total / 1e6, 1),
-        }
+        total = _count(self.parameters())
+        return {"total": total, "total_millions": round(total / 1e6, 1)}

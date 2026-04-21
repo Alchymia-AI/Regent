@@ -87,6 +87,9 @@ class PackedTokenIterator:
     def shuffle(self):
         np.random.shuffle(self._order)
 
+    def reset(self):
+        self._pos = 0
+
     def __len__(self) -> int:
         return self.n_batches
 
@@ -176,8 +179,6 @@ def load_checkpoint(model: RegentModel, path: str) -> int:
 
 
 # ---------------------------------------------------------------------------
-# Validation
-# ---------------------------------------------------------------------------
 
 def run_validation(model: RegentModel, val_iter: PackedTokenIterator, max_batches: int = 50) -> dict:
     """Run validation and return metrics."""
@@ -231,7 +232,6 @@ def train(
     val_interval: int = 500,
     max_val_batches: int = 50,
 ):
-    # Load configs
     model_cfg = RegentConfig.from_yaml(config_path)
     train_cfg = TrainConfig.from_yaml(config_path)
 
@@ -242,19 +242,16 @@ def train(
     print(f"SSM: d_state={model_cfg.ssm_d_state}, n_heads={model_cfg.ssm_n_heads}")
     print(f"Attention layers: {model_cfg.attn_layers}")
 
-    # Build model
     model = RegentModel(model_cfg)
     params = model.count_parameters()
     print(f"Parameters: {params['total_millions']}M")
 
-    # Resume
     start_step = 0
     if resume_from:
         print(f"Resuming from {resume_from}")
         start_step = load_checkpoint(model, resume_from)
         print(f"  Resuming at step {start_step}")
 
-    # Data
     print(f"\nTrain data: {train_data}")
     train_iter = PackedTokenIterator(train_data, train_cfg.max_seq_len, train_cfg.batch_size)
     print(f"  Sequences: {train_iter.n_sequences:,}")
@@ -267,17 +264,13 @@ def train(
         val_iter = PackedTokenIterator(val_data, train_cfg.max_seq_len, train_cfg.batch_size)
         print(f"  Sequences: {val_iter.n_sequences:,}")
 
-    # Optimizer
     optimizer = optim.AdamW(learning_rate=train_cfg.lr, weight_decay=train_cfg.weight_decay)
 
-    # Gradient function
     loss_and_grad_fn = nn.value_and_grad(model, compute_lm_loss)
 
-    # Checkpoint dir
     ckpt_dir = Path(checkpoint_dir) / "base"
     ckpt_dir.mkdir(parents=True, exist_ok=True)
 
-    # Effective batch size
     eff_batch = train_cfg.batch_size * train_cfg.gradient_accumulation
     max_steps = train_cfg.max_steps
 
@@ -293,19 +286,15 @@ def train(
         print(f"  Val every: {val_interval} steps")
     print("=" * 60)
 
-    # Shuffle data
     train_iter.shuffle()
 
-    # Training state
     step = start_step
     accum_loss = 0.0
-    accum_tokens = 0
     accum_grads = None
     accum_count = 0
     best_val_loss = float("inf")
     step_start = time.time()
 
-    # Log file
     log_path = ckpt_dir / "train_log.jsonl"
     log_file = open(log_path, "a")
 
@@ -314,10 +303,8 @@ def train(
     while step < max_steps:
         batch = next(train_iter)
 
-        # Forward + backward
         loss, grads = loss_and_grad_fn(model, batch)
 
-        # Accumulate gradients
         if accum_grads is None:
             accum_grads = grads
         else:
@@ -326,14 +313,11 @@ def train(
         accum_loss += loss.item()
         accum_count += 1
 
-        # Step when accumulation is complete
         if accum_count >= train_cfg.gradient_accumulation:
-            # Average gradients
             avg_grads = mu.tree_map(
                 lambda g: g / train_cfg.gradient_accumulation, accum_grads
             )
 
-            # Clip gradients
             grad_norm_sq = sum(
                 (v * v).sum().item()
                 for _, v in mu.tree_flatten(avg_grads)
@@ -345,20 +329,16 @@ def train(
                 scale = train_cfg.grad_clip / (grad_norm + 1e-8)
                 avg_grads = mu.tree_map(lambda g: g * scale, avg_grads)
 
-            # Update learning rate
             lr = cosine_schedule(step, train_cfg.warmup_steps, max_steps, train_cfg.lr, train_cfg.min_lr)
             optimizer.learning_rate = mx.array(lr)
 
-            # Apply gradients
-            optimizer.apply_gradients(avg_grads, model.parameters())
+            model.update(optimizer.apply_gradients(avg_grads, model))
             mx.eval(model.parameters(), optimizer.state)
 
-            # Compute average loss for this step
             avg_loss = accum_loss / accum_count
 
             step += 1
 
-            # Log
             if step % log_interval == 0:
                 elapsed = time.time() - step_start
                 tokens_per_sec = (eff_batch * train_cfg.max_seq_len * log_interval) / max(elapsed, 1e-6)
@@ -383,7 +363,6 @@ def train(
                 )
                 step_start = time.time()
 
-            # Validation
             if val_iter and step % val_interval == 0:
                 val_metrics = run_validation(model, val_iter, max_val_batches)
                 print(f"  --- VAL step {step}: loss={val_metrics['val_loss']}, ppl={val_metrics['val_ppl']} ---")
@@ -397,18 +376,15 @@ def train(
                     print(f"  New best val loss: {best_val_loss}")
 
                 # Reset val iterator position
-                val_iter._pos = 0
+                val_iter.reset()
 
-            # Periodic checkpoint
             if step % save_interval == 0:
                 save_checkpoint(model, optimizer, step, avg_loss, ckpt_dir)
 
-            # Reset accumulation
             accum_loss = 0.0
             accum_count = 0
             accum_grads = None
 
-    # Final save
     save_checkpoint(model, optimizer, step, avg_loss, ckpt_dir)
     log_file.close()
 

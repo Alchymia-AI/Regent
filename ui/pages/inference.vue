@@ -58,6 +58,10 @@
             <input v-model.number="genConfig.temperature" type="number" step="0.05" min="0" max="2" class="input text-xs py-1" />
           </div>
           <div>
+            <p class="text-xs text-slate-500 mb-1">Top-p</p>
+            <input v-model.number="genConfig.top_p" type="number" step="0.05" min="0" max="1" class="input text-xs py-1" />
+          </div>
+          <div>
             <p class="text-xs text-slate-500 mb-1">Max tokens</p>
             <input v-model.number="genConfig.max_tokens" type="number" step="64" min="64" max="4096" class="input text-xs py-1" />
           </div>
@@ -104,8 +108,22 @@
 
           <!-- Assistant bubble -->
           <div v-else class="max-w-2xl space-y-2">
-            <div class="bg-surface-raised border border-surface-border rounded-lg px-4 py-3 text-sm leading-relaxed">
-              <!-- Grounding token view -->
+            <!-- Thinking block -->
+            <div v-if="msg.thinking" class="bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-xs text-slate-400 leading-relaxed">
+              <p class="text-xs text-slate-500 font-medium mb-1">Thinking</p>
+              <p class="whitespace-pre-wrap">{{ msg.thinking }}</p>
+            </div>
+
+            <!-- Tool call indicator -->
+            <div v-if="msg.tool_calls && msg.tool_calls.length" class="bg-amber-950 border border-amber-800 rounded-lg px-4 py-2 text-xs text-amber-300">
+              <p class="font-medium mb-1">Tool call</p>
+              <div v-for="tc in msg.tool_calls" :key="tc.name" class="font-mono">
+                {{ tc.name }}({{ JSON.stringify(tc.arguments) }})
+              </div>
+            </div>
+
+            <!-- Main response -->
+            <div v-if="msg.content || (msg.token_texts && msg.token_texts.length)" class="bg-surface-raised border border-surface-border rounded-lg px-4 py-3 text-sm leading-relaxed">
               <grounding-tokens
                 v-if="msg.token_texts && msg.token_texts.length"
                 :tokens="msg.token_texts"
@@ -118,6 +136,7 @@
             <div v-if="msg.stats" class="flex flex-wrap gap-3 text-xs text-slate-500 px-1">
               <span>{{ msg.stats.total_tokens }} tokens</span>
               <span>{{ msg.stats.inference_time_ms }}ms</span>
+              <span v-if="msg.stats.stop_reason !== 'eos'" class="text-amber-400">{{ msg.stats.stop_reason }}</span>
               <span v-if="msg.stats.halted_positions.length">
                 <span class="badge-halt">{{ msg.stats.halted_positions.length }} halt(s)</span>
               </span>
@@ -193,6 +212,7 @@ export default {
       nodeSearch: '',
       genConfig: {
         temperature: 0.7,
+        top_p: 0.9,
         max_tokens: 512,
         verification: true,
         grounding_threshold: 0.4,
@@ -251,9 +271,10 @@ export default {
 
       try {
         const body = {
-          messages: this.messages
-            .filter(m => m.role === 'user')
-            .map(m => ({ role: 'user', content: m.content })),
+          messages: this.messages.map(m => ({
+            role: m.role,
+            content: m.content || '',
+          })),
           ...this.genConfig,
           essence: { ...this.essence },
           epg_nodes: this.selectedNodes.length ? this.selectedNodes.map(n => ({
@@ -272,14 +293,17 @@ export default {
         this.sessionId = res.session_id
 
         this.messages.push({
-          role:            'assistant',
-          content:         res.text,
-          token_texts:     res.token_texts     || [],
+          role:             'assistant',
+          content:          res.text,
+          thinking:         res.thinking || '',
+          tool_calls:       res.tool_calls || [],
+          token_texts:      res.token_texts     || [],
           grounding_scores: res.grounding_scores || [],
           stats: {
-            total_tokens:     res.total_tokens,
+            total_tokens:      res.total_tokens,
             inference_time_ms: res.inference_time_ms,
-            halted_positions: res.halted_positions || [],
+            halted_positions:  res.halted_positions || [],
+            stop_reason:       res.stop_reason || 'eos',
           },
         })
       } catch (e) {

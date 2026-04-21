@@ -139,7 +139,6 @@ def export_hf(
         # Ver head
         "ver_enabled":          config.ver_enabled,
         "ver_hidden_dim":       config.ver_hidden_dim,
-        # EPG encoder
         "epg_max_nodes":            config.epg_max_nodes,
         "epg_scalar_features":      config.epg_scalar_features,
         "epg_n_categories":         config.epg_n_categories,

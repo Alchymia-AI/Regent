@@ -19,8 +19,6 @@ Special tokens:
     [/THINK]      = 11 — marks end of a thinking/reasoning block
 """
 
-from pathlib import Path
-
 import sentencepiece as spm
 
 

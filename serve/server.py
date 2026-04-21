@@ -37,7 +37,6 @@ import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional
-from urllib.error import URLError
 from urllib.request import Request, urlopen
 
 import mlx.core as mx
@@ -46,7 +45,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 from regent_model.layers.model import RegentModel, RegentConfig
-from serve.generate import generate, GenerateConfig, GenerateResult
+from serve.generate import generate, GenerateConfig
 
 
 app = FastAPI(title="Regent Model Server", version="0.2.0")
@@ -163,9 +162,7 @@ def encode_epg_nodes(
     category_ids: list[int] = []
 
     for node in nodes:
-        # Tokenise key + value, truncate to budget
         ids = tokenizer.encode_epg_node(node.key, node.value, max_tokens=MAX_NODE_TOKENS)
-        # Pad to MAX_NODE_TOKENS
         ids = ids + [tokenizer.pad_id] * (MAX_NODE_TOKENS - len(ids))
         token_matrix.append(ids)
 
