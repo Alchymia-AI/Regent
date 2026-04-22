@@ -63,12 +63,12 @@
   <div class="container">
     <div class="stats">
       <div class="stat">
-        <div class="number">4GB</div>
-        <div class="label">7B model on a $500 edge device, no cloud needed</div>
+        <div class="number">1GB</div>
+        <div class="label">Fixed memory — same at 100 tokens or 1 million</div>
       </div>
       <div class="stat">
-        <div class="number">2MB</div>
-        <div class="label">Fixed memory at any session length, hours or days</div>
+        <div class="number">∞</div>
+        <div class="label">Context window — runs for hours, days, or weeks</div>
       </div>
       <div class="stat">
         <div class="number">0.1%</div>
@@ -205,7 +205,7 @@
       <div class="novelty-item">
         <div class="novelty-num">05</div>
         <h3>Constant memory regardless of session length</h3>
-        <p>Other models accumulate gigabytes over a multi-hour session. Regent compresses past context into a fixed 2MB buffer. It does not grow. A drone runs six hours on the same memory it used in the first second.</p>
+        <p>Other models accumulate tens of gigabytes over a multi-hour session. Regent compresses past context into a fixed 1 GB state. It does not grow. A session running for weeks uses the same memory it used in the first second.</p>
       </div>
 
       <div class="novelty-item">
@@ -341,7 +341,7 @@
         </tr>
         <tr>
           <td>Fixed memory at any session length</td>
-          <td><span class="check">Yes (~2MB)</span></td>
+          <td><span class="check">Yes (~1 GB fixed)</span></td>
           <td><span class="cross">Grows with session</span></td>
           <td><span class="cross">Grows with session</span></td>
           <td><span class="cross">Grows with session</span></td>
@@ -376,8 +376,8 @@
           <td><span class="check">Yes</span></td>
         </tr>
         <tr>
-          <td>Runs on $500 edge hardware</td>
-          <td><span class="check">7B fits in 4GB</span></td>
+          <td>Self-hosted, single server</td>
+          <td><span class="check">7B on 16 GB GPU</span></td>
           <td><span class="cross">API only</span></td>
           <td><span class="cross">API only</span></td>
           <td><span class="cross">API only</span></td>
@@ -439,9 +439,9 @@
         <tr>
           <td class="model-name">Regent 7B</td>
           <td>Hybrid recurrent + attention</td>
-          <td>~2 MB</td>
-          <td>~2 MB</td>
-          <td>~2 MB</td>
+          <td>~1 GB</td>
+          <td>~1 GB</td>
+          <td>~1 GB</td>
         </tr>
         <tr>
           <td class="model-name">GPT-5</td>
@@ -492,9 +492,9 @@
         <div class="size-label">Regent | Open Source</div>
         <div class="specs">
           <div class="spec"><span class="label">License</span><span class="value">Open</span></div>
-          <div class="spec"><span class="label">Memory (INT4)</span><span class="value">~4 GB</span></div>
-          <div class="spec"><span class="label">Hardware</span><span class="value">Jetson Orin, MacBook, edge</span></div>
-          <div class="spec"><span class="label">Target</span><span class="value">Embedded / Field deployment</span></div>
+          <div class="spec"><span class="label">Weights (INT4)</span><span class="value">~4 GB + 1 GB state</span></div>
+          <div class="spec"><span class="label">Hardware</span><span class="value">Single GPU (16 GB+)</span></div>
+          <div class="spec"><span class="label">Target</span><span class="value">Self-hosted / On-premise</span></div>
         </div>
       </div>
 
@@ -667,7 +667,7 @@ out = model.generate(
       <div class="use-case">
         <h3>Robotics and Drones</h3>
         <div class="fit strong">Strong fit</div>
-        <p>8-hour shifts and 6-hour missions need fixed memory. 7B at INT4 runs in 4GB on a Jetson Orin. Accuracy score gates actions before execution.</p>
+        <p>8-hour shifts and 6-hour missions need fixed memory. The state never grows regardless of duration. Accuracy score gates actions before execution.</p>
       </div>
       <div class="use-case">
         <h3>Government and Defense</h3>
@@ -727,7 +727,7 @@ out = model.generate(
       <div class="use-case">
         <h3>Agriculture and Precision Farming</h3>
         <div class="fit strong">Strong fit</div>
-        <p>Unreliable connectivity, thin margins, structured knowledge of crop disease and soil. Zero marginal cost after deployment is the only viable model at this scale. 7B on a $500 device is the only distribution path that reaches 800 million smallholder farmers.</p>
+        <p>Unreliable connectivity, thin margins, structured knowledge of crop disease and soil. Zero marginal cost after deployment is the only viable model at this scale. Self-hosted deployment is the only distribution path that reaches this market.</p>
       </div>
       <div class="use-case">
         <h3>Emerging Markets</h3>

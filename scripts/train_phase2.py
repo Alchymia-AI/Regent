@@ -209,7 +209,6 @@ def train(
     params = model.count_parameters()
     print(f"Parameters: {params['total_millions']}M")
 
-    # Tokenizer
     tokenizer = RegentTokenizer(tokenizer_path)
 
     train_iter = ConversationIterator(train_data, tokenizer, train_cfg.max_seq_len, train_cfg.batch_size)

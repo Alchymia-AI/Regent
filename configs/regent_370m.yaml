@@ -9,7 +9,7 @@ model:
   # Mamba-2 SSM parameters
   ssm:
     expand: 2            # d_inner = expand * d_model = 2048
-    d_state: 64          # state dimension per head
+    d_state: 512         # ~456 MB fixed state at fp16
     d_conv: 4            # causal conv1d kernel width
     n_heads: 16          # multi-head SSM (head_dim = d_inner / n_heads = 128)
 

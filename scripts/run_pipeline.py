@@ -30,7 +30,6 @@ Usage:
 """
 
 import argparse
-import json
 import os
 import subprocess
 import sys
@@ -392,6 +391,44 @@ def run_pipeline(
         stages_skipped += 1
 
     # -----------------------------------------------------------------------
+    # STAGE 8: PHASE 5 — ADAPTIVE GATE CALIBRATION
+    # -----------------------------------------------------------------------
+    if start_stage <= 8:
+        # Only runs if adaptive_gate is enabled in the config
+        # Uses the same training data as Phase 1 (packed tokens)
+        phase5_dir = Path(checkpoint_dir) / "adaptive_gate"
+        phase5_ckpt = _find_latest_checkpoint(phase5_dir)
+
+        if phase5_ckpt is None:
+            base_ckpt = (
+                _find_latest_checkpoint(Path(checkpoint_dir) / "alignment")
+                or phase3_ckpt or phase2_ckpt or phase1_ckpt
+            )
+            train_npy = "data/processed/train.npy"
+
+            if check_output_exists(train_npy) and base_ckpt:
+                cmd = [
+                    PYTHON, "scripts/train_phase5.py",
+                    "--config", config,
+                    "--train-data", train_npy,
+                    "--tokenizer", tokenizer_path,
+                    "--base-checkpoint", base_ckpt,
+                ]
+                ok = run_cmd(cmd, "Stage 8: Phase 5 — Adaptive gate calibration")
+                if not ok:
+                    stages_failed += 1
+                else:
+                    stages_run += 1
+            else:
+                print("\n  → Stage 8: No training data or base checkpoint, skipping")
+                stages_skipped += 1
+        else:
+            print(f"\n  → Stage 8: Phase 5 checkpoint exists: {phase5_ckpt}")
+            stages_skipped += 1
+    elif start_stage > 8:
+        stages_skipped += 1
+
+    # -----------------------------------------------------------------------
     # Summary
     # -----------------------------------------------------------------------
     total_time = time.time() - pipeline_start
@@ -406,7 +443,8 @@ def run_pipeline(
 
     # Find final checkpoint
     final = (
-        _find_latest_checkpoint(Path(checkpoint_dir) / "alignment")
+        _find_latest_checkpoint(Path(checkpoint_dir) / "adaptive_gate")
+        or _find_latest_checkpoint(Path(checkpoint_dir) / "alignment")
         or _find_latest_checkpoint(Path(checkpoint_dir) / "verification")
         or _find_latest_checkpoint(Path(checkpoint_dir) / "identity")
         or _find_latest_checkpoint(Path(checkpoint_dir) / "base")
@@ -443,8 +481,8 @@ def main():
     parser.add_argument("--config", required=True, help="Model config YAML")
     parser.add_argument("--scrape-config", default=None, help="Scraping pipeline YAML")
     parser.add_argument("--synthetic", action="store_true", help="Use synthetic data for all phases")
-    parser.add_argument("--start-stage", type=int, default=1, choices=range(1, 8),
-                        help="Start from stage N (1=scrape, 4=phase1, 5=phase2, 6=phase3, 7=phase4)")
+    parser.add_argument("--start-stage", type=int, default=1, choices=range(1, 9),
+                        help="Start from stage N (1=scrape, 4=phase1, 5=phase2, 6=phase3, 7=phase4, 8=phase5-gate)")
     parser.add_argument("--checkpoint-dir", default="checkpoints")
     args = parser.parse_args()
 

@@ -78,7 +78,7 @@ One forward pass. The verification head is a 2-layer MLP on the same hidden stat
 
 Two reasons.
 
-First, the state. Mamba-2 has a fixed-size recurrent state. For the 7B config it is roughly 2 MB regardless of session length. A transformer's KV cache grows linearly with context. The Regent runs for hours or days at a time. A transformer hits a memory wall. Mamba-2 does not.
+First, the state. Mamba-2 has a fixed-size recurrent state. For the 7B config it is ~1 GB regardless of session length. A transformer's KV cache grows linearly with context — 50+ GB for long sessions. Regent runs for hours, days, or weeks at the same fixed cost. A transformer hits a memory wall. Mamba-2 does not.
 
 Second, the math. The whitepaper defines cognition as a state-space process with a decay term, an input-gated update, and a memory contribution. Mamba-2's selective scan is that equation. We get the whitepaper's dynamics in the weights instead of approximating them through attention over text.
 
@@ -301,7 +301,7 @@ Air-gap deployment is a hard requirement that eliminates API-based competitors. 
 
 ### Robotics
 
-Physical robots running continuous control loops cannot accumulate memory over an 8-hour shift. The 7B Regent at INT4 runs on a Jetson Orin in roughly 4 GB and stays there. The Ver Head lets the planner reject actions whose justification is fabricated, before the action is executed.
+Physical robots running continuous control loops cannot accumulate memory over an 8-hour shift. Regent's fixed memory state never grows regardless of duration. The Ver Head lets the planner reject actions whose justification is fabricated, before the action is executed.
 
 ### Drones and autonomous vehicles
 
@@ -345,7 +345,7 @@ Every figure needs a source. Long document review sessions over structured finan
 
 ### Agriculture and precision farming
 
-Smallholder farmers in regions with unreliable connectivity. Structured knowledge of crop disease, soil types, weather patterns, and market prices fits the EPG format. Zero marginal cost after deployment is the only viable economic model at this scale. The 7B model on a $500 device is the only distribution path that reaches this market.
+Smallholder farmers in regions with unreliable connectivity. Structured knowledge of crop disease, soil types, weather patterns, and market prices fits the EPG format. Zero marginal cost after deployment is the only viable economic model at this scale. Self-hosted deployment is the only distribution path that reaches this market.
 
 ### Where the model is not positioned to play
 

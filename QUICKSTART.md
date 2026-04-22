@@ -322,7 +322,7 @@ The server starts on port 8400 with the same API as the development server.
 
 ## 10. INT4 quantization for edge deployment
 
-To run the 7B model on a Jetson Orin or similar edge device, quantize to INT4 after export:
+To reduce the 7B model's weight footprint, quantize to INT4 after export:
 
 ```bash
 pip install auto-gptq optimum
@@ -344,7 +344,7 @@ tokenizer.save_pretrained('export/regent-7b-int4')
 "
 ```
 
-Expected size: ~4GB for the 7B model at INT4. Runs on devices with 6GB+ VRAM.
+Expected weight size: ~4 GB for the 7B model at INT4. Requires ~5 GB additional for the 1 GB fixed state plus overhead. Runs on GPUs with 16 GB+ VRAM.
 
 ---
 

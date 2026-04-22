@@ -64,6 +64,16 @@ Different engine. Different properties. Different outcomes.
 
 **Tweet 6**
 
+Every other model runs every layer on every token. Whether the token needs deep reasoning or is just continuing a sentence. Same cost. Same compute. Every time.
+
+Regent has an adaptive gate. The model learns which tokens need its expensive attention layers and which ones don't. When attention isn't needed, it skips it. When it is, it fires.
+
+The result: lower cost per token in production, faster inference on routine text, and full reasoning power exactly when the task demands it. The model allocates its own compute.
+
+---
+
+**Tweet 8**
+
 The second problem: AI is priced as a service.
 
 Per token. On someone else's servers. Over the internet. In USD.
@@ -80,11 +90,11 @@ License once. Deploy on your own hardware. Run indefinitely.
 
 No per-inference fees. No internet required. No data leaving your infrastructure.
 
-The 7B model runs on a $500 edge device.
+The 7B model runs on a single server. No cluster required.
 
 ---
 
-**Tweet 8 (benchmark table)**
+**Tweet 9 (benchmark table)**
 
 ```
 Capability comparison
@@ -110,7 +120,7 @@ GPT-5 and Opus 4.6 are more capable on general chat. That is not the comparison.
 
 ---
 
-**Tweet 9**
+**Tweet 10**
 
 Two tiers:
 
@@ -122,7 +132,7 @@ Same architecture. Workflows built on one migrate to the other.
 
 ---
 
-**Tweet 10**
+**Tweet 11**
 
 The markets:
 
@@ -132,7 +142,7 @@ What they share: the cost of a wrong answer is measurable, and cloud dependency 
 
 ---
 
-**Tweet 11**
+**Tweet 12**
 
 Regent is the first real language model to come out of Africa.
 
@@ -144,7 +154,7 @@ https://alchymia.ai
 
 ---
 
-**Tweet 12**
+**Tweet 13**
 
 We are also building DSTP, a Distributed Shared Training Protocol.
 
@@ -156,7 +166,7 @@ More on this soon.
 
 ---
 
-**Tweet 13**
+**Tweet 14**
 
 The core belief at Alchymia: developing economies do not need cheaper versions of Western AI. They need AI with different properties.
 
@@ -166,7 +176,7 @@ This is not charity. It is the 10x magnitude of ingenuity it takes to compete fr
 
 ---
 
-**Tweet 14**
+**Tweet 15**
 
 Coming in the next few months: Darkhorse.
 
@@ -182,7 +192,7 @@ More soon.
 
 ---
 
-**Tweet 15 (CTA)**
+**Tweet 16 (CTA)**
 
 Regent is available now on HuggingFace.
 

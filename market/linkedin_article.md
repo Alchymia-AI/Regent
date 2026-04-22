@@ -34,13 +34,31 @@ Every frontier model in production today, GPT-5, Claude, Llama, Mistral, Gemini,
 
 Regent is not a transformer. It is a Mamba-2 state-space model with grouped-query attention at selected layers. This is a fundamentally different computational engine with different properties.
 
-Transformers grow their memory linearly with conversation length. Regent maintains a fixed memory footprint regardless of session length, approximately 2 megabytes for the 7B configuration, whether the conversation is 100 words or 100,000. This is not a compression trick. It is a property of the state-space architecture.
+Transformers grow their memory linearly with conversation length. Regent maintains a fixed memory footprint regardless of session length — approximately 1 GB for the 7B configuration, whether the conversation is 100 words or 1 million. A transformer needs 50+ GB of KV cache for a long session. Regent uses the same 1 GB from the first token to the last. This is not a compression trick. It is a property of the state-space architecture.
 
 Transformers require all knowledge to be serialized into text and injected as prompt context. Regent accepts structured knowledge nodes, typed, scored, and categorized, as native input. An organization's knowledge base is first-class input, not text the model has to parse.
 
 And because that knowledge is input, not weights, it is live. Update your database and the model sees the change on the next request. No retraining. No waiting for a model provider to release a new version that includes your latest data. A new drug interaction discovered today is available to the model today. A regulatory change published this morning is reflected in outputs this afternoon. A crop disease alert, a fraud pattern, updated AML/KYC rules, a sanctions list change, a commodity price movement, an equipment fault code, a patient history update, a route hazard, new case law: all live on the next request. Any industry where decisions depend on current information. Other models require retraining to incorporate new knowledge, a process that costs months and millions. Regent reads it directly.
 
 These are not incremental improvements. They are properties that the transformer architecture cannot provide through scale alone.
+
+## The model that allocates its own compute
+
+Every transformer runs every layer on every token. A simple continuation like "the" after "in" uses the same compute as a complex inference across a 50-page document. There is no efficiency signal. The operator pays the same per token regardless of difficulty.
+
+Regent has an adaptive gate at each attention layer. The model learns per-token whether its expensive attention pathway is needed (long-range dependency, precise recall across distant context) or whether its recurrent backbone handles it alone (local continuation, straightforward generation).
+
+During routine text, the gate stays closed. The recurrent path handles it at lower cost. When the model encounters a question that requires reaching back across thousands of tokens of context, the gate opens and attention fires.
+
+The outcomes:
+
+Lower inference cost in production. Tokens that don't need attention don't pay for it. For workloads that are 70-80% routine text with bursts of complex reasoning, this reduces effective compute per token significantly.
+
+Faster responses on routine queries. The model isn't running its most expensive pathway on tokens that don't need it.
+
+No quality loss on hard questions. When the task demands full reasoning, the gate opens and the model has its complete attention capacity available.
+
+The model decides where to spend its compute. Not the operator. Not a fixed schedule. A learned signal based on what the token actually requires.
 
 ## Why this replaces RAG for most use cases
 
@@ -62,7 +80,7 @@ The global AI market is currently structured as a service. OpenAI, Google, Anthr
 
 For organizations in the United States, Europe, and East Asia, this is a procurement decision. For a hospital network in sub-Saharan Africa, a government ministry in South Asia, or a legal services provider in Latin America, it is a structural barrier. The unit economics do not close. The cloud dependency introduces risk they cannot manage. The data sovereignty questions are unresolved.
 
-Regent is not a service. It is a model. You license it, you deploy it on your own hardware, and you run it indefinitely at the cost of electricity. There are no per-token fees after deployment. There is no cloud dependency. It operates fully offline. The 7B parameter version runs on edge hardware costing less than $1,000. The 50B version runs on a single high-end workstation.
+Regent is not a service. It is a model. You license it, you deploy it on your own hardware, and you run it indefinitely at the cost of electricity. There are no per-token fees after deployment. There is no cloud dependency. It operates fully offline. The 7B parameter version runs on a single server with a 16 GB+ GPU. The 50B version runs on a multi-GPU workstation.
 
 For emerging markets, this changes the economics entirely. A rural hospital does not need a monthly API budget. A government can deploy it inside its own data center with no external data exposure. A drone operating in a region with intermittent connectivity runs its cognitive layer locally and keeps working when the link drops.
 
@@ -102,7 +120,7 @@ In legal research, every claim in a brief has to be traceable. The accuracy scor
 
 In healthcare, clinical decision support requires that recommendations be auditable. Patient histories are long. The model maintains full session context in a fixed memory footprint regardless of session length, which means a multi-hour patient encounter does not degrade performance the way it does in models where memory grows with the conversation.
 
-In robotics and autonomous systems, a fabricated navigation instruction is a physical event. The confidence scoring gates every action before it is executed. A drone running a six-hour mission maintains its cognitive state in roughly two megabytes of memory that does not grow, on hardware that fits inside the airframe.
+In robotics and autonomous systems, a fabricated navigation instruction is a physical event. The confidence scoring gates every action before it is executed. A drone running a six-hour mission maintains its cognitive state in fixed memory that does not grow regardless of duration.
 
 In government and defense, the hard requirement is often air-gap deployment. No cloud, no external network, no third-party data exposure. Regent runs entirely on local infrastructure.
 

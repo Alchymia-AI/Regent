@@ -10,6 +10,8 @@ It also thinks before it answers. When a question requires reasoning, the model 
 
 Regent is not built on the same architecture as GPT, Claude, Llama, or Mistral. Every one of those is a transformer. Regent is a Mamba-2 state-space model. Different engine, different properties. Fixed memory regardless of conversation length. Real-time verification built into the architecture, not bolted on.
 
+It also allocates its own compute. Every other model runs every layer on every token at the same cost, whether the token needs deep reasoning or is a simple continuation. Regent has an adaptive gate that learns which tokens need its expensive attention layers and which ones the recurrent backbone handles alone. The result is lower inference cost in production, faster responses on routine text, and full reasoning power exactly when the question demands it. The model decides where to spend its compute, not the operator.
+
 It also reads your knowledge base live. Not baked into weights during training. Your organization's knowledge graph is input to the model, per request, in real time. A new drug interaction, a crop disease outbreak, a fraud pattern, a sanctions list change, updated AML/KYC rules, a commodity price shift, an equipment fault code, a route hazard, a patient history update, a newly published ruling: the model reflects it on the next call. No retraining. No waiting months for a model update. Your data stays current because the model reads it directly, not because someone retrained a $50M model to include it.
 
 For most organizations, this replaces RAG entirely. No vector database to maintain. No embedding pipeline. No chunking strategy to tune. No retrieval misses. No context window filling up. Knowledge enters the model structured and scored through a dedicated encoder. The model knows which facts are high-confidence and which are stale. When it is uncertain, it retrieves from the graph automatically at the point of uncertainty, not at the start of the request based on a keyword search. The result is fewer moving parts, lower infrastructure cost, and answers grounded in your actual knowledge rather than whatever a similarity search happened to return.
@@ -18,7 +20,7 @@ The second problem we fixed is deployment. Every major AI model today is a servi
 
 Regent ships as weights and code. You buy it once. You deploy it on your own hardware. It runs without internet. The cost per inference after deployment is electricity.
 
-The 7B model runs on a $500 edge device. A rural clinic can deploy it. A government ministry can air-gap it. A drone manufacturer can put it on the vehicle itself. A ship can run it for weeks without connectivity. A mining site can run it without infrastructure. A pharmaceutical company can deploy it without sending trial data to a third-party server.
+The 7B model runs on a single server. A rural clinic can deploy it. A government ministry can air-gap it. A ship can run it for weeks without connectivity. A mining site can run it without external infrastructure. A pharmaceutical company can deploy it without sending trial data to a third-party server.
 
 Regent is the first production language model built in Africa. Not a fine-tune of someone else's work. A ground-up architecture designed to be on par with the best in the world at the workloads it is built for.
 
@@ -28,7 +30,7 @@ We are also developing DSTP, a Distributed Shared Training Protocol, designed to
 
 Regent is open source at 7B to 50B parameters. It loads from HuggingFace with two lines of code and works with every tool already built on it. It is available now.
 
-In the coming months, we are introducing Darkhorse: Alchymia's Large Language Action Model (LLAM), first generation. Our flagship and most capable generalist AI. Millions of tokens of context window with the same compact memory efficiency as Regent. Built not just to answer questions but to execute multi-step tasks end to end. Today, every "AI agent" is a chat model with scaffolding bolted on: prompt chains, retry loops, tool orchestration layers built outside the model because the model was never designed to act. Darkhorse changes that. It decides and executes out of the box. Not a chat model repurposed for action. An action model from the start, with the same compact memory efficiency that makes Regent viable on edge hardware. It will change how agents are built and what they are capable of.
+In the coming months, we are introducing Darkhorse: Alchymia's Large Language Action Model (LLAM), first generation. Our flagship and most capable generalist AI. Millions of tokens of context window with the same compact memory efficiency as Regent. Built not just to answer questions but to execute multi-step tasks end to end. Today, every "AI agent" is a chat model with scaffolding bolted on: prompt chains, retry loops, tool orchestration layers built outside the model because the model was never designed to act. Darkhorse changes that. It decides and executes out of the box. Not a chat model repurposed for action. An action model from the start, with the same compact fixed-memory architecture as Regent. It will change how agents are built and what they are capable of.
 
 https://alchymia.ai
 research@alchymia.ai

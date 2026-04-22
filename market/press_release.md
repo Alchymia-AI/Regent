@@ -11,7 +11,7 @@ https://alchymia.ai
 
 ---
 
-## Alchymia Labs Releases Regent, a Language Model with Unlimited Context Window
+## Alchymia Labs Releases Regent, a Production Language Model with No Context Limit
 
 *Open-source model targets legal, healthcare, defense, and industrial sectors where AI output must be accountable, and emerging markets where cloud dependency is not a viable economic model*
 
@@ -43,6 +43,13 @@ Regent reasons through complex questions before responding. When a query require
 
 The model also calls external tools natively. When it determines it needs information from an API, database, or search engine, it emits a structured tool request, pauses generation, receives the result, and continues. This operates through dedicated tokens in the architecture, not through a plugin system.
 
+**Adaptive compute allocation**
+
+
+Regent includes an adaptive gate at each attention layer. The model learns per-token whether its attention pathway is needed for long-range dependency resolution or whether its recurrent backbone is sufficient. During routine generation, attention is skipped. During complex reasoning, it fires at full capacity.
+
+The result is lower inference cost in production, faster responses on routine queries, and no quality degradation on hard questions. The model allocates its own compute based on what each token actually requires.
+
 **Live knowledge, no retraining**
 
 The model accepts structured knowledge as native input on every request. An organization's knowledge base, policies, patient records, case law, operational procedures, regulatory frameworks, is read directly by the model at inference time. It is not baked into weights during training.
@@ -57,7 +64,7 @@ For the majority of enterprise deployments currently using Retrieval-Augmented G
 
 Current frontier AI models operate as services. Pricing is per-token, infrastructure is cloud-based, and ongoing access requires internet connectivity and subscription fees denominated in major currencies.
 
-Regent is distributed as weights and code. Organizations license the model once and deploy it on their own hardware. There are no per-inference fees after deployment. The model operates fully offline. The 7B parameter version runs on edge hardware in the sub-$1,000 range. Larger configurations scale to single-server deployment.
+Regent is distributed as weights and code. Organizations license the model once and deploy it on their own hardware. There are no per-inference fees after deployment. The model operates fully offline. The 7B parameter version runs on a single server with a 16 GB+ GPU. Larger configurations scale to multi-GPU or multi-node deployment.
 
 This changes the economic model for organizations in markets where cloud API pricing is not viable at scale: public health systems, government ministries, legal aid organizations, agricultural cooperatives, and industrial operators across sub-Saharan Africa, South and Southeast Asia, and Latin America.
 

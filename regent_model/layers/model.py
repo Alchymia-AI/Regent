@@ -25,6 +25,7 @@ import yaml
 
 from ..blocks.mamba2 import Mamba2Block, Mamba2Config
 from ..blocks.attention import GQABlock
+from ..blocks.adaptive_gate import AdaptiveGate
 from ..heads.gen_head import GenHead
 from ..heads.ver_head import VerHead
 from ..encoder.epg_encoder import EPGEncoder
@@ -71,6 +72,11 @@ class RegentConfig:
     essence_input_dim: int = 7
     essence_inject_every_n: int = 8
 
+    # Adaptive gate (Phase 5 — disabled by default)
+    adaptive_gate: bool = False
+    adaptive_gate_hidden: int = 64
+    adaptive_gate_threshold: float = 0.5  # hard-gate threshold during inference
+
     # Norms
     norm_eps: float = 1e-5
     initializer_range: float = 0.02
@@ -113,6 +119,9 @@ class RegentConfig:
             epg_encoder_heads=epg.get("encoder_heads", 4),
             essence_input_dim=ess.get("input_dim", 7),
             essence_inject_every_n=ess.get("inject_every_n", 8),
+            adaptive_gate=m.get("adaptive_gate", False),
+            adaptive_gate_hidden=m.get("adaptive_gate_hidden", 64),
+            adaptive_gate_threshold=m.get("adaptive_gate_threshold", 0.5),
             norm_eps=m.get("norm_eps", 1e-5),
             initializer_range=m.get("initializer_range", 0.02),
         )
@@ -151,8 +160,12 @@ class EssenceConditioner(nn.Module):
 
 class RegentBlock(nn.Module):
     """
-    Single block in the Regent backbone — either Mamba-2 or GQA attention,
-    with pre-norm residual connection and optional Essence injection.
+    Single block in the Regent backbone — either Mamba-2, GQA attention,
+    or adaptively gated (both paths, learned routing).
+
+    When adaptive_gate is enabled on attention layers, both Mamba and attention
+    paths exist. A learned gate decides per-token how much to route through
+    attention (precise recall) vs Mamba (local flow).
     """
 
     def __init__(
@@ -163,10 +176,40 @@ class RegentBlock(nn.Module):
         super().__init__()
         self.layer_idx = layer_idx
         self.is_attention = layer_idx in cfg.attn_layers
+        self.adaptive = cfg.adaptive_gate and self.is_attention
+        self.gate_threshold = cfg.adaptive_gate_threshold
 
         self.pre_norm = nn.RMSNorm(cfg.d_model, eps=cfg.norm_eps)
 
-        if self.is_attention:
+        mamba_cfg = Mamba2Config(
+            d_model=cfg.d_model,
+            d_state=cfg.ssm_d_state,
+            d_conv=cfg.ssm_d_conv,
+            expand=cfg.ssm_expand,
+            n_heads=cfg.ssm_n_heads,
+            norm_eps=cfg.norm_eps,
+            chunk_size=cfg.ssm_chunk_size,
+        )
+
+        if self.adaptive:
+            # Both paths available — gate decides routing
+            self.mamba = Mamba2Block(mamba_cfg)
+            self.attn = GQABlock(
+                d_model=cfg.d_model,
+                n_q_heads=cfg.attn_n_q_heads,
+                n_kv_heads=cfg.attn_n_kv_heads,
+                head_dim=cfg.attn_head_dim,
+                window_size=cfg.attn_window_size,
+                norm_eps=cfg.norm_eps,
+            )
+            self.gate = AdaptiveGate(cfg.d_model, cfg.adaptive_gate_hidden)
+            self.ff_norm = nn.RMSNorm(cfg.d_model, eps=cfg.norm_eps)
+            self.ff = nn.Sequential(
+                nn.Linear(cfg.d_model, cfg.d_model * 4, bias=False),
+                nn.SiLU(),
+                nn.Linear(cfg.d_model * 4, cfg.d_model, bias=False),
+            )
+        elif self.is_attention:
             self.block = GQABlock(
                 d_model=cfg.d_model,
                 n_q_heads=cfg.attn_n_q_heads,
@@ -175,26 +218,14 @@ class RegentBlock(nn.Module):
                 window_size=cfg.attn_window_size,
                 norm_eps=cfg.norm_eps,
             )
-        else:
-            mamba_cfg = Mamba2Config(
-                d_model=cfg.d_model,
-                d_state=cfg.ssm_d_state,
-                d_conv=cfg.ssm_d_conv,
-                expand=cfg.ssm_expand,
-                n_heads=cfg.ssm_n_heads,
-                norm_eps=cfg.norm_eps,
-                chunk_size=cfg.ssm_chunk_size,
-            )
-            self.block = Mamba2Block(mamba_cfg)
-
-        # Feed-forward for attention layers (Mamba has its own gating)
-        if self.is_attention:
             self.ff_norm = nn.RMSNorm(cfg.d_model, eps=cfg.norm_eps)
             self.ff = nn.Sequential(
                 nn.Linear(cfg.d_model, cfg.d_model * 4, bias=False),
                 nn.SiLU(),
                 nn.Linear(cfg.d_model * 4, cfg.d_model, bias=False),
             )
+        else:
+            self.block = Mamba2Block(mamba_cfg)
 
     def __call__(
         self,
@@ -205,15 +236,33 @@ class RegentBlock(nn.Module):
     ) -> tuple[mx.array, dict | None]:
         h = self.pre_norm(x)
 
-        if self.is_attention:
+        if self.adaptive:
+            # Learned routing between Mamba and attention
+            gate = self.gate(h)  # (batch, seq_len, 1)
+
+            mamba_out, mamba_cache = self.mamba(h, cache=cache.get("mamba") if cache else None, use_chunked=use_chunked)
+            attn_out, attn_cache = self.attn(h, cache=cache.get("attn") if cache else None)
+
+            # Soft mixture during training, hard gate during inference
+            if use_chunked:
+                block_out = gate * attn_out + (1.0 - gate) * mamba_out
+            else:
+                hard_gate = (gate > self.gate_threshold).astype(mx.float32)
+                block_out = hard_gate * attn_out + (1.0 - hard_gate) * mamba_out
+
+            x = x + block_out
+            x = x + self.ff(self.ff_norm(x))
+
+            new_cache = {"mamba": mamba_cache, "attn": attn_cache} if cache is not None else None
+
+        elif self.is_attention:
             block_out, new_cache = self.block(h, cache=cache)
+            x = x + block_out
+            x = x + self.ff(self.ff_norm(x))
+
         else:
             block_out, new_cache = self.block(h, cache=cache, use_chunked=use_chunked)
-
-        x = x + block_out
-
-        if self.is_attention:
-            x = x + self.ff(self.ff_norm(x))
+            x = x + block_out
 
         if essence_cond is not None:
             x = x + essence_cond

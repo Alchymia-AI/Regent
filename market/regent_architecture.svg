@@ -101,7 +101,7 @@
   <!-- Summary stats -->
   <text x="530" y="386" fill="#94a3b8" font-size="10">48 to 64 layers (config-dependent)</text>
   <text x="530" y="404" fill="#94a3b8" font-size="10">~7:1 recurrent-to-attention ratio</text>
-  <text x="530" y="428" fill="#94a3b8" font-size="10">Fixed memory footprint</text>
+  <text x="530" y="428" fill="#94a3b8" font-size="10">~1 GB fixed memory (7B config)</text>
   <text x="530" y="446" fill="#94a3b8" font-size="10">regardless of session length</text>
 
   <text x="530" y="476" fill="#94a3b8" font-size="10">Thinking: [THINK]...[/THINK]</text>

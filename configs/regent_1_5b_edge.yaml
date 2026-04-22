@@ -8,7 +8,7 @@ model:
 
   ssm:
     expand: 2            # d_inner = 4096
-    d_state: 64
+    d_state: 768         # ~684 MB fixed state at fp16
     d_conv: 4
     n_heads: 32          # head_dim = 128
 

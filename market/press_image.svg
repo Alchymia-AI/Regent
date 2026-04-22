@@ -1,0 +1,217 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1200 630" font-family="Inter, -apple-system, sans-serif">
+  <defs>
+    <!-- Background gradient -->
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#06070a"/>
+      <stop offset="50%" stop-color="#0a0d14"/>
+      <stop offset="100%" stop-color="#080a10"/>
+    </linearGradient>
+
+    <!-- Accent glow -->
+    <radialGradient id="glow1" cx="0.3" cy="0.4" r="0.6">
+      <stop offset="0%" stop-color="#6366f1" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#6366f1" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="0.75" cy="0.6" r="0.5">
+      <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow3" cx="0.5" cy="0.3" r="0.3">
+      <stop offset="0%" stop-color="#a78bfa" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#a78bfa" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Circuit pattern -->
+    <pattern id="circuit" width="120" height="120" patternUnits="userSpaceOnUse">
+      <path d="M0 60 h30 M40 60 h20 M70 60 h50" stroke="#1e2130" stroke-width="0.5" fill="none"/>
+      <path d="M60 0 v30 M60 40 v20 M60 70 v50" stroke="#1e2130" stroke-width="0.5" fill="none"/>
+      <circle cx="60" cy="60" r="2" fill="#1e2130"/>
+      <circle cx="30" cy="60" r="1.5" fill="none" stroke="#252840" stroke-width="0.5"/>
+      <circle cx="60" cy="30" r="1.5" fill="none" stroke="#252840" stroke-width="0.5"/>
+    </pattern>
+
+    <!-- Node connection line gradient -->
+    <linearGradient id="line-grad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#6366f1" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#6366f1" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#6366f1" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Card glass effect -->
+    <linearGradient id="card-fill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#14162a" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#0d0f1a" stop-opacity="0.9"/>
+    </linearGradient>
+
+    <!-- Verification score gradient -->
+    <linearGradient id="score-grad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ef4444"/>
+      <stop offset="30%" stop-color="#f59e0b"/>
+      <stop offset="60%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#10b981"/>
+    </linearGradient>
+
+    <!-- Glow filter -->
+    <filter id="soft-glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="text-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Base -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#circuit)" opacity="0.4"/>
+
+  <!-- Ambient glows -->
+  <rect width="1200" height="630" fill="url(#glow1)"/>
+  <rect width="1200" height="630" fill="url(#glow2)"/>
+
+  <!-- ═══════ Neural network visualization (left side) ═══════ -->
+
+  <!-- Connection lines suggesting data flow -->
+  <g opacity="0.3">
+    <!-- Horizontal flows -->
+    <line x1="0" y1="200" x2="350" y2="200" stroke="url(#line-grad)" stroke-width="1"/>
+    <line x1="0" y1="315" x2="300" y2="315" stroke="url(#line-grad)" stroke-width="1"/>
+    <line x1="0" y1="430" x2="350" y2="430" stroke="url(#line-grad)" stroke-width="1"/>
+
+    <!-- Diagonal connections -->
+    <line x1="120" y1="180" x2="220" y2="280" stroke="#6366f1" stroke-width="0.5" opacity="0.4"/>
+    <line x1="120" y1="340" x2="220" y2="280" stroke="#6366f1" stroke-width="0.5" opacity="0.4"/>
+    <line x1="120" y1="450" x2="220" y2="350" stroke="#6366f1" stroke-width="0.5" opacity="0.3"/>
+    <line x1="150" y1="200" x2="250" y2="315" stroke="#8b5cf6" stroke-width="0.5" opacity="0.3"/>
+    <line x1="150" y1="430" x2="250" y2="315" stroke="#8b5cf6" stroke-width="0.5" opacity="0.3"/>
+  </g>
+
+  <!-- Input nodes (left) -->
+  <g filter="url(#soft-glow)">
+    <circle cx="80" cy="200" r="4" fill="#6366f1" opacity="0.8"/>
+    <circle cx="80" cy="260" r="3" fill="#8b5cf6" opacity="0.6"/>
+    <circle cx="80" cy="315" r="5" fill="#6366f1" opacity="0.9"/>
+    <circle cx="80" cy="370" r="3" fill="#8b5cf6" opacity="0.6"/>
+    <circle cx="80" cy="430" r="4" fill="#6366f1" opacity="0.8"/>
+  </g>
+
+  <!-- Hidden layer nodes -->
+  <g filter="url(#soft-glow)">
+    <circle cx="200" cy="230" r="3" fill="#a78bfa" opacity="0.7"/>
+    <circle cx="200" cy="290" r="4" fill="#8b5cf6" opacity="0.8"/>
+    <circle cx="200" cy="340" r="3" fill="#a78bfa" opacity="0.7"/>
+    <circle cx="200" cy="390" r="4" fill="#8b5cf6" opacity="0.6"/>
+    <circle cx="180" cy="180" r="2" fill="#6366f1" opacity="0.5"/>
+    <circle cx="180" cy="450" r="2" fill="#6366f1" opacity="0.5"/>
+  </g>
+
+  <!-- SSM state flow (curved paths suggesting recurrence) -->
+  <g opacity="0.25">
+    <path d="M 250 250 C 290 250, 290 310, 250 310" fill="none" stroke="#10b981" stroke-width="1" stroke-dasharray="4,4"/>
+    <path d="M 260 270 C 310 270, 310 350, 260 350" fill="none" stroke="#10b981" stroke-width="0.8" stroke-dasharray="3,5"/>
+    <path d="M 240 220 C 320 220, 320 400, 240 400" fill="none" stroke="#10b981" stroke-width="0.5" stroke-dasharray="2,6"/>
+  </g>
+
+  <!-- ═══════ Right side: output visualization ═══════ -->
+
+  <!-- Connection lines from center to right -->
+  <g opacity="0.25">
+    <line x1="850" y1="250" x2="1200" y2="200" stroke="url(#line-grad)" stroke-width="0.8"/>
+    <line x1="850" y1="315" x2="1200" y2="315" stroke="url(#line-grad)" stroke-width="1"/>
+    <line x1="850" y1="380" x2="1200" y2="430" stroke="url(#line-grad)" stroke-width="0.8"/>
+  </g>
+
+  <!-- Output nodes (right) -->
+  <g filter="url(#soft-glow)">
+    <circle cx="1120" cy="230" r="3" fill="#10b981" opacity="0.7"/>
+    <circle cx="1120" cy="290" r="4" fill="#10b981" opacity="0.9"/>
+    <circle cx="1120" cy="340" r="3" fill="#f59e0b" opacity="0.7"/>
+    <circle cx="1120" cy="390" r="4" fill="#10b981" opacity="0.8"/>
+  </g>
+
+  <!-- Dual output head visual -->
+  <g opacity="0.3">
+    <!-- Gen head branch -->
+    <path d="M 980 290 L 1050 260 L 1100 260" fill="none" stroke="#60a5fa" stroke-width="1"/>
+    <circle cx="1100" cy="260" r="3" fill="#60a5fa" opacity="0.8"/>
+
+    <!-- Ver head branch -->
+    <path d="M 980 340 L 1050 370 L 1100 370" fill="none" stroke="#10b981" stroke-width="1"/>
+    <circle cx="1100" cy="370" r="3" fill="#10b981" opacity="0.8"/>
+  </g>
+
+  <!-- ═══════ Central content ═══════ -->
+
+  <!-- Logo with glow -->
+  <circle cx="600" cy="160" r="60" fill="url(#glow3)"/>
+  <image href="https://alchymia.ai/press/logo_blue.png" x="540" y="100" width="120" height="120"/>
+
+  <!-- Model name -->
+  <text x="600" y="290" text-anchor="middle" fill="#f1f5f9" font-size="72" font-weight="800" letter-spacing="-2" filter="url(#text-glow)">Regent</text>
+
+  <!-- Tagline -->
+  <text x="600" y="335" text-anchor="middle" fill="#cbd5e1" font-size="20" font-weight="400">The model built for decisions that matter.</text>
+
+  <!-- Verification score bar (visual element) -->
+  <rect x="380" y="365" width="440" height="3" rx="1.5" fill="#1a1b2e"/>
+  <rect x="380" y="365" width="340" height="3" rx="1.5" fill="url(#score-grad)" opacity="0.8"/>
+  <circle cx="720" cy="366.5" r="5" fill="#10b981" opacity="0.9" filter="url(#soft-glow)"/>
+  <text x="738" y="370" fill="#10b981" font-size="10" font-weight="600">0.87</text>
+
+  <!-- Properties chips -->
+  <g font-size="11" font-weight="500">
+    <!-- Row 1 -->
+    <rect x="310" y="400" width="130" height="26" rx="13" fill="url(#card-fill)" stroke="#2d2f4a" stroke-width="0.5"/>
+    <text x="375" y="417" text-anchor="middle" fill="#a5b4fc">Not a Transformer</text>
+
+    <rect x="455" y="400" width="135" height="26" rx="13" fill="url(#card-fill)" stroke="#2d2f4a" stroke-width="0.5"/>
+    <text x="522" y="417" text-anchor="middle" fill="#a5b4fc">Live Knowledge</text>
+
+    <rect x="605" y="400" width="125" height="26" rx="13" fill="url(#card-fill)" stroke="#2d2f4a" stroke-width="0.5"/>
+    <text x="667" y="417" text-anchor="middle" fill="#a5b4fc">Replaces RAG</text>
+
+    <rect x="745" y="400" width="145" height="26" rx="13" fill="url(#card-fill)" stroke="#2d2f4a" stroke-width="0.5"/>
+    <text x="817" y="417" text-anchor="middle" fill="#a5b4fc">Fixed Memory</text>
+
+    <!-- Row 2 -->
+    <rect x="350" y="435" width="130" height="26" rx="13" fill="url(#card-fill)" stroke="#2d2f4a" stroke-width="0.5"/>
+    <text x="415" y="452" text-anchor="middle" fill="#94a3b8">Native Thinking</text>
+
+    <rect x="495" y="435" width="120" height="26" rx="13" fill="url(#card-fill)" stroke="#2d2f4a" stroke-width="0.5"/>
+    <text x="555" y="452" text-anchor="middle" fill="#94a3b8">Tool Calling</text>
+
+    <rect x="630" y="435" width="110" height="26" rx="13" fill="url(#card-fill)" stroke="#2d2f4a" stroke-width="0.5"/>
+    <text x="685" y="452" text-anchor="middle" fill="#94a3b8">Runs Offline</text>
+
+    <rect x="755" y="435" width="115" height="26" rx="13" fill="url(#card-fill)" stroke="#2d2f4a" stroke-width="0.5"/>
+    <text x="812" y="452" text-anchor="middle" fill="#94a3b8">Open Source</text>
+  </g>
+
+  <!-- Bottom section -->
+  <line x1="300" y1="500" x2="900" y2="500" stroke="#1e2130" stroke-width="0.5"/>
+
+  <text x="600" y="535" text-anchor="middle" fill="#64748b" font-size="14" font-weight="400">The first production language model built for emerging markets</text>
+
+  <!-- Bottom left: open source badge -->
+  <rect x="390" y="555" width="90" height="22" rx="4" fill="#0f2918" stroke="#166534" stroke-width="0.5"/>
+  <text x="435" y="570" text-anchor="middle" fill="#4ade80" font-size="10" font-weight="600">7B – 50B</text>
+
+  <!-- Bottom center -->
+  <text x="600" y="570" text-anchor="middle" fill="#475569" font-size="12">Mamba-2 SSM · Verification Head · EPG Encoder · Essence Conditioning</text>
+
+  <!-- Bottom right: commercial badge -->
+  <rect x="720" y="555" width="100" height="22" rx="4" fill="#1a1028" stroke="#4c1d95" stroke-width="0.5"/>
+  <text x="770" y="570" text-anchor="middle" fill="#a78bfa" font-size="10" font-weight="600">70B – 1T</text>
+
+  <!-- Alchymia -->
+  <text x="600" y="605" text-anchor="middle" fill="#334155" font-size="11" font-weight="500">Alchymia Labs  ·  alchymia.ai</text>
+
+</svg>
