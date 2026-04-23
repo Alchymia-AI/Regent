@@ -13,7 +13,7 @@ https://alchymia.ai
 
 ## Alchymia Labs Releases Regent, a Production Language Model with No Context Limit
 
-*Open-source model targets legal, healthcare, defense, and industrial sectors where AI output must be accountable, and emerging markets where cloud dependency is not a viable economic model*
+*Open-source model with unlimited context, real-time accuracy scoring, native tool calling, and adaptive compute. Targets legal, healthcare, finance, defense, code generation, and emerging markets where cloud dependency is not viable.*
 
 ---
 
@@ -74,13 +74,17 @@ Regent exposes an OpenAI-compatible API endpoint at `/v1/chat/completions`. Any 
 
 **Market focus**
 
-Regent is positioned for sectors where the cost of an inaccurate output is quantifiable and where data sovereignty or operational constraints make cloud dependency unacceptable.
+Regent is positioned for sectors where the cost of an inaccurate output is quantifiable, where data sovereignty or operational constraints make cloud dependency unacceptable, or where unlimited context and fixed memory create a structural advantage.
 
-Legal research requires every claim to be traceable to a source. Financial research and risk analysis require AI output to be auditable before it influences decisions. Clinical decision support requires confidence scoring that meets healthcare compliance requirements. Government and defense deployments require air-gapped operation with no external data exposure. Robotics and autonomous vehicle deployments require a cognitive layer that fits on embedded hardware and operates without connectivity.
+Legal research requires every claim to be traceable to a source. Financial research, fraud detection, and AML/KYC require AI output to be auditable before it influences decisions. Clinical decision support requires confidence scoring that meets healthcare compliance requirements and multi-hour patient encounters without memory degradation. Government and defense deployments require air-gapped operation with no external data exposure.
 
-Beyond those primary sectors, the same architecture properties apply across: pharmaceutical and drug development, where regulatory submissions require claim-level auditability and trial data cannot leave a jurisdiction; nuclear and critical infrastructure, where air-gap and long-shift operation are mandatory; maritime and offshore, where vessels operate without connectivity for weeks; mining and extraction, where remote sites have no reliable infrastructure; insurance and claims, where every decision requires a traceable justification for regulatory review; compliance and regulatory affairs, where AI output must be auditable at the claim level; emergency services, where the model must operate when infrastructure is unavailable; audit and financial forensics, where every figure needs a source; and agriculture, where zero marginal cost after deployment is the only viable model for organizations operating on thin margins without reliable internet.
+The same architecture properties apply across pharmaceutical and drug development, where regulatory submissions require claim-level auditability and trial data cannot leave a jurisdiction. Nuclear and critical infrastructure, where air-gap and long-shift operation are mandatory. Maritime and offshore, where vessels operate without connectivity for weeks. Mining and extraction, where remote sites have no reliable infrastructure. Insurance and claims, where every decision requires a traceable justification for regulatory review. Emergency services, where the model must operate when infrastructure is unavailable. Audit and financial forensics, where every figure needs a source. Agriculture, where zero marginal cost after deployment is the only viable model for organizations operating on thin margins without reliable internet.
 
-Regent is not positioned for consumer applications, code generation tools, or multimodal tasks. Those segments are served by incumbent providers with established distribution. Regent competes on properties, not on general benchmark rankings.
+Code generation benefits from the same properties. The model holds an entire repository in context with no limit, calls compilers, test runners, and linters natively through tool calling during generation, and scores confidence on every line of generated code before the developer runs anything. Multi-hour coding sessions do not degrade.
+
+Consumer chat is well served by the fixed memory and adaptive gate. Conversations never truncate. Routine exchanges cost less compute. Grande Regent at 70B+ is competitive with frontier models on general tasks.
+
+Regent is not positioned for image generation.
 
 **Developing economies and the 10x imperative**
 

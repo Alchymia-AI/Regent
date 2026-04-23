@@ -134,9 +134,21 @@ Same architecture. Workflows built on one migrate to the other.
 
 **Tweet 11**
 
+Code generation, but the model holds your entire repo in context. Not 128K tokens. The whole thing.
+
+It calls your compiler mid-generation. Runs your tests. Gets the failures back. Fixes the code. One pass.
+
+The verification head tells you which lines it's confident about and which ones it's guessing. Before you run anything.
+
+No other code model does all three natively.
+
+---
+
+**Tweet 13**
+
 The markets:
 
-Legal. Healthcare. Defense and government. Robotics. Drones. Pharma. Nuclear. Maritime. Mining. Insurance. Compliance. Emergency services. Audit. Agriculture. Industrial automation.
+Legal. Healthcare. Defense and government. Robotics. Drones. Pharma. Nuclear. Maritime. Mining. Insurance. Compliance. Emergency services. Audit. Agriculture. Industrial automation. Code generation.
 
 What they share: the cost of a wrong answer is measurable, and cloud dependency is either too expensive or not allowed.
 
@@ -166,7 +178,7 @@ More on this soon.
 
 ---
 
-**Tweet 14**
+**Tweet 16**
 
 The core belief at Alchymia: developing economies do not need cheaper versions of Western AI. They need AI with different properties.
 
@@ -176,7 +188,7 @@ This is not charity. It is the 10x magnitude of ingenuity it takes to compete fr
 
 ---
 
-**Tweet 15**
+**Tweet 17**
 
 Coming in the next few months: Darkhorse.
 
@@ -192,7 +204,7 @@ More soon.
 
 ---
 
-**Tweet 16 (CTA)**
+**Tweet 18 (CTA)**
 
 Regent is available now on HuggingFace.
 

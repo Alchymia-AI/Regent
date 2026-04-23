@@ -128,7 +128,23 @@ The same logic applies across a broader set of industries that general models ca
 
 In all of these, the issue is not that general models are inaccurate in an obvious way. The issue is that they cannot tell you which parts of their output to trust, they stop working without internet, and the economics do not close for organizations outside the top tier of the global economy.
 
-Regent does not compete for general consumer chat, code autocomplete, or image generation. Those markets are won by scale and marketing spend. That is not the objective.
+Regent is not positioned for image generation. It competes on properties, not on general benchmark rankings.
+
+## Advanced code generation
+
+Current code models hold 128K tokens of context. A mid-size codebase exceeds that. The model sees fragments, not the project.
+
+Regent has no context limit. The entire repository lives in the model's state. Every file, every type definition, every import chain. Not as context window tokens burning quadratic attention cost, but as compressed state that costs nothing additional per step.
+
+Three properties combine to make this different from existing code generation:
+
+The model calls your toolchain mid-generation. It emits a tool call to a compiler, test runner, linter, or type checker. Gets the result back. Fixes the code. Continues. One generation pass. No external agent framework orchestrating retry loops. The model decides when it needs to check its work and does it.
+
+The verification head scores confidence on generated code in real time. A function call the model has seen thousands of times scores 0.9. An API it is less sure about scores 0.4. A fabricated method signature scores 0.2. You see which lines to review before you run anything.
+
+Fixed memory means a four-hour refactoring session does not degrade. The model remembers the module you touched in the first hour when you are working on its dependency in the fourth hour. Transformer-based code models hit their context limit and lose earlier work.
+
+No other code model combines full-project context, native toolchain integration, and per-line confidence scoring in a single architecture.
 
 ## What this means for developing economies
 
