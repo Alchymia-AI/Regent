@@ -156,6 +156,8 @@ See [QUICKSTART.md](QUICKSTART.md) for the full end-to-end guide from data to de
 
 See [API.md](API.md) for the complete API reference: inference, chat, tool calling, thinking, verification, knowledge graph input, sessions, and the OpenAI-compatible endpoint.
 
+See [recipes/](recipes/) for reproducible training recipes with data sources, configs, and commands.
+
 ## Inference
 
 Start the model server and the UI together.
