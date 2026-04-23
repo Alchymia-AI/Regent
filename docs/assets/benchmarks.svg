@@ -1,0 +1,243 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2400 1300" font-family="Inter, -apple-system, sans-serif">
+  <defs>
+    <linearGradient id="c-regent" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#a78bfa"/>
+    </linearGradient>
+    <filter id="regent-glow">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="2400" height="1300" fill="#ffffff"/>
+
+  <!-- ═══════ HEADER ═══════ -->
+  <text x="1200" y="80" text-anchor="middle" fill="#0f172a" font-size="48" font-weight="800" letter-spacing="-1">Grande Regent</text>
+  <text x="1200" y="118" text-anchor="middle" fill="#475569" font-size="18" font-weight="400">Performance across reasoning, code, agent, long-context, and grounding benchmarks</text>
+
+  <line x1="140" y1="160" x2="2260" y2="160" stroke="#e2e8f0" stroke-width="1"/>
+
+  <!-- Legend -->
+  <g transform="translate(400, 195)" font-size="14" font-weight="600">
+    <g>
+      <rect x="0" y="0" width="22" height="14" rx="3" fill="url(#c-regent)"/>
+      <text x="30" y="12" fill="#6d28d9">Grande Regent</text>
+    </g>
+    <g transform="translate(200, 0)">
+      <rect x="0" y="0" width="22" height="14" rx="3" fill="#10b981"/>
+      <text x="30" y="12" fill="#475569">GPT-5.4</text>
+    </g>
+    <g transform="translate(330, 0)">
+      <rect x="0" y="0" width="22" height="14" rx="3" fill="#f97316"/>
+      <text x="30" y="12" fill="#475569">Claude Opus 4.7</text>
+    </g>
+    <g transform="translate(510, 0)">
+      <rect x="0" y="0" width="22" height="14" rx="3" fill="#3b82f6"/>
+      <text x="30" y="12" fill="#475569">Llama 4 Maverick</text>
+    </g>
+    <g transform="translate(700, 0)">
+      <rect x="0" y="0" width="22" height="14" rx="3" fill="#ef4444"/>
+      <text x="30" y="12" fill="#475569">Qwen 3.6</text>
+    </g>
+    <g transform="translate(830, 0)">
+      <rect x="0" y="0" width="22" height="14" rx="3" fill="#06b6d4"/>
+      <text x="30" y="12" fill="#475569">DeepSeek V3.5</text>
+    </g>
+    <g transform="translate(1000, 0)">
+      <rect x="0" y="0" width="22" height="14" rx="3" fill="#eab308"/>
+      <text x="30" y="12" fill="#475569">Kimi K2.6</text>
+    </g>
+  </g>
+
+  <!-- Gridlines -->
+  <g stroke="#e2e8f0" stroke-width="1" stroke-dasharray="3,3">
+    <line x1="180" y1="1100" x2="2220" y2="1100"/>
+    <line x1="180" y1="1024" x2="2220" y2="1024"/>
+    <line x1="180" y1="948" x2="2220" y2="948"/>
+    <line x1="180" y1="872" x2="2220" y2="872"/>
+    <line x1="180" y1="796" x2="2220" y2="796"/>
+    <line x1="180" y1="720" x2="2220" y2="720"/>
+    <line x1="180" y1="644" x2="2220" y2="644"/>
+    <line x1="180" y1="568" x2="2220" y2="568"/>
+    <line x1="180" y1="492" x2="2220" y2="492"/>
+    <line x1="180" y1="416" x2="2220" y2="416"/>
+    <line x1="180" y1="340" x2="2220" y2="340"/>
+  </g>
+
+  <g font-size="12" fill="#94a3b8" text-anchor="end">
+    <text x="170" y="1104">0</text>
+    <text x="170" y="1028">10</text>
+    <text x="170" y="952">20</text>
+    <text x="170" y="876">30</text>
+    <text x="170" y="800">40</text>
+    <text x="170" y="724">50</text>
+    <text x="170" y="648">60</text>
+    <text x="170" y="572">70</text>
+    <text x="170" y="496">80</text>
+    <text x="170" y="420">90</text>
+    <text x="170" y="344">100</text>
+  </g>
+
+  <line x1="180" y1="1100" x2="2220" y2="1100" stroke="#cbd5e1" stroke-width="2"/>
+
+  <!-- 8 groups at centers 349, 595, 841, 1087, 1333, 1579, 1825, 2071 -->
+  <!-- Bar offsets from center: -83, -59, -35, -11, +13, +37, +61 -->
+
+  <!-- MMLU-Pro (center 349) | R 89.5, GPT 92.3, Opus 90.0, Llama 80.5, Qwen 88.0, DS 86.9, Kimi 87.1 -->
+  <g>
+    <rect x="266" y="420" width="22" height="680" fill="url(#c-regent)" rx="2" filter="url(#regent-glow)"/>
+    <rect x="290" y="399" width="22" height="701" fill="#10b981" rx="2"/>
+    <rect x="314" y="416" width="22" height="684" fill="#f97316" rx="2"/>
+    <rect x="338" y="488" width="22" height="612" fill="#3b82f6" rx="2"/>
+    <rect x="362" y="431" width="22" height="669" fill="#ef4444" rx="2"/>
+    <rect x="386" y="440" width="22" height="660" fill="#06b6d4" rx="2"/>
+    <rect x="410" y="438" width="22" height="662" fill="#eab308" rx="2"/>
+    <text x="277" y="412" text-anchor="middle" fill="#6d28d9" font-size="10" font-weight="700">89.5</text>
+    <text x="301" y="391" text-anchor="middle" fill="#047857" font-size="9" font-weight="600">92.3</text>
+    <text x="325" y="408" text-anchor="middle" fill="#c2410c" font-size="9" font-weight="600">90.0</text>
+    <text x="349" y="480" text-anchor="middle" fill="#1d4ed8" font-size="9" font-weight="600">80.5</text>
+    <text x="373" y="423" text-anchor="middle" fill="#b91c1c" font-size="9" font-weight="600">88.0</text>
+    <text x="397" y="432" text-anchor="middle" fill="#0e7490" font-size="9" font-weight="600">86.9</text>
+    <text x="421" y="430" text-anchor="middle" fill="#a16207" font-size="9" font-weight="600">87.1</text>
+    <text x="349" y="1160" text-anchor="middle" fill="#334155" font-size="14" font-weight="600">MMLU-Pro</text>
+  </g>
+
+  <!-- GPQA Diamond (center 595) | R 85.0, GPT 83.9, Opus 94.2, Llama 70.0, Qwen 87.8, DS 75.0, Kimi 90.5 -->
+  <g>
+    <rect x="512" y="454" width="22" height="646" fill="url(#c-regent)" rx="2" filter="url(#regent-glow)"/>
+    <rect x="536" y="462" width="22" height="638" fill="#10b981" rx="2"/>
+    <rect x="560" y="384" width="22" height="716" fill="#f97316" rx="2"/>
+    <rect x="584" y="568" width="22" height="532" fill="#3b82f6" rx="2"/>
+    <rect x="608" y="433" width="22" height="667" fill="#ef4444" rx="2"/>
+    <rect x="632" y="530" width="22" height="570" fill="#06b6d4" rx="2"/>
+    <rect x="656" y="412" width="22" height="688" fill="#eab308" rx="2"/>
+    <text x="523" y="446" text-anchor="middle" fill="#6d28d9" font-size="10" font-weight="700">85.0</text>
+    <text x="547" y="454" text-anchor="middle" fill="#047857" font-size="9" font-weight="600">83.9</text>
+    <text x="571" y="376" text-anchor="middle" fill="#c2410c" font-size="9" font-weight="600">94.2</text>
+    <text x="595" y="560" text-anchor="middle" fill="#1d4ed8" font-size="9" font-weight="600">70.0</text>
+    <text x="619" y="425" text-anchor="middle" fill="#b91c1c" font-size="9" font-weight="600">87.8</text>
+    <text x="643" y="522" text-anchor="middle" fill="#0e7490" font-size="9" font-weight="600">75.0</text>
+    <text x="667" y="404" text-anchor="middle" fill="#a16207" font-size="9" font-weight="600">90.5</text>
+    <text x="595" y="1160" text-anchor="middle" fill="#334155" font-size="14" font-weight="600">GPQA Diamond</text>
+  </g>
+
+  <!-- MATH-500 (center 841) | R 92.0, GPT 94.8, Opus 93.0, Llama 78.0, Qwen 94.1, DS 88.6, Kimi 98.0 -->
+  <g>
+    <rect x="758" y="401" width="22" height="699" fill="url(#c-regent)" rx="2" filter="url(#regent-glow)"/>
+    <rect x="782" y="380" width="22" height="720" fill="#10b981" rx="2"/>
+    <rect x="806" y="393" width="22" height="707" fill="#f97316" rx="2"/>
+    <rect x="830" y="507" width="22" height="593" fill="#3b82f6" rx="2"/>
+    <rect x="854" y="385" width="22" height="715" fill="#ef4444" rx="2"/>
+    <rect x="878" y="427" width="22" height="673" fill="#06b6d4" rx="2"/>
+    <rect x="902" y="355" width="22" height="745" fill="#eab308" rx="2"/>
+    <text x="769" y="393" text-anchor="middle" fill="#6d28d9" font-size="10" font-weight="700">92.0</text>
+    <text x="793" y="372" text-anchor="middle" fill="#047857" font-size="9" font-weight="600">94.8</text>
+    <text x="817" y="385" text-anchor="middle" fill="#c2410c" font-size="9" font-weight="600">93.0</text>
+    <text x="841" y="499" text-anchor="middle" fill="#1d4ed8" font-size="9" font-weight="600">78.0</text>
+    <text x="865" y="377" text-anchor="middle" fill="#b91c1c" font-size="9" font-weight="600">94.1</text>
+    <text x="889" y="419" text-anchor="middle" fill="#0e7490" font-size="9" font-weight="600">88.6</text>
+    <text x="913" y="347" text-anchor="middle" fill="#a16207" font-size="9" font-weight="600">98.0</text>
+    <text x="841" y="1160" text-anchor="middle" fill="#334155" font-size="14" font-weight="600">MATH-500</text>
+  </g>
+
+  <!-- HumanEval (center 1087) | R 92.5, GPT 93.1, Opus 91.0, Llama 88.0, Qwen 91.3, DS 92.8, Kimi 93.5 -->
+  <g>
+    <rect x="1004" y="397" width="22" height="703" fill="url(#c-regent)" rx="2" filter="url(#regent-glow)"/>
+    <rect x="1028" y="392" width="22" height="708" fill="#10b981" rx="2"/>
+    <rect x="1052" y="408" width="22" height="692" fill="#f97316" rx="2"/>
+    <rect x="1076" y="431" width="22" height="669" fill="#3b82f6" rx="2"/>
+    <rect x="1100" y="406" width="22" height="694" fill="#ef4444" rx="2"/>
+    <rect x="1124" y="395" width="22" height="705" fill="#06b6d4" rx="2"/>
+    <rect x="1148" y="389" width="22" height="711" fill="#eab308" rx="2"/>
+    <text x="1015" y="389" text-anchor="middle" fill="#6d28d9" font-size="10" font-weight="700">92.5</text>
+    <text x="1039" y="384" text-anchor="middle" fill="#047857" font-size="9" font-weight="600">93.1</text>
+    <text x="1063" y="400" text-anchor="middle" fill="#c2410c" font-size="9" font-weight="600">91.0</text>
+    <text x="1087" y="423" text-anchor="middle" fill="#1d4ed8" font-size="9" font-weight="600">88.0</text>
+    <text x="1111" y="398" text-anchor="middle" fill="#b91c1c" font-size="9" font-weight="600">91.3</text>
+    <text x="1135" y="387" text-anchor="middle" fill="#0e7490" font-size="9" font-weight="600">92.8</text>
+    <text x="1159" y="381" text-anchor="middle" fill="#a16207" font-size="9" font-weight="600">93.5</text>
+    <text x="1087" y="1160" text-anchor="middle" fill="#334155" font-size="14" font-weight="600">HumanEval</text>
+  </g>
+
+  <!-- SWE-bench Verified (center 1333) | R 78.5, GPT 52.7, Opus 87.6, Llama 43.0, Qwen 77.2, DS 59.2, Kimi 80.2 -->
+  <g>
+    <rect x="1250" y="503" width="22" height="597" fill="url(#c-regent)" rx="2" filter="url(#regent-glow)"/>
+    <rect x="1274" y="699" width="22" height="401" fill="#10b981" rx="2"/>
+    <rect x="1298" y="434" width="22" height="666" fill="#f97316" rx="2"/>
+    <rect x="1322" y="773" width="22" height="327" fill="#3b82f6" rx="2"/>
+    <rect x="1346" y="513" width="22" height="587" fill="#ef4444" rx="2"/>
+    <rect x="1370" y="650" width="22" height="450" fill="#06b6d4" rx="2"/>
+    <rect x="1394" y="490" width="22" height="610" fill="#eab308" rx="2"/>
+    <text x="1261" y="495" text-anchor="middle" fill="#6d28d9" font-size="10" font-weight="700">78.5</text>
+    <text x="1285" y="691" text-anchor="middle" fill="#047857" font-size="9" font-weight="600">52.7</text>
+    <text x="1309" y="426" text-anchor="middle" fill="#c2410c" font-size="9" font-weight="600">87.6</text>
+    <text x="1333" y="765" text-anchor="middle" fill="#1d4ed8" font-size="9" font-weight="600">43.0</text>
+    <text x="1357" y="505" text-anchor="middle" fill="#b91c1c" font-size="9" font-weight="600">77.2</text>
+    <text x="1381" y="642" text-anchor="middle" fill="#0e7490" font-size="9" font-weight="600">59.2</text>
+    <text x="1405" y="482" text-anchor="middle" fill="#a16207" font-size="9" font-weight="600">80.2</text>
+    <text x="1333" y="1160" text-anchor="middle" fill="#334155" font-size="14" font-weight="600">SWE-bench Verified</text>
+  </g>
+
+  <!-- Terminal-Bench 2.0 (center 1579) | R 72.0, GPT 65.0, Opus 78.0, Llama 50.0, Qwen 70.0, DS 58.0, Kimi 73.0 -->
+  <g>
+    <rect x="1496" y="553" width="22" height="547" fill="url(#c-regent)" rx="2" filter="url(#regent-glow)"/>
+    <rect x="1520" y="606" width="22" height="494" fill="#10b981" rx="2"/>
+    <rect x="1544" y="507" width="22" height="593" fill="#f97316" rx="2"/>
+    <rect x="1568" y="720" width="22" height="380" fill="#3b82f6" rx="2"/>
+    <rect x="1592" y="568" width="22" height="532" fill="#ef4444" rx="2"/>
+    <rect x="1616" y="659" width="22" height="441" fill="#06b6d4" rx="2"/>
+    <rect x="1640" y="545" width="22" height="555" fill="#eab308" rx="2"/>
+    <text x="1507" y="545" text-anchor="middle" fill="#6d28d9" font-size="10" font-weight="700">72.0</text>
+    <text x="1531" y="598" text-anchor="middle" fill="#047857" font-size="9" font-weight="600">65.0</text>
+    <text x="1555" y="499" text-anchor="middle" fill="#c2410c" font-size="9" font-weight="600">78.0</text>
+    <text x="1579" y="712" text-anchor="middle" fill="#1d4ed8" font-size="9" font-weight="600">50.0</text>
+    <text x="1603" y="560" text-anchor="middle" fill="#b91c1c" font-size="9" font-weight="600">70.0</text>
+    <text x="1627" y="651" text-anchor="middle" fill="#0e7490" font-size="9" font-weight="600">58.0</text>
+    <text x="1651" y="537" text-anchor="middle" fill="#a16207" font-size="9" font-weight="600">73.0</text>
+    <text x="1579" y="1160" text-anchor="middle" fill="#334155" font-size="14" font-weight="600">Terminal-Bench 2.0</text>
+  </g>
+
+  <!-- RULER 128K (center 1825) | R 98.5, GPT 85.0, Opus 88.0, Llama 72.0, Qwen 78.0, DS 74.0, Kimi 82.0 -->
+  <g>
+    <rect x="1742" y="351" width="22" height="749" fill="url(#c-regent)" rx="2" filter="url(#regent-glow)"/>
+    <rect x="1766" y="454" width="22" height="646" fill="#10b981" rx="2"/>
+    <rect x="1790" y="431" width="22" height="669" fill="#f97316" rx="2"/>
+    <rect x="1814" y="553" width="22" height="547" fill="#3b82f6" rx="2"/>
+    <rect x="1838" y="507" width="22" height="593" fill="#ef4444" rx="2"/>
+    <rect x="1862" y="538" width="22" height="562" fill="#06b6d4" rx="2"/>
+    <rect x="1886" y="477" width="22" height="623" fill="#eab308" rx="2"/>
+    <text x="1753" y="343" text-anchor="middle" fill="#6d28d9" font-size="10" font-weight="700">98.5</text>
+    <text x="1777" y="446" text-anchor="middle" fill="#047857" font-size="9" font-weight="600">85.0</text>
+    <text x="1801" y="423" text-anchor="middle" fill="#c2410c" font-size="9" font-weight="600">88.0</text>
+    <text x="1825" y="545" text-anchor="middle" fill="#1d4ed8" font-size="9" font-weight="600">72.0</text>
+    <text x="1849" y="499" text-anchor="middle" fill="#b91c1c" font-size="9" font-weight="600">78.0</text>
+    <text x="1873" y="530" text-anchor="middle" fill="#0e7490" font-size="9" font-weight="600">74.0</text>
+    <text x="1897" y="469" text-anchor="middle" fill="#a16207" font-size="9" font-weight="600">82.0</text>
+    <text x="1825" y="1160" text-anchor="middle" fill="#6d28d9" font-size="14" font-weight="600">RULER 128K</text>
+  </g>
+
+  <!-- HaluEval (center 2071) | R 94.0, GPT 83.0, Opus 87.0, Llama 77.0, Qwen 81.0, DS 78.0, Kimi 76.0 -->
+  <g>
+    <rect x="1988" y="386" width="22" height="714" fill="url(#c-regent)" rx="2" filter="url(#regent-glow)"/>
+    <rect x="2012" y="469" width="22" height="631" fill="#10b981" rx="2"/>
+    <rect x="2036" y="439" width="22" height="661" fill="#f97316" rx="2"/>
+    <rect x="2060" y="515" width="22" height="585" fill="#3b82f6" rx="2"/>
+    <rect x="2084" y="484" width="22" height="616" fill="#ef4444" rx="2"/>
+    <rect x="2108" y="507" width="22" height="593" fill="#06b6d4" rx="2"/>
+    <rect x="2132" y="522" width="22" height="578" fill="#eab308" rx="2"/>
+    <text x="1999" y="378" text-anchor="middle" fill="#6d28d9" font-size="10" font-weight="700">94.0</text>
+    <text x="2023" y="461" text-anchor="middle" fill="#047857" font-size="9" font-weight="600">83.0</text>
+    <text x="2047" y="431" text-anchor="middle" fill="#c2410c" font-size="9" font-weight="600">87.0</text>
+    <text x="2071" y="507" text-anchor="middle" fill="#1d4ed8" font-size="9" font-weight="600">77.0</text>
+    <text x="2095" y="476" text-anchor="middle" fill="#b91c1c" font-size="9" font-weight="600">81.0</text>
+    <text x="2119" y="499" text-anchor="middle" fill="#0e7490" font-size="9" font-weight="600">78.0</text>
+    <text x="2143" y="514" text-anchor="middle" fill="#a16207" font-size="9" font-weight="600">76.0</text>
+    <text x="2071" y="1160" text-anchor="middle" fill="#6d28d9" font-size="14" font-weight="600">HaluEval</text>
+  </g>
+
+  <!-- Footer -->
+  <line x1="140" y1="1240" x2="2260" y2="1240" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="140" y="1275" fill="#64748b" font-size="13">Higher is better. Grande Regent scores projected assuming competitive training data access. Other models at current published performance. Apr 2026.</text>
+  <text x="2260" y="1275" text-anchor="end" fill="#94a3b8" font-size="12">Alchymia Labs · alchymia.ai</text>
+</svg>

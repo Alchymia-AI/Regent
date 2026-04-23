@@ -1,0 +1,59 @@
+# Regent 3B Code — Code-focused model for testing
+# Target: single A100 40GB or M2 Ultra
+
+model:
+  d_model: 2560
+  n_layer: 32
+  vocab_size: 32768
+
+  ssm:
+    expand: 2              # d_inner = 5120
+    d_state: 256           # ~320 MB fixed state at fp16
+    d_conv: 4
+    n_heads: 40            # head_dim = 128
+
+  attention:
+    layers: [7, 15, 23, 31]
+    n_q_heads: 20
+    n_kv_heads: 4
+    head_dim: 128
+    window_size: 2048
+
+  gen_head:
+    tie_embeddings: true
+
+  ver_head:
+    hidden_dim: 256
+    enabled: true
+
+  epg_encoder:
+    max_nodes: 32
+    scalar_features: 5
+    n_categories: 15
+    category_embed_dim: 16
+    n_encoder_layers: 2
+    encoder_heads: 8
+
+  essence:
+    input_dim: 7
+    inject_every_n: 8
+
+  norm_eps: 1.0e-5
+  initializer_range: 0.02
+
+training:
+  max_seq_len: 512
+  batch_size: 1
+  gradient_accumulation: 32
+  lr: 2.0e-4
+  min_lr: 2.0e-5
+  warmup_steps: 1000
+  max_steps: 200000
+  weight_decay: 0.1
+  grad_clip: 1.0
+  dtype: float16
+
+  ver_head:
+    lr: 5.0e-5
+    freeze_backbone: true
+    epochs: 10

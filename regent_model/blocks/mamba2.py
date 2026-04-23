@@ -360,8 +360,10 @@ class Mamba2Block(nn.Module):
         B = B.reshape(batch, seq_len, cfg.n_heads, cfg.d_state)
         C = C.reshape(batch, seq_len, cfg.n_heads, cfg.d_state)
 
-        # Softplus on dt to ensure positive, then add bias
-        dt = nn.softplus(dt_raw) + self.dt_bias[None, None, :]  # (batch, seq_len, n_heads)
+        # Softplus on dt to ensure positive, then add bias.
+        # Clamp dt to prevent runaway cumulative sums that cause exp() to overflow/underflow.
+        dt = nn.softplus(dt_raw) + self.dt_bias[None, None, :]
+        dt = mx.clip(dt, 1e-4, 1.0)
 
         # Causal conv1d on x
         conv_cache = cache.get("conv") if cache else None
@@ -371,8 +373,11 @@ class Mamba2Block(nn.Module):
         # Reshape x for multi-head SSM
         x_ssm = x_ssm.reshape(batch, seq_len, cfg.n_heads, self.head_dim)
 
-        # Get A from log space (negative for decay)
-        A = -mx.exp(self.A_log)  # (n_heads,) — negative values
+        # Get A from log space (negative for decay).
+        # Clamp A_log to [-8, 4] to prevent A from becoming too extreme.
+        # A = -exp(clamped) in [-exp(4), -exp(-8)] ≈ [-54.6, -0.0003]
+        A_log_clamped = mx.clip(self.A_log, -8.0, 4.0)
+        A = -mx.exp(A_log_clamped)
 
         # Run SSM
         if use_chunked and seq_len > cfg.chunk_size:

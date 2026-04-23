@@ -1,0 +1,60 @@
+# Regent Code Test — Compact code model for 18 GB systems
+# Target: 8-12 GB training footprint, validates architecture on code data
+# ~130M parameters, trainable on Apple Silicon with 16-24 GB unified memory
+
+model:
+  d_model: 512
+  n_layer: 16
+  vocab_size: 32768
+
+  ssm:
+    expand: 2            # d_inner = 1024
+    d_state: 64          # compact state
+    d_conv: 4
+    n_heads: 8           # head_dim = 128
+
+  attention:
+    layers: [7, 15]
+    n_q_heads: 8
+    n_kv_heads: 2
+    head_dim: 64
+    window_size: 256
+
+  gen_head:
+    tie_embeddings: true
+
+  ver_head:
+    hidden_dim: 128
+    enabled: true
+
+  epg_encoder:
+    max_nodes: 16
+    scalar_features: 5
+    n_categories: 15
+    category_embed_dim: 8
+    n_encoder_layers: 1
+    encoder_heads: 4
+
+  essence:
+    input_dim: 7
+    inject_every_n: 8
+
+  norm_eps: 1.0e-5
+  initializer_range: 0.02
+
+training:
+  max_seq_len: 256
+  batch_size: 1
+  gradient_accumulation: 8
+  lr: 1.0e-4
+  min_lr: 1.0e-5
+  warmup_steps: 1000
+  max_steps: 20000
+  weight_decay: 0.1
+  grad_clip: 0.5
+  dtype: float32
+
+  ver_head:
+    lr: 1.0e-4
+    freeze_backbone: true
+    epochs: 5

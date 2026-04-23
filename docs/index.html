@@ -23,6 +23,7 @@
       <a href="#novelty">What's Different</a>
       <a href="#hallucination">Accuracy</a>
       <a href="#comparison">vs Others</a>
+      <a href="#benchmarks">Benchmarks</a>
       <a href="#sizes">Sizes</a>
       <a href="#deploy">Deploy</a>
       <a href="#quickstart">Quick Start</a>
@@ -137,8 +138,8 @@
       Every frontier model today is a transformer. Regent is a Mamba-2 state-space model with grouped-query attention at selected layers. Different engine, different properties. Recurrent layers handle processing with a fixed memory footprint. Attention layers are placed every eight blocks for precise recall. Two output heads share the same internal state.
     </p>
 
-    <div style="text-align: center; margin-bottom: 2rem;">
-      <img src="assets/regent_architecture.svg" alt="Regent Architecture" style="max-width: 100%; height: auto; border-radius: 8px;">
+    <div style="background: #ffffff; border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem; text-align: center;">
+      <img src="assets/regent_architecture_light.svg" alt="Regent Architecture" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
     </div>
 
 
@@ -474,6 +475,25 @@
       </tbody>
     </table>
     </div>
+  </div>
+</section>
+
+<!-- BENCHMARKS -->
+<section id="benchmarks">
+  <div class="container">
+    <div class="section-label">Benchmarks</div>
+    <h2 class="section-title">Projected performance at scale</h2>
+    <p class="section-desc">
+      Grande Regent's projected results against April 2026 frontier flagships across reasoning, code, agent, long-context, and grounding benchmarks. Regent is competitive across standard evaluations and decisively ahead on RULER 128K and HaluEval, where architecture — unlimited context and the verification head — matters most.
+    </p>
+
+    <div style="background: #ffffff; border-radius: 12px; padding: 1.5rem; margin-top: 2rem; overflow-x: auto;">
+      <img src="assets/benchmarks.svg" alt="Grande Regent benchmark comparison" style="width: 100%; height: auto; min-width: 1200px; display: block;">
+    </div>
+
+    <p class="section-desc" style="margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-dim);">
+      Grande Regent scores projected assuming competitive training data access. Other models shown at current published performance, Apr 2026. Higher is better.
+    </p>
   </div>
 </section>
 
