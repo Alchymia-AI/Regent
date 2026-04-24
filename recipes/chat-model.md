@@ -111,8 +111,6 @@ No reference chat run executed on this repo. Rough expectations from standard sc
 
 | Config | Data | Val PPL | Wall-clock |
 |---|---|---|---|
-| 72M | 40M tokens | ~7–9 | 8–12 h on M3 Ultra |
-| 370M | 5B tokens | ~10–12 | ~2 weeks on 1× H100 |
 | 1.5B | 30B tokens | ~8 | ~3 weeks on 1× H100 |
 | 7B | 300B tokens | ~4–5 | 3–4 weeks on 8× H100 |
 | 70B | 1.5T tokens | ~2.5–3 | months on cluster |
