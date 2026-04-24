@@ -2,8 +2,8 @@
 
 Reproducible recipes for training Regent on a specific domain. Same 4-phase pipeline, same stability constraints, same scaling rules. Domain-specific variation is data and a few config fields.
 
-| Recipe | Target | Status |
-|---|---|---|
+| Recipe | Target |
+|---|---|
 | [code-model.md](code-model.md) | Python code |
 | [chat-model.md](chat-model.md) | General conversation |
 
