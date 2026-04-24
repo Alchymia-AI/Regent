@@ -9,6 +9,10 @@ build/
 *.docx
 /market
 /groom
+/dstp
+/data
+data
+dstp
 
 # Model weights
 *.gguf

@@ -8,8 +8,6 @@ End-to-end recipe for training a Regent general-purpose chat model. Same 4-phase
 
 | Machine | Target |
 |---|---|
-| Mac Studio M3 Ultra, 18 GB | 72M validation only |
-| Mac Studio M3 Ultra, 128 GB | Phase 2 SFT on pretrained base |
 | A100 40 GB | 1B full pipeline |
 | 8× H100 80 GB | 7B full pipeline, 300B tokens, ~3–4 weeks |
 | Multi-node cluster | 70B+ |

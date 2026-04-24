@@ -4,8 +4,8 @@ Reproducible recipes for training Regent on a specific domain. Same 4-phase pipe
 
 | Recipe | Target | Status |
 |---|---|---|
-| [code-model.md](code-model.md) | Python code | Validated at 72M on M3 Ultra |
-| [chat-model.md](chat-model.md) | General conversation | Spec only, no reference run yet |
+| [code-model.md](code-model.md) | Python code |
+| [chat-model.md](chat-model.md) | General conversation |
 
 ## Adding a recipe
 

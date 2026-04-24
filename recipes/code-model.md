@@ -1,6 +1,6 @@
 # Code Model
 
-End-to-end recipe for training a Regent code model. Validated at 72M on M3 Ultra, 18 GB. Scales to 3B and 7B via config.
+End-to-end recipe for training a Regent code model.
 
 ---
 
@@ -8,8 +8,6 @@ End-to-end recipe for training a Regent code model. Validated at 72M on M3 Ultra
 
 | Machine | Phase 1 wall-clock to val PPL 9 |
 |---|---|
-| Mac Studio M3 Ultra, 18 GB | ~8 h |
-| Mac Studio M3 Ultra, 128 GB | ~5 h |
 | A100 40 GB | ~2 h |
 | H100 80 GB | ~1 h |
 
