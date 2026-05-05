@@ -58,6 +58,8 @@ Regent is not a transformer.
 
 Every frontier model today is built on the same architecture from a 2017 paper. Regent is a Mamba-2 state-space model with GQA attention at selected layers, a verification head, a structured knowledge graph interface, and a persistent memory system.
 
+Credit where due: Mamba and Mamba-2 are the work of @_albertgu and @tri_dao. Regent stands on that foundation.
+
 Different engine. Different properties. Different outcomes.
 
 ---
@@ -174,6 +176,8 @@ It is designed to enable training models at 1 to 2 trillion parameters by poolin
 
 The goal: frontier-scale models should not require a $200M check to a single cloud provider.
 
+Adjacent prior art worth following: @PrimeIntellect, @togethercompute, @nousresearch.
+
 More on this soon.
 
 ---
@@ -206,7 +210,7 @@ More soon.
 
 **Tweet 18 (CTA)**
 
-Regent is available now on HuggingFace.
+Regent is available now on @huggingface.
 
 Weights, code, architecture docs, and training pipeline are all open.
 
