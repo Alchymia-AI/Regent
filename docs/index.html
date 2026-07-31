@@ -6,7 +6,10 @@
   <title>Regent Model - The Model Built for Decisions That Matter</title>
   <meta name="description" content="The first production language model built in Africa. Regent scores its own accuracy word by word, thinks before it answers, calls tools natively, and runs on your hardware offline. Open source at 7B to 50B.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://api.fontshare.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -15,19 +18,19 @@
 <nav>
   <div class="container">
     <div class="logo-group">
-      <img src="assets/logo.png" alt="Alchymia AI">
+      <a href="https://alchymia.ai" class="lab-mark" target="_blank" rel="noopener">
+        <img src="assets/logo.png" alt="Alchymia Labs">
+        <span class="lab-mark-name">Alchymia Labs</span>
+      </a>
+      <span class="logo-sep" aria-hidden="true">/</span>
       <div class="logo"><span>Regent</span> Model</div>
     </div>
     <div class="links">
-      <a href="#variants">Variants</a>
-      <a href="#novelty">What's Different</a>
+      <a href="#architecture">Architecture</a>
       <a href="#hallucination">Accuracy</a>
-      <a href="#comparison">vs Others</a>
       <a href="#benchmarks">Benchmarks</a>
-      <a href="#sizes">Sizes</a>
-      <a href="#deploy">Deploy</a>
-      <a href="#quickstart">Quick Start</a>
-      <a href="#training">Training</a>
+      <a href="#sizes">Models</a>
+      <a href="#quickstart">Get Started</a>
       <a href="#about">About</a>
       <a href="https://github.com/Alchymia-AI/Regent" class="nav-cta">GitHub</a>
     </div>
@@ -40,20 +43,21 @@
 <!-- HERO -->
 <section class="hero">
   <div class="container">
-    <img src="assets/logo.png" alt="Alchymia AI" class="hero-logo">
+    <a href="https://alchymia.ai" class="lab-badge" target="_blank" rel="noopener">
+      <img src="assets/logo.png" alt="">
+      <span class="lab-badge-name">Alchymia Labs</span>
+      <span class="lab-badge-dot" aria-hidden="true"></span>
+      <span class="lab-badge-note">alchymia.ai</span>
+      <span class="lab-badge-go" aria-hidden="true">→</span>
+    </a>
     <h1>The model built for<br><span class="accent">decisions that matter.</span></h1>
-    <p class="subtitle">Scores every word it generates in real time. Thinks before it answers. Calls tools natively. Runs on your hardware, offline, with no per-inference cost after deployment.
-    </p>
+    <p class="subtitle">Scores every word it generates in real time. Thinks before it answers. Calls tools natively. Runs on your hardware, offline, with no per-inference cost after deployment.</p>
     <div class="tag-row">
       <span class="tag">Not a Transformer</span>
       <span class="tag">Real-Time Accuracy Scoring</span>
-      <span class="tag">Native Thinking</span>
-      <span class="tag">Native Tool Calling</span>
+      <span class="tag">Native Thinking and Tool Calling</span>
       <span class="tag">Constant Memory</span>
-      <span class="tag">OpenAI-Compatible API</span>
-      <span class="tag">HuggingFace Compatible</span>
-      <span class="tag">CUDA + Apple Silicon</span>
-      <span class="tag">No API Dependency</span>
+      <span class="tag">Runs Offline</span>
     </div>
   </div>
 </section>
@@ -64,11 +68,11 @@
     <div class="stats">
       <div class="stat">
         <div class="number">1GB</div>
-        <div class="label">Fixed memory — same at 100 tokens or 1 million</div>
+        <div class="label">Fixed memory at 100 tokens or at 1 million</div>
       </div>
       <div class="stat">
         <div class="number">∞</div>
-        <div class="label">Context window — runs for hours, days, or weeks</div>
+        <div class="label">Context window. Runs for hours, days or weeks</div>
       </div>
       <div class="stat">
         <div class="number">0.1%</div>
@@ -137,30 +141,24 @@
       Every frontier model today is a transformer. Regent is a Mamba-2 state-space model with grouped-query attention at selected layers. Different engine, different properties. Recurrent layers handle processing with a fixed memory footprint. Attention layers are placed every eight blocks for precise recall. Two output heads share the same internal state.
     </p>
 
-    <div style="background: #ffffff; border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem; text-align: center;">
-      <img src="assets/regent_architecture_light.svg" alt="Regent Architecture" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+    <div class="figure">
+      <img src="assets/regent_architecture_light.svg" alt="Regent Architecture">
     </div>
 
-
-
-    <div class="card-grid" style="margin-top: 2rem;">
+    <div class="card-grid">
       <div class="card">
-        <div class="icon">⚡</div>
         <h3>Recurrent Layers (Mamba-2)</h3>
         <p>Compresses each input into a fixed-size state buffer. The buffer stays the same size whether the session runs one minute or eight hours.</p>
       </div>
       <div class="card">
-        <div class="icon">🎯</div>
         <h3>Attention Layers (Sparse)</h3>
         <p>Placed every eight recurrent layers for precise recall. Finds specific facts the recurrent layers compressed away. Sliding window keeps memory bounded.</p>
       </div>
       <div class="card">
-        <div class="icon">🧠</div>
         <h3>Knowledge Graph Encoder</h3>
         <p>Converts structured knowledge nodes into native model inputs. Each node carries confidence, recency, emotional weight, and category. No text conversion needed.</p>
       </div>
       <div class="card">
-        <div class="icon">💜</div>
         <h3>Behavioral Conditioning</h3>
         <p>7 numbers injected at multiple layers during generation: mood, influence, truth bias, civility, good/evil, curiosity, self-preservation. Shapes the entire response. Not a prompt prefix.</p>
       </div>
@@ -179,49 +177,41 @@
 
     <div class="novelty-grid">
       <div class="novelty-item">
-        <div class="novelty-num">01</div>
         <h3>It scores its own accuracy while it writes</h3>
         <p>Two output channels, one pass. One produces the next word. The other scores it 0 to 1: confident or guessing. Other systems check after the fact by re-running the model or sending output to a second one.</p>
       </div>
 
       <div class="novelty-item">
-        <div class="novelty-num">02</div>
         <h3>It changes behavior when confidence drops</h3>
         <p>Above 0.6: writes normally. Between 0.3 and 0.6: slows, picks conservative words. Below 0.3: stops, retrieves facts, tries again from the uncertain point. Other models write at the same pace whether right or wrong.</p>
       </div>
 
       <div class="novelty-item">
-        <div class="novelty-num">03</div>
         <h3>It reads structured knowledge directly</h3>
         <p>Typed nodes as input: facts, relationships, memories, constraints, each with confidence and category. No text conversion. Other systems flatten knowledge into prompt text and re-inject it on every call.</p>
       </div>
 
       <div class="novelty-item">
-        <div class="novelty-num">04</div>
         <h3>Behavioral state is a dial, not a paragraph</h3>
         <p>7 numbers alongside the conversation: mood, influence, truth bias, civility, good/evil, curiosity, self-preservation. Injected at multiple layers. Shapes the entire response. Other models use a prompt persona that dilutes as the response grows.</p>
       </div>
 
       <div class="novelty-item">
-        <div class="novelty-num">05</div>
         <h3>Constant memory regardless of session length</h3>
         <p>Other models accumulate tens of gigabytes over a multi-hour session. Regent compresses past context into a fixed 1 GB state. It does not grow. A session running for weeks uses the same memory it used in the first second.</p>
       </div>
 
       <div class="novelty-item">
-        <div class="novelty-num">06</div>
         <h3>Accuracy scoring adds 0.1% to the cost</h3>
         <p>Reads state that already exists. No extra passes. Most safety systems run the model 5 to 20 times for a reliability signal. This one runs once.</p>
       </div>
 
       <div class="novelty-item">
-        <div class="novelty-num">07</div>
         <h3>It thinks before it answers</h3>
         <p>When the question requires reasoning, the model works through it internally first, then responds. The reasoning is visible to the caller. Built into the generation loop with dedicated tokens, not a prompt engineering trick.</p>
       </div>
 
       <div class="novelty-item">
-        <div class="novelty-num">08</div>
         <h3>It calls tools natively</h3>
         <p>When the model needs external information, it emits a structured tool request, pauses, receives the result, and continues. APIs, databases, search. Built into the architecture with dedicated tokens, not a plugin layer.</p>
       </div>
@@ -254,7 +244,7 @@
       </div>
     </div>
 
-    <div class="card-grid" style="margin-top: 2rem;">
+    <div class="card-grid">
       <div class="card">
         <h3>Per-word, not per-response</h3>
         <p>Most checks score an entire response. This scores every word, catching fabricated claims mid-sentence and identifying the exact span.</p>
@@ -419,8 +409,8 @@
       <strong>Not a general capability ranking.</strong> On language quality, instruction following, math, and coding, the frontier transformers lead. Regent is a different architecture built for different properties: accuracy-scored, long-running, self-hosted workloads where wrong answers have a measurable cost.
     </div>
 
-    <h3 style="margin-top: 3rem; font-size: 1.5rem; color: var(--text);">Memory at scale: the operational difference</h3>
-    <p class="section-desc" style="max-width: 100%;">
+    <h3 class="subhead">Memory at scale: the operational difference</h3>
+    <p class="section-desc wide">
       Standard models accumulate memory with every word processed. Regent's memory is fixed. For workloads measured in hours, not turns, this is the difference between running and not running.
     </p>
 
@@ -483,11 +473,11 @@
     <div class="section-label">Benchmarks</div>
     <h2 class="section-title">Benchmark performance</h2>
     <p class="section-desc">
-      Grande Regent against April 2026 frontier flagships across reasoning, code, agent, long-context, and grounding benchmarks. Competitive on standard evaluations and decisively ahead on RULER 128K and HaluEval, where architecture being unlimited context and the verification head matters most.
+      Grande Regent against April 2026 frontier flagships across reasoning, code, agent, long-context, and grounding benchmarks. Competitive on standard evaluations and ahead on RULER 128K and HaluEval, where unlimited context and the verification head do the work.
     </p>
 
-    <div style="background: #ffffff; border-radius: 12px; padding: 2rem; margin-top: 2rem; overflow-x: auto;">
-      <img src="assets/benchmarks.svg" alt="Grande Regent benchmark comparison" style="width: 100%; height: auto; display: block;">
+    <div class="figure">
+      <img src="assets/benchmarks.svg" alt="Grande Regent benchmark comparison">
     </div>
   </div>
 </section>
@@ -513,8 +503,8 @@
         </div>
       </div>
 
-      <div class="size-card" style="border: 1px solid rgba(16, 185, 129, 0.3);">
-        <div class="size-name" style="color: var(--green);">13B to 50B</div>
+      <div class="size-card size-card-open">
+        <div class="size-name">13B to 50B</div>
         <div class="size-label">Regent | Open Source</div>
         <div class="specs">
           <div class="spec"><span class="label">License</span><span class="value">Open</span></div>
@@ -549,42 +539,29 @@
 
     <div class="card-grid">
       <div class="card">
-        <div class="icon">🤗</div>
         <h3>HuggingFace</h3>
         <p>Export to a HuggingFace package. Load with two lines. Push to Hub from the interface. Works with existing fine-tuning, quantization, and deployment tooling.</p>
-        <div class="code-block" style="margin-top: 1rem; font-size: 0.75rem;">
-<span class="keyword">from</span> transformers <span class="keyword">import</span> AutoModelForCausalLM, AutoTokenizer
-
-model = AutoModelForCausalLM.from_pretrained(
-    <span class="string">"path/to/export"</span>, trust_remote_code=<span class="keyword">True</span>
-)
-        </div>
       </div>
       <div class="card">
-        <div class="icon">🐳</div>
         <h3>Docker / Self-Hosted</h3>
         <p>Self-contained Docker package with FastAPI server. Runs on any machine with Docker. No Python setup needed.</p>
       </div>
       <div class="card">
-        <div class="icon">⚡</div>
         <h3>CUDA + Apple Silicon</h3>
         <p>Native on NVIDIA GPUs and Apple Silicon. Optional Triton kernel on CUDA for long-sequence throughput. CPU fallback on any machine.</p>
       </div>
     </div>
 
-    <div class="card-grid" style="margin-top: 1.5rem;">
+    <div class="card-grid">
       <div class="card">
-        <div class="icon">🖥</div>
         <h3>Model Studio Interface</h3>
         <p>Browser interface for the full lifecycle: scrape data, train, monitor, chat with live accuracy scores, manage the knowledge graph, export. No command line needed.</p>
       </div>
       <div class="card">
-        <div class="icon">🔌</div>
         <h3>OpenAI-Compatible API</h3>
         <p>Drop-in replacement at <code>/v1/chat/completions</code>. Any SDK, framework, or application built for OpenAI works by changing the base URL. No code changes needed.</p>
       </div>
       <div class="card">
-        <div class="icon">📦</div>
         <h3>Weight Formats</h3>
         <p>SafeTensors format, readable by PyTorch and MLX. Supports float32, float16, and bfloat16. Same file loads on both platforms.</p>
       </div>
@@ -598,14 +575,13 @@ model = AutoModelForCausalLM.from_pretrained(
     <div class="section-label">Quick Start</div>
     <h2 class="section-title">Up and running in three steps</h2>
     <p class="section-desc">
-      Clone, install, and start. The Model Studio interface opens in your browser and handles everything from there.
+      Clone, install, and start. Model Studio opens in your browser and runs the rest.
     </p>
 
     <div class="card-grid">
       <div class="card">
-        <h3>Step 1 — Clone and install</h3>
-        <div class="code-block" style="font-size: 0.75rem;">
-<span class="comment"># Apple Silicon</span>
+        <h3>Step 1. Clone and install</h3>
+        <pre class="code-block"><span class="comment"># Apple Silicon</span>
 git clone https://github.com/Alchymia-AI/Regent
 cd regent-model
 python3.12 -m venv .venv && source .venv/bin/activate
@@ -614,12 +590,11 @@ pip install mlx pyyaml sentencepiece numpy fastapi uvicorn pydantic
 <span class="comment"># NVIDIA GPU</span>
 pip install torch --index-url https://download.pytorch.org/whl/cu124
 pip install pyyaml sentencepiece numpy fastapi uvicorn pydantic safetensors transformers
-        </div>
+</pre>
       </div>
       <div class="card">
-        <h3>Step 2 — Start the interface</h3>
-        <div class="code-block" style="font-size: 0.75rem;">
-<span class="comment"># Starts Model Studio UI + API server</span>
+        <h3>Step 2. Start the interface</h3>
+        <pre class="code-block"><span class="comment"># Starts Model Studio UI + API server</span>
 ./start.sh
 
 <span class="comment"># Opens at http://localhost:3000</span>
@@ -628,12 +603,11 @@ pip install pyyaml sentencepiece numpy fastapi uvicorn pydantic safetensors tran
 <span class="comment"># With a specific model config and weights</span>
 ./start.sh --config configs/regent_7b.yaml \
            --model  checkpoints/alignment/regent.safetensors
-        </div>
+</pre>
       </div>
       <div class="card">
-        <h3>Step 3 — Or load from HuggingFace</h3>
-        <div class="code-block" style="font-size: 0.75rem;">
-<span class="keyword">from</span> transformers <span class="keyword">import</span> AutoModelForCausalLM, AutoTokenizer
+        <h3>Step 3. Load from HuggingFace</h3>
+        <pre class="code-block"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoModelForCausalLM, AutoTokenizer
 <span class="keyword">import</span> torch
 
 model = AutoModelForCausalLM.from_pretrained(
@@ -649,11 +623,11 @@ out = model.generate(
     **tok(<span class="string">"Hello, Regent!"</span>, return_tensors=<span class="string">"pt"</span>).to(model.device),
     max_new_tokens=200
 )
-        </div>
+</pre>
       </div>
     </div>
 
-    <div class="callout" style="margin-top: 2rem;">
+    <div class="callout">
       No weights yet? Run with <code>--synthetic</code> to validate on random data. All four phases run end-to-end. Swap in a real corpus when ready.
     </div>
   </div>
@@ -671,92 +645,74 @@ out = model.generate(
     <div class="use-case-grid">
       <div class="use-case">
         <h3>Legal Research and Drafting</h3>
-        <div class="fit strong">Strong fit</div>
         <p>Every claim needs to be traceable. The accuracy score flags uncertain spans before the document is finished. Case law and statute are graph-shaped; the knowledge encoder ingests them directly.</p>
       </div>
       <div class="use-case">
         <h3>Healthcare and Clinical Support</h3>
-        <div class="fit strong">Strong fit</div>
         <p>Long sessions, fixed memory, clinical consequences for errors. UMLS, SNOMED, and ICD are structured ontologies the knowledge encoder reads natively. The accuracy score meets the auditability bar clinical workflows require.</p>
       </div>
       <div class="use-case">
         <h3>Robotics and Drones</h3>
-        <div class="fit strong">Strong fit</div>
         <p>8-hour shifts and 6-hour missions need fixed memory. The state never grows regardless of duration. Accuracy score gates actions before execution.</p>
       </div>
       <div class="use-case">
         <h3>Government and Defense</h3>
-        <div class="fit strong">Strong fit</div>
         <p>Air-gap is a hard requirement. Ships as weights, runs on local hardware, no external connectivity. Accuracy score produces auditable records per claim.</p>
       </div>
       <div class="use-case">
         <h3>Financial Research and Risk</h3>
-        <div class="fit strong">Strong fit</div>
         <p>Long sessions over structured data. Every claim traceable before it influences a decision. The accuracy score is the audit trail. Self-hosting removes data sovereignty concerns.</p>
       </div>
       <div class="use-case">
         <h3>Persistent AI Agents</h3>
-        <div class="fit strong">Strong fit</div>
         <p>Constant memory means no session limit. Knowledge graph input persists context without growing prompts. Behavioral state stays consistent across the full session.</p>
       </div>
       <div class="use-case">
         <h3>Pharmaceutical and Drug Development</h3>
-        <div class="fit strong">Strong fit</div>
         <p>Molecular databases, drug interaction graphs, and trial data are graph-shaped. Regulatory submissions require every claim to be auditable. Trial data often cannot leave a jurisdiction. Wrong output has patient consequences.</p>
       </div>
       <div class="use-case">
         <h3>Nuclear and Critical Infrastructure</h3>
-        <div class="fit strong">Strong fit</div>
         <p>Air-gap is mandatory. 8 to 12 hour shifts run without memory degradation. The accuracy score flags uncertain operational recommendations before an operator acts. No cloud vendor has clearance to run inside a nuclear facility.</p>
       </div>
       <div class="use-case">
         <h3>Maritime and Offshore</h3>
-        <div class="fit strong">Strong fit</div>
         <p>Ships at sea have no reliable internet for weeks. Engine monitoring, navigation, and cargo management need a model that runs offline for the full voyage. Long sessions, fixed memory, no connectivity required.</p>
       </div>
       <div class="use-case">
         <h3>Mining and Extraction</h3>
-        <div class="fit strong">Strong fit</div>
         <p>Remote sites, zero connectivity, safety-critical decisions. Long operational cycles. The accuracy score gates decisions before they become incidents. No ongoing infrastructure required after deployment.</p>
       </div>
       <div class="use-case">
         <h3>Insurance and Claims</h3>
-        <div class="fit strong">Strong fit</div>
         <p>Every decision needs a traceable justification for regulatory review. Structured policy, precedent, and actuarial knowledge fits the graph encoder. The accuracy score is the audit trail regulators require.</p>
       </div>
       <div class="use-case">
         <h3>Compliance and Regulatory</h3>
-        <div class="fit strong">Strong fit</div>
         <p>Pharmaceutical, financial, and environmental compliance all require AI output auditable at the claim level. Regulatory frameworks are graph-shaped. General models produce plausible compliance text with no verifiability.</p>
       </div>
       <div class="use-case">
         <h3>Emergency Services</h3>
-        <div class="fit strong">Strong fit</div>
         <p>Works offline when infrastructure is down. Medical triage, search and rescue, resource allocation. A model requiring connectivity is unavailable exactly when needed most. Behavioral conditioning keeps output calibrated for high-stakes decisions.</p>
       </div>
       <div class="use-case">
         <h3>Audit and Financial Forensics</h3>
-        <div class="fit strong">Strong fit</div>
         <p>Every figure needs a source. Long document review over structured financial data. The accuracy score identifies which claims to scrutinize before the report is signed. Self-hosting removes the conflict of sending client data to a third-party API.</p>
       </div>
       <div class="use-case">
         <h3>Agriculture and Precision Farming</h3>
-        <div class="fit strong">Strong fit</div>
         <p>Unreliable connectivity, thin margins, structured knowledge of crop disease and soil. Zero marginal cost after deployment is the only viable model at this scale. Self-hosted deployment is the only distribution path that reaches this market.</p>
       </div>
       <div class="use-case">
         <h3>Emerging Markets</h3>
-        <div class="fit good">Strong fit</div>
         <p>One license, local hardware, zero marginal cost after deployment. Works without internet. Healthcare, legal, agricultural, and financial organizations across Africa, South Asia, Southeast Asia, and Latin America.</p>
       </div>
       <div class="use-case">
         <h3>Code Generation</h3>
-        <div class="fit strong">Strong fit</div>
         <p>Entire repository in context with no limit. Calls compilers, test runners, and linters mid-generation through native tool calling. Verification head scores confidence per line before you run anything. Multi-hour sessions without memory degradation.</p>
       </div>
       <div class="use-case">
         <h3>General-Purpose Chat</h3>
-        <div class="fit good">Good fit</div>
         <p>Fixed memory means conversations never truncate. Adaptive gate reduces cost on routine exchanges. Thinking and tool calling work natively. At 7B it will not match 70B+ frontier models on open-ended tasks, but Grande Regent at 70B+ is competitive.</p>
       </div>
     </div>
@@ -772,16 +728,15 @@ out = model.generate(
       Run all four phases from the Model Studio interface with one click, or from the command line with one command. Validated end-to-end on Apple Silicon and NVIDIA CUDA.
     </p>
 
-    <div class="code-block">
-<span class="comment"># Command line: full pipeline from scrape to alignment</span>
+    <pre class="code-block"><span class="comment"># Command line: full pipeline from scrape to alignment</span>
 <span class="keyword">PYTHONPATH</span>=. python3 scripts/run_pipeline.py \
     --config configs/regent_370m.yaml \
     --scrape-config pipeline.yaml
 
 <span class="comment"># Or open the Model Studio UI and click Start</span>
-./start.sh   <span class="comment"># opens at http://localhost:3000</span></div>
+./start.sh   <span class="comment"># opens at http://localhost:3000</span></pre>
 
-    <div class="card-grid" style="margin-top: 2rem;">
+    <div class="card-grid">
       <div class="card">
         <h3>Phase 1: Base</h3>
         <p>Language modeling on a general corpus. Full model trains. Learns grammar, world knowledge, and reasoning.</p>
@@ -806,7 +761,7 @@ out = model.generate(
 <section id="about">
   <div class="container">
     <div class="section-label">About</div>
-    <h2 class="section-title">Alchymia Labs</h2>
+    <h2 class="section-title"><a href="https://alchymia.ai" target="_blank" rel="noopener" class="lab-title-link">Alchymia Labs<span class="lab-title-go" aria-hidden="true">↗</span></a></h2>
     <p class="section-desc">
       Researching, building, and accelerating AI for developing economies.
     </p>
@@ -815,7 +770,7 @@ out = model.generate(
       <div class="card">
         <h3>The first production model from Africa</h3>
         <p>Regent is the first real language model to come out of Africa. Not a fine-tune. Not a wrapper. A ground-up architecture designed to be on par with the best models in the world at the workloads it is built for.</p>
-        <p>Alchymia Labs is founded by <a href="https://www.linkedin.com/in/prime-architect/" style="color: var(--accent);">Ayomide I. Daniels</a>. The team is in the diaspora. The work is global.</p>
+        <p>Alchymia Labs is founded by <a href="https://www.linkedin.com/in/prime-architect/">Ayomide I. Daniels</a>. The team is in the diaspora. The work is global.</p>
       </div>
       <div class="card">
         <h3>The 10x imperative</h3>
@@ -829,7 +784,7 @@ out = model.generate(
       </div>
     </div>
 
-    <div class="card-grid" style="margin-top: 1.5rem;">
+    <div class="card-grid">
       <div class="card">
         <h3>Distributed Shared Training Protocol</h3>
         <p>Training frontier-scale models currently requires concentrating tens of thousands of GPUs in one facility and a $50M to $200M check to a single cloud provider.</p>
@@ -878,7 +833,7 @@ out = model.generate(
       </div>
     </div>
 
-    <div class="callout" style="margin-top: 2rem; text-align: center;">
+    <div class="callout callout-center">
       Press and media inquiries: <strong>research@alchymia.ai</strong>
     </div>
   </div>
@@ -887,12 +842,12 @@ out = model.generate(
 <!-- FOOTER -->
 <footer>
   <div class="container">
-    <div class="footer-logo">
-      <img src="assets/logo.png" alt="Alchymia AI">
+    <a href="https://alchymia.ai" class="footer-logo" target="_blank" rel="noopener">
+      <img src="assets/logo.png" alt="Alchymia Labs">
       <span>Alchymia Labs</span>
-    </div>
+    </a>
     <p>Researching, building, and accelerating AI for developing economies.</p>
-    <p><a href="https://alchymia.ai" style="color: var(--accent);">alchymia.ai</a></p>
+    <p><a href="https://alchymia.ai" target="_blank" rel="noopener">alchymia.ai</a></p>
     <p>&copy; 2026 Alchymia Labs. All rights reserved.</p>
     
   </div>
